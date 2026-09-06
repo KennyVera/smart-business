@@ -1,0 +1,75 @@
+from datetime import date, timedelta
+
+import django_filters as filters
+from django.db.models import F, Q
+
+from .models import InventarioStock, LoteCaducidad, Producto, RegistroMerma
+
+
+class ProductoFilter(filters.FilterSet):
+    sku = filters.CharFilter(lookup_expr="icontains")
+    nombre = filters.CharFilter(lookup_expr="icontains")
+    categoria = filters.NumberFilter(field_name="categoria_id")
+    sucursal = filters.NumberFilter(method="filtrar_sucursal")
+    buscar = filters.CharFilter(method="filtrar_texto")
+
+    class Meta:
+        model = Producto
+        fields = ("sku", "nombre", "categoria", "sucursal")
+
+    def filtrar_sucursal(self, queryset, _name, value):
+        return queryset.filter(stock__sucursal_id=value).distinct()
+
+    def filtrar_texto(self, queryset, _name, value):
+        texto = value.strip()
+        if not texto:
+            return queryset
+        return queryset.filter(Q(sku__icontains=texto) | Q(nombre__icontains=texto))
+
+
+class StockFilter(filters.FilterSet):
+    sucursal = filters.NumberFilter(field_name="sucursal_id")
+    producto = filters.NumberFilter(field_name="producto_id")
+    categoria = filters.NumberFilter(field_name="producto__categoria_id")
+    buscar = filters.CharFilter(method="filtrar_texto")
+    solo_alerta = filters.BooleanFilter(method="filtrar_alerta")
+
+    class Meta:
+        model = InventarioStock
+        fields = ("sucursal", "producto", "categoria")
+
+    def filtrar_texto(self, queryset, _name, value):
+        texto = value.strip()
+        if not texto:
+            return queryset
+        return queryset.filter(
+            Q(producto__sku__icontains=texto) | Q(producto__nombre__icontains=texto)
+        )
+
+    def filtrar_alerta(self, queryset, _name, value):
+        if not value:
+            return queryset
+        return queryset.filter(cantidad_actual__lte=F("stock_minimo"))
+
+
+class LoteFilter(filters.FilterSet):
+    sucursal = filters.NumberFilter(field_name="sucursal_id")
+    producto = filters.NumberFilter(field_name="producto_id")
+    dias = filters.NumberFilter(method="filtrar_dias")
+
+    class Meta:
+        model = LoteCaducidad
+        fields = ("sucursal", "producto")
+
+    def filtrar_dias(self, queryset, _name, value):
+        limite = date.today() + timedelta(days=int(value))
+        return queryset.filter(fecha_vencimiento__lte=limite)
+
+
+class MermaFilter(filters.FilterSet):
+    sucursal = filters.NumberFilter(field_name="sucursal_id")
+    producto = filters.NumberFilter(field_name="producto_id")
+
+    class Meta:
+        model = RegistroMerma
+        fields = ("sucursal", "producto")

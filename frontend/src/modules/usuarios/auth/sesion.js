@@ -28,6 +28,10 @@ export function borrarSesion() {
   localStorage.removeItem(CLAVE_SESION);
 }
 
+export function rolDeSesion() {
+  return (leerSesion()?.rol_nombre || "").trim().toLowerCase();
+}
+
 export function iniciales(nombre) {
   return nombre
     .split(/\s+/)
