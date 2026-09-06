@@ -1,0 +1,52 @@
+services:
+  # PostgreSQL local ya existe. El servicio `db` queda definido para
+  # entornos sin Postgres en el host. No se inicia por defecto para no
+  # ocupar el puerto 5432. Parámetros de la BD existente:
+  #   USER: postgres
+  #   PASSWORD: postgreAdmin19
+  #   DB: requeson_erp_db
+  #   PORT: 5432
+  db:
+    image: postgres:15-alpine
+    profiles: ["bundled-db"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgreAdmin19
+      POSTGRES_DB: requeson_erp_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: "*"
+      POSTGRES_HOST: host.docker.internal
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgreAdmin19
+      POSTGRES_DB: requeson_erp_db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+      CHOKIDAR_USEPOLLING: "true"
+
+volumes:
+  postgres_data:

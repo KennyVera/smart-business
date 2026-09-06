@@ -1,0 +1,100 @@
+.admin-header {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.85rem 1.75rem;
+  border-bottom: 1px solid #eceff1;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 180px;
+}
+
+.header-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--sb-accent);
+}
+
+.header-title { font-weight: 700; }
+.header-search {
+  flex: 1;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--sb-bg);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  color: var(--sb-muted);
+}
+
+.header-search input {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.header-bell {
+  position: relative;
+  border: 0;
+  background: transparent;
+  color: #495057;
+}
+
+.header-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: var(--sb-accent);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  min-width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-user strong,
+.header-user small {
+  display: block;
+  text-align: right;
+}
+
+.header-user small {
+  color: var(--sb-muted);
+  font-size: 0.75rem;
+}
+
+.header-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #d9dde1;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #495057;
+}

@@ -1,0 +1,93 @@
+.kpi-card {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.kpi-card .card-body {
+  padding: 1.1rem 1.2rem 1rem;
+}
+
+.kpi-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--sb-muted);
+  margin-bottom: 0.65rem;
+}
+
+.kpi-card__value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.kpi-card__delta {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.kpi-card__delta.is-up {
+  color: var(--sb-accent);
+}
+
+.kpi-card__delta.is-down {
+  color: #dc3545;
+}
+
+.kpi-card__delta.is-zero {
+  color: var(--sb-muted);
+}
+
+.kpi-card--accent {
+  background: #000;
+  color: #fff;
+}
+
+.kpi-card--accent .kpi-card__head,
+.kpi-card--accent .kpi-card__delta {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dashboard-chart-wrap {
+  width: 100%;
+  min-height: 280px;
+}
+
+.dashboard-donut-wrap {
+  width: 100%;
+  min-height: 220px;
+}
+
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--sb-muted);
+}
+
+.donut-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.donut-legend__item i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dashboard-page .table thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dashboard-page .table tbody td {
+  font-size: 0.92rem;
+  color: #343a40;
+}

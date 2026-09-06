@@ -1,0 +1,64 @@
+:root {
+  --sb-sidebar: #000;
+  --sb-sidebar-hover: #1a1a1a;
+  --sb-sidebar-active: #2a2a2a;
+  --sb-bg: #f4f7f6;
+  --sb-accent: #000;
+  --sb-text: #1c1f24;
+  --sb-muted: #6c757d;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: var(--sb-text);
+  background: var(--sb-bg);
+}
+
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-content {
+  padding: 1.5rem 1.75rem 2rem;
+  background: var(--sb-bg);
+  flex: 1;
+}
+
+.page-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.06);
+  padding: 1.15rem 1.25rem;
+}
+
+.page-card h2 {
+  font-size: 1.05rem;
+  margin: 0 0 1rem;
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-wrap: wrap;
+  }
+
+  .header-search {
+    order: 3;
+    max-width: none;
+    width: 100%;
+  }
+}

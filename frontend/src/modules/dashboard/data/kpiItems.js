@@ -1,0 +1,38 @@
+export const KPI_ITEMS = [
+  {
+    id: "ventas",
+    title: "Ventas totales",
+    value: "0",
+    delta: "0",
+    positive: null,
+    icon: "bag",
+    accent: true,
+  },
+  {
+    id: "ingresos",
+    title: "Ingresos totales",
+    value: "$0.00",
+    delta: "$0.00",
+    positive: null,
+    icon: "dollar",
+    accent: false,
+  },
+  {
+    id: "sesiones",
+    title: "Sesiones totales",
+    value: "0",
+    delta: "0",
+    positive: null,
+    icon: "users",
+    accent: false,
+  },
+  {
+    id: "conversion",
+    title: "Tasa de conversión",
+    value: "0%",
+    delta: "0%",
+    positive: null,
+    icon: "check",
+    accent: false,
+  },
+];

@@ -1,0 +1,68 @@
+.btn-nueva-sucursal {
+  border: 0;
+  background: #000;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.5rem 1.05rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.btn-nueva-sucursal:hover {
+  background: #1a1a1a;
+}
+
+.sucursales-wrap {
+  border: 1px solid #eef1f3;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.sucursales-table {
+  --bs-table-bg: transparent;
+  margin: 0;
+}
+
+.sucursales-table thead th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #212529;
+  background: #fafbfb;
+  border-bottom: 1px solid #eef1f3;
+  padding: 0.85rem 1rem;
+}
+
+.sucursales-table tbody td {
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 0.92rem;
+  color: #343a40;
+}
+
+.sucursales-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.sucursal-row {
+  cursor: pointer;
+}
+
+.sucursal-row:hover td {
+  background: #f8f9fa;
+}
+
+.sucursal-nombre {
+  font-weight: 600;
+  color: #111;
+}
+
+.sucursal-tel {
+  font-variant-numeric: tabular-nums;
+  color: #5c636a;
+}

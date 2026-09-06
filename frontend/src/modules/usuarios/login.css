@@ -1,0 +1,89 @@
+.login-page {
+  min-height: 100vh;
+  background: #f4f7f6;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+.login-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: #eceff1;
+}
+
+.login-orb--tr {
+  width: 280px;
+  height: 280px;
+  top: -90px;
+  right: -70px;
+}
+
+.login-orb--br {
+  width: 360px;
+  height: 360px;
+  right: -120px;
+  bottom: -140px;
+}
+
+.login-wrap {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.login-brand {
+  margin-bottom: 1.75rem;
+}
+
+.login-logo {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #000;
+  margin-bottom: 0.85rem;
+}
+
+.login-brand h1 {
+  font-size: 1.85rem;
+  margin: 0;
+}
+
+.login-brand p {
+  margin: 0.2rem 0 0;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  color: #9aa0a6;
+  text-transform: uppercase;
+}
+
+.login-wrap h2 {
+  font-size: 1.35rem;
+  margin: 0 0 0.35rem;
+}
+
+.login-lead {
+  color: #8a9096;
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+}
+
+.login-foot {
+  margin-top: 2rem;
+  color: #b0b5ba;
+  font-size: 0.78rem;
+}
+
+.login-foot span,
+.login-foot small {
+  display: block;
+}
+
+.login-foot small {
+  margin-top: 0.45rem;
+}

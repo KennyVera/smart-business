@@ -1,0 +1,83 @@
+.admin-sidebar {
+  width: 72px;
+  flex-shrink: 0;
+  background: #000;
+  color: #cfd3d8;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 1rem 0.5rem;
+  min-height: 100vh;
+  transition: width 0.2s ease;
+}
+
+.admin-sidebar.is-open {
+  width: 220px;
+}
+
+.sidebar-menu-btn {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin: 0 auto 1.25rem;
+  cursor: pointer;
+}
+
+.admin-sidebar.is-open .sidebar-menu-btn {
+  margin-left: 0.55rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.sidebar-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #cfd3d8;
+  text-decoration: none;
+  font-size: 0.65rem;
+  padding: 0.75rem 0.25rem;
+  border-radius: 10px;
+}
+
+.sidebar-link span {
+  display: none;
+}
+
+.admin-sidebar.is-open .sidebar-link {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.admin-sidebar.is-open .sidebar-link span {
+  display: inline;
+}
+
+.sidebar-link.is-active,
+.sidebar-link:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+button.sidebar-link {
+  border: 0;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+}
+
+.sidebar-logout {
+  margin-top: auto;
+}
