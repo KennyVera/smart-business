@@ -1,7 +1,11 @@
 import { Settings } from "lucide-react";
+import Paginacion from "../../../shared/Paginacion";
+import { usePaginacion } from "../../../shared/usePaginacion";
 import { RECENT_BRANCHES } from "../data/recentBranches";
 
 function DashboardTable() {
+  const pagina = usePaginacion(RECENT_BRANCHES);
+
   return (
     <div className="page-card">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -27,7 +31,7 @@ function DashboardTable() {
                 </td>
               </tr>
             ) : (
-              RECENT_BRANCHES.map((row) => (
+              pagina.visibles.map((row) => (
                 <tr key={row.nombre}>
                   <td>{row.nombre}</td>
                   <td>{row.fecha}</td>
@@ -40,6 +44,7 @@ function DashboardTable() {
           </tbody>
         </table>
       </div>
+      <Paginacion {...pagina} etiqueta="sucursales" onCambio={pagina.irA} />
     </div>
   );
 }

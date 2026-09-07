@@ -8,6 +8,7 @@ import CatalogoPage from "./modules/inventario/pages/CatalogoPage";
 import CategoriasPage from "./modules/inventario/pages/CategoriasPage";
 import StockPage from "./modules/inventario/pages/StockPage";
 import AlertasPage from "./modules/inventario/pages/AlertasPage";
+import ReportesInventario from "./modules/inventario/pages/ReportesInventario";
 import LoginPage from "./modules/usuarios/pages/LoginPage";
 import RequireAuth from "./modules/usuarios/components/RequireAuth";
 
@@ -26,6 +27,7 @@ function App() {
             <Route path="inventario/categorias" element={<CategoriasPage />} />
             <Route path="inventario/stock" element={<StockPage />} />
             <Route path="inventario/alertas" element={<AlertasPage />} />
+            <Route path="inventario/reportes" element={<ReportesInventario />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Route>

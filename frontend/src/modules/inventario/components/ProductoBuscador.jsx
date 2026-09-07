@@ -39,7 +39,9 @@ function ProductoBuscador({ valor, total, onChange }) {
           <X size={16} />
         </button>
       ) : null}
-      <span className="inv-scan-total">{total} productos</span>
+      <span className="inv-scan-total">
+        {total} {total === 1 ? "producto" : "productos"}
+      </span>
     </div>
   );
 }

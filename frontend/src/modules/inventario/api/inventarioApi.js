@@ -1,9 +1,18 @@
 import api from "../../../api/client";
+import { leerPagina, TODOS } from "../../../shared/paginado";
 
 const BASE = "/api/inventario";
 
-export function fetchCategorias() {
-  return api.get(`${BASE}/categorias/`);
+export function fetchCategorias(params) {
+  return api.get(`${BASE}/categorias/`, { params });
+}
+
+/** Para los <select>: trae el catálogo de categorías sin paginar. */
+export async function fetchCategoriasTodas() {
+  const { data } = await api.get(`${BASE}/categorias/`, {
+    params: { page_size: TODOS },
+  });
+  return { data: leerPagina(data).items };
 }
 
 export function createCategoria(payload) {
@@ -24,6 +33,10 @@ export function createProducto(payload) {
 
 export function updateProducto(id, payload) {
   return api.patch(`${BASE}/productos/${id}/`, payload);
+}
+
+export function fetchKardex(idProducto, params) {
+  return api.get(`${BASE}/productos/${idProducto}/kardex/`, { params });
 }
 
 export function fetchStock(params) {
@@ -52,4 +65,8 @@ export function createMerma(payload) {
 
 export function fetchAlertas(params) {
   return api.get(`${BASE}/alertas/`, { params });
+}
+
+export function fetchReporte(ruta, params) {
+  return api.get(`${BASE}/reportes/${ruta}/`, { params });
 }

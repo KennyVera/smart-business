@@ -10,6 +10,13 @@ export function clasificarMargen(valor) {
   return { tono: "triste", texto: "Triste" };
 }
 
+export const OPCIONES_MARGEN = [
+  { valor: "", etiqueta: "Todos los márgenes" },
+  { valor: "alegre", etiqueta: `Alegres (>${MARGEN_ALEGRE}%)` },
+  { valor: "medio", etiqueta: "Ajustados" },
+  { valor: "triste", etiqueta: `Tristes (<${MARGEN_TRISTE}%)` },
+];
+
 export function formatearMargen(valor) {
   if (valor === null || valor === undefined) return "—";
   return `${valor.toFixed(1)}%`;

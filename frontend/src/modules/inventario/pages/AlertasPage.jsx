@@ -1,5 +1,6 @@
 import { AlertTriangle, CalendarClock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { usePagina } from "../../../shared/paginado";
 import { fetchSucursalesAsignables } from "../../usuarios/api/usuariosApi";
 import AlertasInventario from "../components/AlertasInventario";
 import AlertasResumen from "../components/AlertasResumen";
@@ -20,7 +21,15 @@ function AlertasPage() {
   const [dias, setDias] = useState(30);
   const [merma, setMerma] = useState({ open: false, fila: null });
   const [aviso, setAviso] = useState("");
-  const { datos, error, cargando, recargar } = useAlertas({ sucursal, dias });
+  const clave = `${sucursal}|${dias}`;
+  const [paginaCritico, setPaginaCritico] = usePagina(clave);
+  const [paginaCaducar, setPaginaCaducar] = usePagina(clave);
+  const { datos, error, cargando, recargar } = useAlertas({
+    sucursal,
+    dias,
+    paginaCritico,
+    paginaCaducar,
+  });
 
   useEffect(() => {
     if (fija) return;
@@ -67,6 +76,10 @@ function AlertasPage() {
         <AlertasInventario
           datos={datos}
           mostrarSucursal={!fija}
+          paginaCritico={paginaCritico}
+          paginaCaducar={paginaCaducar}
+          onPaginaCritico={setPaginaCritico}
+          onPaginaCaducar={setPaginaCaducar}
           onMerma={(fila) => setMerma({ open: true, fila })}
         />
       ) : null}

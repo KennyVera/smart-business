@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Paginacion from "../../../shared/Paginacion";
+import { datosPaginacion, usePagina } from "../../../shared/paginado";
 import { desactivarSucursal, fetchCantones, fetchSucursalDetalle } from "../api/geografiaApi";
 import { useSucursales } from "../hooks/useSucursales";
 import SucursalDetalleModal from "../components/SucursalDetalleModal";
@@ -9,7 +11,8 @@ import "../sucursales.css";
 import "../sucursales-acciones.css";
 
 function SucursalesPage() {
-  const { items, error, cargando, recargar } = useSucursales();
+  const [pagina, setPagina] = usePagina();
+  const { items, total, error, cargando, recargar } = useSucursales(pagina);
   const [cantones, setCantones] = useState([]);
   const [form, setForm] = useState({ open: false, sucursal: null });
   const [detalle, setDetalle] = useState({ open: false, data: null });
@@ -41,12 +44,19 @@ function SucursalesPage() {
       {cargando ? <p className="text-muted mb-0">Cargando sucursales...</p> : null}
       {error ? <p className="text-danger mb-0">{error}</p> : null}
       {!cargando && !error ? (
-        <SucursalesTable
-          sucursales={items}
-          onEditar={(item) => setForm({ open: true, sucursal: item })}
-          onDesactivar={onDesactivar}
-          onDetalle={onDetalle}
-        />
+        <>
+          <SucursalesTable
+            sucursales={items}
+            onEditar={(item) => setForm({ open: true, sucursal: item })}
+            onDesactivar={onDesactivar}
+            onDetalle={onDetalle}
+          />
+          <Paginacion
+            {...datosPaginacion(pagina, total)}
+            etiqueta="sucursales"
+            onCambio={setPagina}
+          />
+        </>
       ) : null}
       <SucursalFormModal
         show={form.open}

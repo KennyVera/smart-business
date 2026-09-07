@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   AlertTriangle,
   Boxes,
+  FileBarChart,
   LayoutDashboard,
   MapPinned,
   Menu,
@@ -27,6 +28,7 @@ const ITEMS = [
   { to: "/inventario/categorias", label: "Categorías", icon: Tags, roles: INVENTARIO },
   { to: "/inventario/stock", label: "Stock", icon: Boxes, roles: INVENTARIO },
   { to: "/inventario/alertas", label: "Alertas", icon: AlertTriangle, roles: INVENTARIO },
+  { to: "/inventario/reportes", label: "Reportes", icon: FileBarChart, roles: INVENTARIO },
 ];
 
 function Sidebar() {

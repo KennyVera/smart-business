@@ -1,15 +1,23 @@
 import api from "../../../api/client";
+import { leerPagina, TODOS } from "../../../shared/paginado";
 
-export function fetchUsuarios() {
-  return api.get("/api/usuarios/usuarios/");
+export function fetchUsuarios(params) {
+  return api.get("/api/usuarios/usuarios/", { params });
 }
 
-export function fetchRoles() {
-  return api.get("/api/usuarios/roles/");
+export async function fetchRoles() {
+  const { data } = await api.get("/api/usuarios/roles/", {
+    params: { page_size: TODOS },
+  });
+  return { data: leerPagina(data).items };
 }
 
-export function fetchSucursalesAsignables() {
-  return api.get("/api/usuarios/sucursales/");
+/** Alimenta los <select> de sucursal, por eso pide la lista completa. */
+export async function fetchSucursalesAsignables() {
+  const { data } = await api.get("/api/usuarios/sucursales/", {
+    params: { page_size: TODOS },
+  });
+  return { data: leerPagina(data).items };
 }
 
 export function createUsuario(payload) {
@@ -28,8 +36,8 @@ export function restablecerClave(id) {
   return api.post(`/api/usuarios/usuarios/${id}/restablecer-clave/`);
 }
 
-export function fetchSesiones(idUsuario) {
-  return api.get(`/api/usuarios/usuarios/${idUsuario}/sesiones/`);
+export function fetchSesiones(idUsuario, params) {
+  return api.get(`/api/usuarios/usuarios/${idUsuario}/sesiones/`, { params });
 }
 
 export function fetchSesionesResumen() {

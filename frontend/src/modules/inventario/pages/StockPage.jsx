@@ -1,5 +1,7 @@
 import { Boxes } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import Paginacion from "../../../shared/Paginacion";
+import { datosPaginacion, usePagina } from "../../../shared/paginado";
 import { fetchSucursalesAsignables } from "../../usuarios/api/usuariosApi";
 import InventarioHeader from "../components/InventarioHeader";
 import MermaFormModal from "../components/MermaFormModal";
@@ -22,10 +24,12 @@ function StockPage() {
   const [merma, setMerma] = useState({ open: false, fila: null });
   const [aviso, setAviso] = useState("");
   const buscar = useDebounce(texto, 250);
-  const { datos: filas, error, cargando, recargar } = useStock({
+  const [pagina, setPagina] = usePagina(`${sucursal}|${buscar}|${soloAlerta}`);
+  const { items: filas, total, error, cargando, recargar } = useStock({
     sucursal,
     buscar,
     soloAlerta,
+    pagina,
   });
 
   useEffect(() => {
@@ -35,15 +39,13 @@ function StockPage() {
       .catch(() => setSucursales([]));
   }, [fija]);
 
-  const enAlerta = filas.filter((fila) => fila.en_alerta).length;
+  const detalle = soloAlerta
+    ? `${total} productos bajo el mínimo con estos filtros.`
+    : `${total} productos con estos filtros.`;
 
   return (
     <div className="page-card">
-      <InventarioHeader
-        icon={Boxes}
-        titulo="Control de stock"
-        detalle={`${filas.length} productos en pantalla · ${enAlerta} bajo el mínimo.`}
-      />
+      <InventarioHeader icon={Boxes} titulo="Control de stock" detalle={detalle} />
 
       <StockFiltros
         fija={fija}
@@ -60,12 +62,19 @@ function StockPage() {
       {error ? <p className="text-danger mb-2">{error}</p> : null}
       {cargando ? <p className="text-muted mb-0">Cargando stock...</p> : null}
       {!cargando && !error ? (
-        <StockTable
-          filas={filas}
-          mostrarSucursal={!fija}
-          onAjustar={(fila) => setAjuste({ open: true, fila })}
-          onMerma={(fila) => setMerma({ open: true, fila })}
-        />
+        <>
+          <StockTable
+            filas={filas}
+            mostrarSucursal={!fija}
+            onAjustar={(fila) => setAjuste({ open: true, fila })}
+            onMerma={(fila) => setMerma({ open: true, fila })}
+          />
+          <Paginacion
+            {...datosPaginacion(pagina, total)}
+            etiqueta="productos"
+            onCambio={setPagina}
+          />
+        </>
       ) : null}
 
       <StockAjusteModal

@@ -1,4 +1,5 @@
 from .models_catalogo import Categoria, Producto
+from .models_kardex import HistorialMovimiento
 from .models_stock import InventarioStock, LoteCaducidad, RegistroMerma
 
 __all__ = [
@@ -7,4 +8,5 @@ __all__ = [
     "InventarioStock",
     "LoteCaducidad",
     "RegistroMerma",
+    "HistorialMovimiento",
 ]

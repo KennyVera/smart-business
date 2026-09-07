@@ -1,5 +1,7 @@
 import { Plus, Tags } from "lucide-react";
 import { useState } from "react";
+import Paginacion from "../../../shared/Paginacion";
+import { datosPaginacion, usePagina } from "../../../shared/paginado";
 import CategoriaFormModal from "../components/CategoriaFormModal";
 import CategoriasTable from "../components/CategoriasTable";
 import InventarioHeader from "../components/InventarioHeader";
@@ -8,7 +10,8 @@ import "../inventario.css";
 import "../inventario-form.css";
 
 function CategoriasPage() {
-  const { datos: categorias, error, cargando, recargar } = useCategorias();
+  const [pagina, setPagina] = usePagina();
+  const { items: categorias, total, error, cargando, recargar } = useCategorias(pagina);
   const [form, setForm] = useState({ open: false, categoria: null });
 
   return (
@@ -31,10 +34,17 @@ function CategoriasPage() {
       {error ? <p className="text-danger mb-2">{error}</p> : null}
       {cargando ? <p className="text-muted mb-0">Cargando categorías...</p> : null}
       {!cargando && !error ? (
-        <CategoriasTable
-          categorias={categorias}
-          onEditar={(categoria) => setForm({ open: true, categoria })}
-        />
+        <>
+          <CategoriasTable
+            categorias={categorias}
+            onEditar={(categoria) => setForm({ open: true, categoria })}
+          />
+          <Paginacion
+            {...datosPaginacion(pagina, total)}
+            etiqueta="categorías"
+            onCambio={setPagina}
+          />
+        </>
       ) : null}
 
       <CategoriaFormModal

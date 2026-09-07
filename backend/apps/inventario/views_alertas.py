@@ -4,6 +4,8 @@ from django.db.models import F
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.paginacion import pagina_manual, tamano_pedido
+
 from .models import InventarioStock, LoteCaducidad
 from .permisos import PuedeGestionarInventario, limitar_a_sucursal
 from .serializers_stock import LoteSerializer, StockSerializer
@@ -44,11 +46,23 @@ class AlertasInventarioView(APIView):
             solicitada,
         ).order_by("fecha_vencimiento")
 
+        # Cada tarjeta pagina por su cuenta, por eso lleva su propio número de página.
+        tamano = tamano_pedido(request)
         return Response(
             {
                 "dias": dias,
-                "stock_critico": StockSerializer(criticos, many=True).data,
-                "por_caducar": LoteSerializer(lotes, many=True).data,
+                "stock_critico": pagina_manual(
+                    criticos,
+                    entero(request.query_params.get("pagina_critico"), 1),
+                    tamano,
+                    StockSerializer,
+                ),
+                "por_caducar": pagina_manual(
+                    lotes,
+                    entero(request.query_params.get("pagina_caducar"), 1),
+                    tamano,
+                    LoteSerializer,
+                ),
                 "resumen": {
                     "criticos": criticos.count(),
                     "por_caducar": lotes.count(),

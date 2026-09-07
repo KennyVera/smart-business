@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
+import { leerPagina } from "../../../shared/paginado";
 
 export function useLista(fetcher, mensajeError) {
-  const [items, setItems] = useState([]);
+  const [datos, setDatos] = useState(null);
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
+    setCargando(true);
     fetcher()
-      .then((response) => setItems(response.data))
+      .then((response) => setDatos(response.data))
       .catch(() => setError(mensajeError))
       .finally(() => setCargando(false));
   }, [fetcher, mensajeError]);
 
-  return { items, error, cargando };
+  const { items, total } = leerPagina(datos);
+  return { items, total, error, cargando };
 }

@@ -1,25 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { usePaginado } from "../../../shared/usePaginado";
 import { fetchSucursales } from "../api/geografiaApi";
 
-export function useSucursales() {
-  const [items, setItems] = useState([]);
-  const [error, setError] = useState("");
-  const [cargando, setCargando] = useState(true);
-
-  const recargar = useCallback(() => {
-    setCargando(true);
-    return fetchSucursales()
-      .then((response) => {
-        setItems(response.data);
-        setError("");
-      })
-      .catch(() => setError("No se pudieron cargar las sucursales."))
-      .finally(() => setCargando(false));
-  }, []);
-
-  useEffect(() => {
-    recargar();
-  }, [recargar]);
-
-  return { items, error, cargando, recargar };
+export function useSucursales(pagina = 1) {
+  const cargar = useCallback(() => fetchSucursales({ page: pagina }), [pagina]);
+  return usePaginado(cargar, "No se pudieron cargar las sucursales.");
 }

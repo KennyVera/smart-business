@@ -1,15 +1,20 @@
 import api from "../../../api/client";
+import { leerPagina, TODOS } from "../../../shared/paginado";
 
-export function fetchZonas() {
-  return api.get("/api/geografia/zonas/");
+export function fetchZonas(params) {
+  return api.get("/api/geografia/zonas/", { params });
 }
 
-export function fetchCantones() {
-  return api.get("/api/geografia/cantones/");
+/** Los formularios necesitan todos los cantones para su <select>. */
+export async function fetchCantones() {
+  const { data } = await api.get("/api/geografia/cantones/", {
+    params: { page_size: TODOS },
+  });
+  return { data: leerPagina(data).items };
 }
 
-export function fetchSucursales() {
-  return api.get("/api/geografia/sucursales/");
+export function fetchSucursales(params) {
+  return api.get("/api/geografia/sucursales/", { params });
 }
 
 export function createSucursal(payload) {

@@ -102,6 +102,8 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "EXCEPTION_HANDLER": "core.exceptions.handler",
+    "DEFAULT_PAGINATION_CLASS": "core.paginacion.PaginacionEstandar",
+    "PAGE_SIZE": 10,
 }
 
 JWT_EXPIRACION_HORAS = 12

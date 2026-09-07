@@ -1,0 +1,83 @@
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+}
+
+.paginacion-conteo {
+  font-size: 0.78rem;
+  color: #8a9096;
+}
+
+.paginacion-conteo strong {
+  color: #343a40;
+  font-variant-numeric: tabular-nums;
+}
+
+.paginacion-controles {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.paginacion-num,
+.paginacion-flecha {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 0.4rem;
+  border: 1px solid #eceff1;
+  background: #fff;
+  color: #495057;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.paginacion-num:hover:not(.is-activa),
+.paginacion-flecha:hover:not(:disabled) {
+  border-color: #111;
+  color: #111;
+  background: #f8f9fa;
+}
+
+.paginacion-num.is-activa {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+  cursor: default;
+}
+
+.paginacion-flecha:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.paginacion-corte {
+  color: #adb5bd;
+  padding: 0 0.15rem;
+  font-size: 0.8rem;
+}
+
+.paginacion.is-compacta {
+  margin-top: 0.6rem;
+}
+
+.paginacion.is-compacta .paginacion-conteo {
+  font-size: 0.72rem;
+}
+
+.paginacion.is-compacta .paginacion-num,
+.paginacion.is-compacta .paginacion-flecha {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  font-size: 0.74rem;
+}

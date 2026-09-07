@@ -1,29 +1,35 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
+import Paginacion from "../../../shared/Paginacion";
+import { datosPaginacion, leerPagina, usePagina } from "../../../shared/paginado";
 import { fetchSesiones, revocarSesion } from "../api/usuariosApi";
 import { mensajeApi } from "../rol";
 import SesionFiltro from "./SesionFiltro";
 import SesionTarjeta from "./SesionTarjeta";
 
 function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
-  const [sesiones, setSesiones] = useState([]);
+  const [sesiones, setSesiones] = useState({ count: 0, results: [] });
   const [soloActivas, setSoloActivas] = useState(false);
   const [aviso, setAviso] = useState("");
   const [error, setError] = useState("");
   const [revocando, setRevocando] = useState(false);
+  const [pagina, setPagina] = usePagina(`${usuario?.id_usuario}|${soloActivas}`);
 
-  async function cargar() {
+  const cargar = useCallback(async () => {
     if (!usuario) return;
-    const { data } = await fetchSesiones(usuario.id_usuario);
+    const { data } = await fetchSesiones(usuario.id_usuario, {
+      page: pagina,
+      activas: soloActivas ? 1 : undefined,
+    });
     setSesiones(data);
-  }
+  }, [usuario, pagina, soloActivas]);
 
   useEffect(() => {
     if (!show || !usuario) return;
     setAviso("");
     setError("");
     cargar().catch(() => setError("No se pudo cargar el historial de sesiones."));
-  }, [show, usuario]);
+  }, [show, usuario, cargar]);
 
   async function onRevocar(sesion) {
     setRevocando(true);
@@ -38,7 +44,7 @@ function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
     }
   }
 
-  const visibles = soloActivas ? sesiones.filter((item) => item.is_active) : sesiones;
+  const { items, total } = leerPagina(sesiones);
   const nombre = usuario?.nombre_completo || usuario?.username || "";
 
   return (
@@ -50,17 +56,25 @@ function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
         <SesionFiltro soloActivas={soloActivas} onCambio={setSoloActivas} />
         {aviso ? <p className="sesion-aviso">{aviso}</p> : null}
         {error ? <p className="text-danger">{error}</p> : null}
-        {visibles.length === 0 ? (
+        {total === 0 ? (
           <p className="text-muted mb-0">No hay sesiones para mostrar.</p>
         ) : (
-          visibles.map((sesion) => (
-            <SesionTarjeta
-              key={sesion.id_sesion}
-              sesion={sesion}
-              onRevocar={onRevocar}
-              revocando={revocando}
+          <>
+            {items.map((sesion) => (
+              <SesionTarjeta
+                key={sesion.id_sesion}
+                sesion={sesion}
+                onRevocar={onRevocar}
+                revocando={revocando}
+              />
+            ))}
+            <Paginacion
+              {...datosPaginacion(pagina, total)}
+              etiqueta="sesiones"
+              compacta
+              onCambio={setPagina}
             />
-          ))
+          </>
         )}
       </Offcanvas.Body>
     </Offcanvas>

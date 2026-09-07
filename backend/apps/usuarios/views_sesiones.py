@@ -3,6 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.paginacion import entero, pagina_manual, tamano_pedido
+
 from .models import SesionUsuario, Usuario
 from .serializers_sesion import SesionUsuarioSerializer
 from .signals import sesion_cerrada
@@ -15,7 +17,16 @@ class SesionesUsuarioView(APIView):
         if not Usuario.objects.filter(pk=pk).exists():
             return Response(status=status.HTTP_404_NOT_FOUND)
         sesiones = SesionUsuario.objects.filter(usuario_id=pk).order_by("-fecha_inicio")
-        return Response(SesionUsuarioSerializer(sesiones, many=True).data)
+        if request.query_params.get("activas") in ("1", "true", "True"):
+            sesiones = sesiones.filter(is_active=True)
+        return Response(
+            pagina_manual(
+                sesiones,
+                entero(request.query_params.get("page"), 1),
+                tamano_pedido(request),
+                SesionUsuarioSerializer,
+            )
+        )
 
 
 class RevocarSesionView(APIView):

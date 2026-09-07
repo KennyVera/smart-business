@@ -13,7 +13,7 @@ from .serializers_stock import (
     MermaSerializer,
     StockSerializer,
 )
-from .services.stock import ajustar_stock, registrar_merma, sumar_stock
+from .services.stock import ajustar_stock, ingresar_lote, registrar_merma
 
 RELACIONES = ("producto", "producto__categoria", "sucursal")
 
@@ -47,6 +47,7 @@ class StockViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             datos.validated_data["producto"],
             datos.validated_data["cantidad_actual"],
             datos.validated_data["stock_minimo"],
+            usuario=request.user,
         )
         return Response(StockSerializer(fila).data)
 
@@ -64,7 +65,7 @@ class LoteViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         sucursal = resolver_sucursal(self.request, serializer)
         lote = serializer.save(sucursal_id=sucursal)
-        sumar_stock(sucursal, lote.producto, lote.cantidad)
+        ingresar_lote(lote, usuario=self.request.user)
 
 
 class MermaViewSet(

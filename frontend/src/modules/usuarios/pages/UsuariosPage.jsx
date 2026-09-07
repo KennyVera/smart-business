@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Paginacion from "../../../shared/Paginacion";
+import { datosPaginacion, usePagina } from "../../../shared/paginado";
 import { desactivarUsuario, fetchRoles, fetchSucursalesAsignables, restablecerClave } from "../api/usuariosApi";
 import { leerSesion } from "../auth/sesion";
 import { mensajeApi } from "../rol";
@@ -14,7 +16,8 @@ import "../usuarios-form.css";
 import "../sesiones.css";
 
 function UsuariosPage() {
-  const { items, error, cargando, recargar } = useUsuarios();
+  const [pagina, setPagina] = usePagina();
+  const { items, total, error, cargando, recargar } = useUsuarios(pagina);
   const [roles, setRoles] = useState([]);
   const [sucursales, setSucursales] = useState([]);
   const [form, setForm] = useState({ open: false, usuario: null });
@@ -64,13 +67,20 @@ function UsuariosPage() {
       {error ? <p className="text-danger mb-0">{error}</p> : null}
       {aviso ? <p className="text-danger mb-2">{aviso}</p> : null}
       {!cargando && !error ? (
-        <UsuariosTable
-          usuarios={items}
-          onEditar={(item) => setForm({ open: true, usuario: item })}
-          onClave={onClave}
-          onDesactivar={onDesactivar}
-          onSesiones={(item) => setHistorial({ open: true, usuario: item })}
-        />
+        <>
+          <UsuariosTable
+            usuarios={items}
+            onEditar={(item) => setForm({ open: true, usuario: item })}
+            onClave={onClave}
+            onDesactivar={onDesactivar}
+            onSesiones={(item) => setHistorial({ open: true, usuario: item })}
+          />
+          <Paginacion
+            {...datosPaginacion(pagina, total)}
+            etiqueta="usuarios"
+            onCambio={setPagina}
+          />
+        </>
       ) : null}
       <UsuarioFormModal
         show={form.open}

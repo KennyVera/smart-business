@@ -6,10 +6,12 @@ from django.core.management.base import BaseCommand
 from apps.inventario.data.catalogo_demo import CATEGORIAS, LOTES, PRODUCTOS, STOCK
 from apps.inventario.models import (
     Categoria,
+    HistorialMovimiento,
     InventarioStock,
     LoteCaducidad,
     Producto,
 )
+from apps.inventario.services.kardex import registrar_movimiento
 from apps.usuarios.models import SucursalExistente
 
 
@@ -39,19 +41,18 @@ class Command(BaseCommand):
             productos[sku] = producto
 
         for sku, cantidad, minimo in STOCK:
-            fila = InventarioStock.objects.filter(
-                sucursal=sucursal,
-                producto=productos[sku],
-            )
+            producto = productos[sku]
+            fila = InventarioStock.objects.filter(sucursal=sucursal, producto=producto)
             if fila.exists():
                 fila.update(cantidad_actual=cantidad, stock_minimo=minimo)
             else:
                 InventarioStock.objects.create(
                     sucursal=sucursal,
-                    producto=productos[sku],
+                    producto=producto,
                     cantidad_actual=cantidad,
                     stock_minimo=minimo,
                 )
+            self.carga_inicial(sucursal, producto, cantidad)
 
         for sku, codigo, dias, cantidad in LOTES:
             LoteCaducidad.objects.update_or_create(
@@ -69,6 +70,23 @@ class Command(BaseCommand):
                 f"Inventario demo cargado en {sucursal.nombre}: "
                 f"{len(productos)} productos, {len(LOTES)} lotes."
             )
+        )
+
+    def carga_inicial(self, sucursal, producto, cantidad):
+        """Deja el kardex con un punto de partida sin duplicarlo al re-sembrar."""
+        ya_tiene = HistorialMovimiento.objects.filter(
+            sucursal=sucursal,
+            producto=producto,
+        ).exists()
+        if ya_tiene:
+            return
+        registrar_movimiento(
+            sucursal.pk,
+            producto.pk,
+            HistorialMovimiento.AJUSTE,
+            cantidad,
+            cantidad,
+            referencia="Carga inicial de inventario",
         )
 
     def resolver_sucursal(self, id_sucursal):
