@@ -41,12 +41,21 @@ class ProductoSerializer(serializers.ModelSerializer):
             "categoria_nombre",
             "costo_actual",
             "precio_venta",
+            "imagen",
+            "aplica_iva",
             "margen_porcentaje",
         )
         extra_kwargs = {
             "sku": {"max_length": 50},
             "nombre": {"max_length": 150},
+            "imagen": {"required": False, "allow_null": True},
+            "aplica_iva": {"required": False},
         }
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["imagen"] = instance.imagen.url if instance.imagen else None
+        return data
 
     def get_margen_porcentaje(self, obj):
         precio = obj.precio_venta or Decimal("0")

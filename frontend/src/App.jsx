@@ -11,6 +11,11 @@ import AlertasPage from "./modules/inventario/pages/AlertasPage";
 import ReportesInventario from "./modules/inventario/pages/ReportesInventario";
 import LoginPage from "./modules/usuarios/pages/LoginPage";
 import RequireAuth from "./modules/usuarios/components/RequireAuth";
+import RequireRol from "./modules/usuarios/components/RequireRol";
+import PosLayout from "./modules/pos/PosLayout";
+import PosWorkspace from "./modules/pos/pages/PosWorkspace";
+
+const ROLES_POS = ["cajero", "administrador", "gerente"];
 
 function App() {
   return (
@@ -18,6 +23,11 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route element={<RequireAuth />}>
+          <Route element={<RequireRol roles={ROLES_POS} to="/" />}>
+            <Route path="pos" element={<PosLayout />}>
+              <Route index element={<PosWorkspace />} />
+            </Route>
+          </Route>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<InicioSegunRol />} />
             <Route path="geografia/zonas" element={<ZonasPage />} />

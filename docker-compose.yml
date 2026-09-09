@@ -34,6 +34,13 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./ImagenesProductos:/app/ImagenesProductos
+    command:
+      [
+        "sh",
+        "-c",
+        "python esperar_postgres.py && python manage.py runserver 0.0.0.0:8000",
+      ]
 
   frontend:
     build: ./frontend

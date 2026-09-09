@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Eye, EyeOff, Lock, User } from "lucide-react";
 import { login } from "../api/authApi";
-import { guardarSesion } from "../auth/sesion";
+import { guardarSesion, inicioDeRol } from "../auth/sesion";
 
 function LoginForm() {
   const navigate = useNavigate();
@@ -20,9 +20,17 @@ function LoginForm() {
     try {
       const { data } = await login(usuario, clave);
       guardarSesion(data, recordar);
-      navigate("/", { replace: true });
-    } catch {
-      setError("Usuario o contraseña incorrectos.");
+      const rol = (data.rol_nombre || "").trim().toLowerCase();
+      navigate(inicioDeRol(rol), { replace: true });
+    } catch (err) {
+      const status = err?.response?.status;
+      if (status === 400) {
+        setError("Usuario o contraseña incorrectos.");
+      } else if (!err?.response) {
+        setError("No se pudo conectar con el servidor. Revisa que el backend esté en marcha.");
+      } else {
+        setError("El servidor no pudo iniciar sesión. Intenta de nuevo en unos segundos.");
+      }
     } finally {
       setEnviando(false);
     }

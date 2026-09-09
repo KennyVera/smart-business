@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from django.core.management.base import BaseCommand
 
-from apps.inventario.data.catalogo_demo import CATEGORIAS, LOTES, PRODUCTOS, STOCK
+from apps.inventario.data.catalogo_demo import CATEGORIAS, LOTES, PRODUCTOS, SKUS_IVA_0, STOCK
 from apps.inventario.models import (
     Categoria,
     HistorialMovimiento,
@@ -36,6 +36,7 @@ class Command(BaseCommand):
                     "categoria": categorias[categoria],
                     "costo_actual": Decimal(costo),
                     "precio_venta": Decimal(precio),
+                    "aplica_iva": sku not in SKUS_IVA_0,
                 },
             )
             productos[sku] = producto

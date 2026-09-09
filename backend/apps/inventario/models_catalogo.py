@@ -28,6 +28,13 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=150)
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
     costo_actual = models.DecimalField(max_digits=10, decimal_places=2)
+    imagen = models.ImageField(
+        upload_to="productos/",
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+    aplica_iva = models.BooleanField(default=True)
 
     class Meta:
         db_table = "producto"

@@ -132,3 +132,19 @@
   font-size: 0.75rem;
   color: #8a9096;
 }
+
+.inv-check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.85rem 0 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.inv-check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: #111;
+}

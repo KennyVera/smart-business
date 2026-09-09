@@ -1,4 +1,4 @@
-import { Barcode, CircleDollarSign, Layers, Tag, TrendingUp } from "lucide-react";
+import { Barcode, CircleDollarSign, Image, Layers, Tag, TrendingUp } from "lucide-react";
 import { LIMITES } from "../validacion";
 import { MARGEN_ALEGRE, clasificarMargen, formatearMargen } from "../margen";
 import InventarioCampo from "./InventarioCampo";
@@ -91,6 +91,22 @@ function ProductoFormCampos({ form, categorias, onCampo }) {
           Con menos de {MARGEN_ALEGRE}% el producto deja poco para la sucursal.
         </p>
       ) : null}
+      <InventarioCampo icon={Image} label="Foto del producto (opcional)">
+        <input
+          className="form-control"
+          type="file"
+          accept="image/*"
+          onChange={(event) => onCampo("imagen", event.target.files?.[0] || null)}
+        />
+      </InventarioCampo>
+      <label className="inv-check">
+        <input
+          type="checkbox"
+          checked={form.aplica_iva !== false}
+          onChange={(event) => onCampo("aplica_iva", event.target.checked)}
+        />
+        Aplica IVA 15%
+      </label>
     </>
   );
 }

@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     "apps.geografia",
     "apps.usuarios.apps.UsuariosConfig",
     "apps.inventario.apps.InventarioConfig",
+    "apps.pos.apps.PosConfig",
+    "apps.crm.apps.CrmConfig",
 ]
 
 MIDDLEWARE = [
@@ -107,3 +109,6 @@ REST_FRAMEWORK = {
 }
 
 JWT_EXPIRACION_HORAS = 12
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

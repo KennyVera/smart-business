@@ -12,6 +12,8 @@ const VACIO = {
   categoria: "",
   costo_actual: "",
   precio_venta: "",
+  imagen: null,
+  aplica_iva: true,
 };
 
 function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
@@ -30,6 +32,8 @@ function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
             categoria: String(producto.categoria),
             costo_actual: String(producto.costo_actual),
             precio_venta: String(producto.precio_venta),
+            imagen: null,
+            aplica_iva: producto.aplica_iva !== false,
           }
         : VACIO,
     );
@@ -52,7 +56,11 @@ function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
       categoria: Number(form.categoria),
       costo_actual: Number(form.costo_actual).toFixed(2),
       precio_venta: Number(form.precio_venta).toFixed(2),
+      aplica_iva: Boolean(form.aplica_iva),
     };
+    if (form.imagen instanceof File) {
+      payload.imagen = form.imagen;
+    }
     try {
       if (editando) {
         await updateProducto(producto.id_producto, payload);

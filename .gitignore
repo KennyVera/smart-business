@@ -51,3 +51,6 @@ Thumbs.db
 
 # Docker
 *.log
+
+# Fotos subidas por Django (se regeneran con cargar_imagenes_locales)
+backend/media/

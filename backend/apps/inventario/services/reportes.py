@@ -1,8 +1,9 @@
-from datetime import timezone as zona_utc
 from decimal import Decimal
 
 from django.db.models import DecimalField, ExpressionWrapper, F, Sum
 from django.utils import timezone
+
+from core.fechas import con_zona
 
 DINERO = DecimalField(max_digits=16, decimal_places=2)
 COSTO_LINEA = ExpressionWrapper(
@@ -21,15 +22,6 @@ def plata(valor):
 
 def dato(etiqueta, valor, formato="numero"):
     return {"etiqueta": etiqueta, "valor": valor, "formato": formato}
-
-
-def con_zona(valor):
-    """Las tablas heredadas guardan la hora en UTC sin zona declarada."""
-    if valor is None:
-        return None
-    if timezone.is_naive(valor):
-        valor = valor.replace(tzinfo=zona_utc.utc)
-    return timezone.localtime(valor)
 
 
 def nombre_usuario(usuario):

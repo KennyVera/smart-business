@@ -28,11 +28,30 @@ export function fetchProductos(params) {
 }
 
 export function createProducto(payload) {
+  if (payload.imagen instanceof File) {
+    return api.post(`${BASE}/productos/`, aFormData(payload));
+  }
   return api.post(`${BASE}/productos/`, payload);
 }
 
 export function updateProducto(id, payload) {
+  if (payload.imagen instanceof File) {
+    return api.patch(`${BASE}/productos/${id}/`, aFormData(payload));
+  }
   return api.patch(`${BASE}/productos/${id}/`, payload);
+}
+
+function aFormData(payload) {
+  const datos = new FormData();
+  Object.entries(payload).forEach(([clave, valor]) => {
+    if (valor === null || valor === undefined || valor === "") return;
+    if (typeof valor === "boolean") {
+      datos.append(clave, valor ? "true" : "false");
+      return;
+    }
+    datos.append(clave, valor);
+  });
+  return datos;
 }
 
 export function fetchKardex(idProducto, params) {

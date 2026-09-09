@@ -32,6 +32,12 @@ export function rolDeSesion() {
   return (leerSesion()?.rol_nombre || "").trim().toLowerCase();
 }
 
+export function inicioDeRol(rol = rolDeSesion()) {
+  if (rol === "cajero") return "/pos";
+  if (rol === "bodeguero") return "/inventario/alertas";
+  return "/";
+}
+
 export function iniciales(nombre) {
   return nombre
     .split(/\s+/)

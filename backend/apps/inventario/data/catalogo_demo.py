@@ -22,6 +22,9 @@ PRODUCTOS = [
     ("LIM-0002", "Cloro 1 L", "Limpieza", "0.95", "1.60"),
 ]
 
+# Canasta básica: pan y leche tarifa 0. El resto (cloro, snacks, etc.) IVA 15%.
+SKUS_IVA_0 = {"LAC-0002", "PAN-0001", "PAN-0002"}
+
 # (sku, cantidad_actual, stock_minimo)
 STOCK = [
     ("LAC-0001", 4, 12),

@@ -7,6 +7,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
   const sesion = leerSesion();
   if (sesion?.access_token) {
     config.headers.Authorization = `Bearer ${sesion.access_token}`;
