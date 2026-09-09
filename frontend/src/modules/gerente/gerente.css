@@ -261,6 +261,11 @@
   padding: 1rem 1.1rem;
 }
 
+.gerente-filtro-reporte {
+  min-width: 240px;
+  max-width: 280px;
+}
+
 .gerente-clientes-card {
   overflow: hidden;
 }

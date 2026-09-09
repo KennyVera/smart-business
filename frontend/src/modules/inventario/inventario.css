@@ -719,6 +719,19 @@
   font-weight: 600;
 }
 
+.inv-kardex-proveedor {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.inv-kardex-proveedor .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 .inv-kardex-titulo {
   font-size: 0.85rem;
   font-weight: 700;

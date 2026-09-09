@@ -1,15 +1,29 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { usePreferences } from "../../../context/PreferencesContext";
+import { paletaDesdeAcento } from "../../inventario/coloresReporte";
 import { pieSlices } from "../data/categoryShares";
 
 function CategoriesDonut({ categorias = [] }) {
-  const slices = pieSlices(categorias);
+  const { colorGraficos } = usePreferences();
+  const paleta = paletaDesdeAcento(colorGraficos || "#00aa5d");
+  const conColor = (categorias.length ? categorias : []).map((item, i) => ({
+    ...item,
+    color: paleta[i % paleta.length],
+  }));
+  const slices = pieSlices(conColor.length ? conColor : categorias).map(
+    (item, i) => ({
+      ...item,
+      color: item.name === "Sin datos" ? "#eceff1" : paleta[i % paleta.length],
+    }),
+  );
   const vacio = slices.length === 1 && slices[0].name === "Sin datos";
+  const leyenda = conColor.length ? conColor : slices;
 
   return (
     <div className="page-card h-100">
       <h2 className="mb-2">Categorías populares</h2>
       <div className="donut-legend">
-        {(categorias.length ? categorias : slices).map((item) => (
+        {leyenda.map((item) => (
           <span key={item.name} className="donut-legend__item">
             <i style={{ background: item.color }} />
             {item.name}
@@ -18,7 +32,7 @@ function CategoriesDonut({ categorias = [] }) {
       </div>
       <div className="dashboard-donut-wrap">
         <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
+          <PieChart key={colorGraficos || "donut"}>
             <Pie
               data={slices}
               dataKey="value"

@@ -22,7 +22,7 @@ function TopProductosChart({ series = [] }) {
       <h2 className="mb-3">Top 5 productos</h2>
       <div className="gerente-chart">
         <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={datos} margin={{ top: 8, right: 8, left: 0, bottom: 40 }}>
+          <BarChart key={colorGraficos || "bar"} data={datos} margin={{ top: 8, right: 8, left: 0, bottom: 40 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e9ecef" />
             <XAxis dataKey="nombre" tick={{ fontSize: 11 }} angle={-20} textAnchor="end" />
             <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />

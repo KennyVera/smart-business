@@ -1,12 +1,14 @@
 import { FileBarChart, FileDown, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePreferences } from "../../../context/PreferencesContext";
+import { puedeVerGerencial } from "../../usuarios/rbac";
 import { fetchSucursalesAsignables } from "../../usuarios/api/usuariosApi";
 import { leerSesion } from "../../usuarios/auth/sesion";
-import { fetchReporte } from "../api/inventarioApi";
+import { fetchReporte, fetchReporteClientesCrm } from "../api/inventarioApi";
 import { ACENTO_DEF, varsAcento } from "../coloresReporte";
 import InventarioHeader from "../components/InventarioHeader";
 import ReporteCard from "../components/ReporteCard";
+import ReporteCardCrm from "../components/ReporteCardCrm";
 import ReporteFiltros from "../components/ReporteFiltros";
 import ReporteGrafico from "../components/ReporteGrafico";
 import ReporteLeyenda from "../components/ReporteLeyenda";
@@ -23,6 +25,7 @@ import {
   selloAuditoria,
 } from "../pdf";
 import {
+  CLAVE_CRM,
   REPORTES,
   alcanceDe,
   buscarReporte,
@@ -37,9 +40,16 @@ import "../reportes.css";
 const ESPERA_GRAFICO = 450;
 const COLS_LANDSCAPE = 6;
 
+function limiteCrm(valor) {
+  const n = Number(valor);
+  if (!Number.isFinite(n)) return 10;
+  return Math.min(Math.max(Math.trunc(n), 1), 100);
+}
+
 function ReportesInventario() {
   const fija = useMemo(() => sucursalDeSesion(), []);
   const sesion = useMemo(() => leerSesion(), []);
+  const verCrm = puedeVerGerencial();
   const { colorGraficos } = usePreferences();
   const tema = varsAcento(colorGraficos || ACENTO_DEF);
   const [sucursales, setSucursales] = useState([]);
@@ -48,6 +58,8 @@ function ReportesInventario() {
     dias: 60,
     ...rangoPorDefecto(30),
   }));
+  const [crmTipo, setCrmTipo] = useState("top_gastos");
+  const [crmLimite, setCrmLimite] = useState(10);
   const [activo, setActivo] = useState(null);
   const [datos, setDatos] = useState(null);
   const [cargando, setCargando] = useState(false);
@@ -57,18 +69,31 @@ function ReportesInventario() {
   const graficoRef = useRef(null);
   const pdfRef = useRef(null);
 
+  const esCrm = activo === CLAVE_CRM;
   const reporte = buscarReporte(activo);
-  const columnas = reporte ? columnasVisibles(reporte, !fija) : [];
+  const columnas = reporte ? columnasVisibles(reporte, !fija && !esCrm) : [];
   const landscape = columnas.length >= COLS_LANDSCAPE;
-  const params = reporte ? parametrosDe(reporte, filtros) : null;
-  const consulta = JSON.stringify([activo, params]);
+  const params = reporte && !esCrm ? parametrosDe(reporte, filtros) : null;
+  const crmParams = { tipo: crmTipo, limite: limiteCrm(crmLimite) };
+  const consulta = JSON.stringify(
+    esCrm ? [activo, crmParams] : [activo, params],
+  );
   const nombreSucursal = fija
     ? fija.nombre
     : sucursales.find((item) => String(item.id_sucursal) === filtros.sucursal)?.nombre || "";
-  // Mientras carga otro reporte no se muestran los datos del anterior.
   const vigentes = datos?.clave === activo ? datos : null;
   const alcance = reporte ? alcanceDe(reporte, vigentes, nombreSucursal) : "";
   const listo = Boolean(vigentes) && !cargando && !error;
+  const graficoMeta = esCrm
+    ? {
+        tipo: "barras",
+        titulo:
+          crmTipo === "cumpleanos_mes"
+            ? "Cumpleañeros del mes"
+            : "Ranking de clientes",
+        medida: crmTipo === "top_gastos" ? "dinero" : "numero",
+      }
+    : reporte?.grafico;
 
   useEffect(() => {
     if (fija) return;
@@ -86,7 +111,10 @@ function ReportesInventario() {
     setCargando(true);
     setError("");
     setImagen("");
-    fetchReporte(reporte.ruta, params)
+    const pedido = esCrm
+      ? fetchReporteClientesCrm(crmParams)
+      : fetchReporte(reporte.ruta, params);
+    pedido
       .then(({ data }) => vivo && setDatos({ ...data, clave: reporte.clave }))
       .catch(() => {
         if (!vivo) return;
@@ -99,7 +127,6 @@ function ReportesInventario() {
     };
   }, [consulta]);
 
-  // Paso 1 del PDF: con los datos en pantalla, el gráfico SVG pasa a imagen.
   useEffect(() => {
     if (trabajo?.fase !== "datos") return undefined;
     if (error) {
@@ -112,7 +139,7 @@ function ReportesInventario() {
       await esperar(ESPERA_GRAFICO);
       const png = await graficoAImagen(
         graficoRef.current?.querySelector("svg"),
-        reporte.grafico.tipo === "pastel",
+        graficoMeta?.tipo === "pastel",
       );
       if (!vivo) return;
       setImagen(png);
@@ -123,7 +150,6 @@ function ReportesInventario() {
     };
   }, [trabajo, datos, cargando, error]);
 
-  // Paso 2: la plantilla oculta ya está montada con la imagen, se exporta.
   useEffect(() => {
     if (trabajo?.fase !== "render" || !pdfRef.current) return undefined;
     let vivo = true;
@@ -149,9 +175,9 @@ function ReportesInventario() {
     setFiltros((actual) => ({ ...actual, ...cambios }));
   }
 
-  function descargar(item) {
-    setActivo(item.clave);
-    setTrabajo({ clave: item.clave, fase: "datos", auditoria: selloAuditoria(sesion) });
+  function descargar(clave) {
+    setActivo(clave);
+    setTrabajo({ clave, fase: "datos", auditoria: selloAuditoria(sesion) });
   }
 
   const Icono = reporte?.icono;
@@ -180,9 +206,22 @@ function ReportesInventario() {
             generando={trabajo?.clave === item.clave}
             bloqueado={Boolean(trabajo)}
             onVer={() => setActivo(item.clave)}
-            onPdf={() => descargar(item)}
+            onPdf={() => descargar(item.clave)}
           />
         ))}
+        {verCrm ? (
+          <ReporteCardCrm
+            activo={esCrm}
+            generando={trabajo?.clave === CLAVE_CRM}
+            bloqueado={Boolean(trabajo)}
+            tipo={crmTipo}
+            limite={crmLimite}
+            onTipo={setCrmTipo}
+            onLimite={setCrmLimite}
+            onVer={() => setActivo(CLAVE_CRM)}
+            onPdf={() => descargar(CLAVE_CRM)}
+          />
+        ) : null}
       </div>
 
       {reporte ? (
@@ -191,16 +230,18 @@ function ReportesInventario() {
             <div>
               <h3>
                 <Icono size={17} strokeWidth={1.75} />
-                {reporte.titulo}
+                {vigentes?.titulo || reporte.titulo}
               </h3>
               <p>{alcance}</p>
             </div>
             <div className="rep-vista-acciones">
-              <ReporteFiltros reporte={reporte} filtros={filtros} onCambio={cambiar} />
+              {!esCrm ? (
+                <ReporteFiltros reporte={reporte} filtros={filtros} onCambio={cambiar} />
+              ) : null}
               <button
                 type="button"
                 className="btn-rep"
-                onClick={() => descargar(reporte)}
+                onClick={() => descargar(reporte.clave)}
                 disabled={Boolean(trabajo) || !listo}
               >
                 <FileDown size={15} strokeWidth={1.75} />
@@ -223,16 +264,18 @@ function ReportesInventario() {
           {listo ? (
             <>
               <ReporteResumen datos={vigentes.resumen} />
-              {vigentes.grafico.length ? (
-                <div className={`rep-visual is-${reporte.grafico.tipo}`}>
+              {vigentes.grafico?.length ? (
+                <div className={`rep-visual is-${graficoMeta.tipo}`}>
                   <ReporteGrafico
-                    tipo={reporte.grafico.tipo}
-                    titulo={reporte.grafico.titulo}
+                    tipo={graficoMeta.tipo}
+                    titulo={graficoMeta.titulo}
                     datos={vigentes.grafico}
+                    medida={graficoMeta.medida}
+                    horizontal={esCrm}
                     innerRef={graficoRef}
                   />
-                  {reporte.grafico.tipo === "pastel" ? (
-                    <ReporteLeyenda datos={vigentes.grafico} medida={reporte.grafico.medida} />
+                  {graficoMeta.tipo === "pastel" ? (
+                    <ReporteLeyenda datos={vigentes.grafico} medida={graficoMeta.medida} />
                   ) : null}
                 </div>
               ) : null}
@@ -246,12 +289,12 @@ function ReportesInventario() {
         </p>
       )}
 
-      {listo ? (
+      {listo && graficoMeta ? (
         <ReportePdfDocumento
           innerRef={pdfRef}
           datos={vigentes}
           columnas={columnas}
-          grafico={reporte.grafico}
+          grafico={graficoMeta}
           imagenGrafico={imagen}
           auditoria={trabajo?.auditoria || selloAuditoria(sesion)}
           alcance={alcance}

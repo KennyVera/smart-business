@@ -1,4 +1,4 @@
-import { Barcode, CircleDollarSign, Image, Layers, Tag, TrendingUp } from "lucide-react";
+import { Barcode, CircleDollarSign, Image, Layers, Sparkles, Tag, TrendingUp, Truck } from "lucide-react";
 import { LIMITES } from "../validacion";
 import { MARGEN_ALEGRE, clasificarMargen, formatearMargen } from "../margen";
 import InventarioCampo from "./InventarioCampo";
@@ -10,7 +10,14 @@ function margenPrevisto(form) {
   return ((precio - costo) / precio) * 100;
 }
 
-function ProductoFormCampos({ form, categorias, onCampo }) {
+function ProductoFormCampos({
+  form,
+  categorias,
+  proveedores = [],
+  onCampo,
+  onGenerarSku,
+  generandoSku = false,
+}) {
   const margen = margenPrevisto(form);
   const { tono, texto } = clasificarMargen(margen);
 
@@ -19,17 +26,29 @@ function ProductoFormCampos({ form, categorias, onCampo }) {
       <InventarioCampo
         icon={Barcode}
         label="Código de barras (SKU)"
-        ayuda={`Letras, números y guiones. Máximo ${LIMITES.sku} caracteres.`}
+        ayuda="Letras, números y guiones. Máximo 50. Usa Generar para un código único."
       >
-        <input
-          className="form-control"
-          value={form.sku}
-          maxLength={LIMITES.sku}
-          minLength={4}
-          autoComplete="off"
-          placeholder="LAC-0001"
-          onChange={(event) => onCampo("sku", event.target.value)}
-        />
+        <div className="inv-sku-row">
+          <input
+            className="form-control"
+            value={form.sku}
+            maxLength={LIMITES.sku}
+            minLength={4}
+            autoComplete="off"
+            placeholder="LAC-0001"
+            onChange={(event) => onCampo("sku", event.target.value)}
+          />
+          <button
+            type="button"
+            className="btn btn-outline-secondary inv-sku-generar"
+            title="Generar SKU único"
+            disabled={generandoSku}
+            onClick={onGenerarSku}
+          >
+            <Sparkles size={15} strokeWidth={1.75} />
+            {generandoSku ? "…" : "Generar"}
+          </button>
+        </div>
       </InventarioCampo>
       <InventarioCampo icon={Tag} label="Nombre del producto">
         <input
@@ -46,11 +65,27 @@ function ProductoFormCampos({ form, categorias, onCampo }) {
           className="form-select"
           value={form.categoria}
           onChange={(event) => onCampo("categoria", event.target.value)}
+          required
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map((categoria) => (
             <option key={categoria.id_categoria} value={categoria.id_categoria}>
               {categoria.nombre}
+            </option>
+          ))}
+        </select>
+      </InventarioCampo>
+      <InventarioCampo icon={Truck} label="Proveedor">
+        <select
+          className="form-select"
+          value={form.proveedor}
+          onChange={(event) => onCampo("proveedor", event.target.value)}
+          required
+        >
+          <option value="">Selecciona un proveedor</option>
+          {proveedores.map((item) => (
+            <option key={item.id_proveedor} value={item.id_proveedor}>
+              {item.razon_social}
             </option>
           ))}
         </select>

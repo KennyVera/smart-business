@@ -39,3 +39,11 @@
 - [x] Rutas protegidas por módulo (ops vs gerencial vs consultas)
 - [x] Toast Acceso denegado
 - [x] Ocultar merma en Alertas si no puede operar inventario
+
+## CRM analítico (clientes de sucursal)
+
+- [x] `GerenteClienteViewSet` en `/api/pos/gerente/clientes/` (+ CRM mirror)
+- [x] Listado con annotations, detalle 360°, PATCH contacto, export CSV
+- [x] Query `reporte`: top_gastos, top_frecuentes, riesgo_abandono, cumpleaños
+- [x] UI selector en `ClientesList` + resalte rojo en abandono + CSV filtrado
+- [x] `GET /api/crm/reportes/clientes/` + tarjeta en Reportes operativos (PDF html2pdf)

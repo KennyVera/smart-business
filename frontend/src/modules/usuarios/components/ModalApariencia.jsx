@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { usePreferences } from "../../../context/PreferencesContext";
+import { normalizarHex, usePreferences } from "../../../context/PreferencesContext";
 import { mensajeApi } from "../rol";
 import "./modal-apariencia.css";
 
@@ -15,24 +15,25 @@ function ModalApariencia({ show, onClose }) {
     filasPorPagina,
     updatePreferences,
   } = usePreferences();
-  const [sidebar, setSidebar] = useState(colorSidebar);
-  const [graficos, setGraficos] = useState(colorGraficos);
-  const [logs, setLogs] = useState(colorLogs);
+  const [sidebar, setSidebar] = useState(() => normalizarHex(colorSidebar, "#000000"));
+  const [graficos, setGraficos] = useState(() => normalizarHex(colorGraficos, "#00aa5d"));
+  const [logs, setLogs] = useState(() => normalizarHex(colorLogs, "#00aa5d"));
   const [filas, setFilas] = useState(filasPorPagina);
   const [logo, setLogo] = useState(null);
   const [preview, setPreview] = useState(logoPersonalizado || "");
   const [error, setError] = useState("");
   const [guardando, setGuardando] = useState(false);
 
-  function alAbrir() {
-    setSidebar(colorSidebar);
-    setGraficos(colorGraficos);
-    setLogs(colorLogs);
+  useEffect(() => {
+    if (!show) return;
+    setSidebar(normalizarHex(colorSidebar, "#000000"));
+    setGraficos(normalizarHex(colorGraficos, "#00aa5d"));
+    setLogs(normalizarHex(colorLogs, "#00aa5d"));
     setFilas(filasPorPagina);
     setLogo(null);
     setPreview(logoPersonalizado || "");
     setError("");
-  }
+  }, [show, colorSidebar, colorGraficos, colorLogs, filasPorPagina, logoPersonalizado]);
 
   function alElegirLogo(archivo) {
     setLogo(archivo);
@@ -45,9 +46,9 @@ function ModalApariencia({ show, onClose }) {
     setError("");
     try {
       await updatePreferences({
-        color_sidebar: sidebar,
-        color_graficos: graficos,
-        color_logs: logs,
+        color_sidebar: normalizarHex(sidebar, "#000000"),
+        color_graficos: normalizarHex(graficos, "#00aa5d"),
+        color_logs: normalizarHex(logs, "#00aa5d"),
         filas_por_pagina: Number(filas),
         ...(logo instanceof File ? { logo_personalizado: logo } : {}),
       });
@@ -60,7 +61,7 @@ function ModalApariencia({ show, onClose }) {
   }
 
   return (
-    <Modal show={show} onHide={onClose} centered onEnter={alAbrir}>
+    <Modal show={show} onHide={onClose} centered>
       <form onSubmit={onSubmit} noValidate>
         <Modal.Header closeButton>
           <Modal.Title>Apariencia y configuración</Modal.Title>
@@ -72,21 +73,21 @@ function ModalApariencia({ show, onClose }) {
             type="color"
             className="form-control form-control-color mb-3"
             value={sidebar}
-            onChange={(e) => setSidebar(e.target.value)}
+            onChange={(e) => setSidebar(normalizarHex(e.target.value, "#000000"))}
           />
           <label className="form-label">Color de gráficos</label>
           <input
             type="color"
             className="form-control form-control-color mb-3"
             value={graficos}
-            onChange={(e) => setGraficos(e.target.value)}
+            onChange={(e) => setGraficos(normalizarHex(e.target.value, "#00aa5d"))}
           />
           <label className="form-label">Color de los logs</label>
           <input
             type="color"
             className="form-control form-control-color mb-3"
             value={logs}
-            onChange={(e) => setLogs(e.target.value)}
+            onChange={(e) => setLogs(normalizarHex(e.target.value, "#00aa5d"))}
           />
           <small className="text-muted d-block mb-3">
             Confirmaciones y avisos del sistema (aparte de los gráficos).

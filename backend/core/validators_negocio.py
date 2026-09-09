@@ -18,6 +18,11 @@ CEDULA_O_RUC = RegexValidator(
     message="Debe ser Cédula (10) o RUC (13) numérico.",
 )
 
+RUC_EMPRESA = RegexValidator(
+    regex=r"^\d{13}$",
+    message="El RUC del proveedor debe tener exactamente 13 dígitos.",
+)
+
 TELEFONO_MOVIL = RegexValidator(
     regex=r"^\d{10}$",
     message="El teléfono móvil debe tener exactamente 10 dígitos.",

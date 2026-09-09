@@ -23,12 +23,15 @@ En backend: `python manage.py crear_gerente_cuenca`.
 | `/gerente` | Dashboard (nombre de sucursal) |
 | `/gerente/auditoria` | Filtros + tabla + Offcanvas |
 | `/gerente/devoluciones` | Buscar ticket y anular |
+| `/gerente/clientes` | CRM: reportes estratégicos + CSV + ficha 360° |
 
 ## Endpoints clave
 
 | Método | Ruta |
 |--------|------|
 | GET | `/api/pos/gerente/dashboard/` |
+| GET | `/api/pos/gerente/clientes/?reporte=&q=` |
+| GET | `/api/pos/gerente/clientes/exportar/?reporte=&q=` |
 | GET | `/api/pos/gerente/auditoria-cajas/?fecha_inicio=&fecha_fin=` |
 | GET | `/api/pos/gerente/auditoria-cajas/<id>/desglose/` |
 | POST | `/api/pos/gerente/auditoria-cajas/<id>/auditar/` |
@@ -45,3 +48,5 @@ En backend: `python manage.py crear_gerente_cuenca`.
 - [ ] Intentar datos de otra sucursal → 403.
 - [ ] Cierre con descuadre ≠ 0 → campanita CAJA.
 - [ ] URL `/inventario/catalogo` → Acceso denegado.
+- [ ] `/gerente/clientes`: selector de reporte (top gastos, leales, abandono, cumpleaños).
+- [ ] Export CSV con el mismo `reporte` activo; abandono muestra última compra en rojo.

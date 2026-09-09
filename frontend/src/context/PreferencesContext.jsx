@@ -8,11 +8,18 @@ import ConfirmHost from "../shared/ConfirmHost";
 
 const DEFECTO = {
   colorSidebar: "#000000",
-  colorGraficos: "#00AA5D",
-  colorLogs: "#00AA5D",
+  colorGraficos: "#00aa5d",
+  colorLogs: "#00aa5d",
   logoPersonalizado: null,
   filasPorPagina: 10,
 };
+
+/** <input type="color"> solo acepta #rrggbb en minúsculas de forma fiable. */
+export function normalizarHex(valor, defecto) {
+  const crudo = String(valor || "").trim();
+  if (/^#[0-9A-Fa-f]{6}$/.test(crudo)) return crudo.toLowerCase();
+  return defecto;
+}
 
 const PreferencesContext = createContext({
   ...DEFECTO,
@@ -22,9 +29,9 @@ const PreferencesContext = createContext({
 
 function mapear(data) {
   return {
-    colorSidebar: data.color_sidebar || DEFECTO.colorSidebar,
-    colorGraficos: data.color_graficos || DEFECTO.colorGraficos,
-    colorLogs: data.color_logs || DEFECTO.colorLogs,
+    colorSidebar: normalizarHex(data.color_sidebar, DEFECTO.colorSidebar),
+    colorGraficos: normalizarHex(data.color_graficos, DEFECTO.colorGraficos),
+    colorLogs: normalizarHex(data.color_logs, DEFECTO.colorLogs),
     logoPersonalizado: data.logo_personalizado || null,
     filasPorPagina: Number(data.filas_por_pagina) || DEFECTO.filasPorPagina,
   };

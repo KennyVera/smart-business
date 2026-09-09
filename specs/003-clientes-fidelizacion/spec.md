@@ -59,3 +59,9 @@ Permiso: el mismo de venta POS (`PuedeVender`).
 
 - Panel administrativo de CRM para el especialista de marketing.
 - Acumulación y redención de `puntos_acumulados` en la venta.
+
+## 6. Vista gerencial (sucursal)
+
+El gerente opera CRM analítico en `/gerente/clientes` (spec `005-gerente-sucursal`):
+métricas por sucursal, reportes estratégicos (`?reporte=`) y export CSV.
+No sustituye el backoffice de marketing; es retención operativa del local.

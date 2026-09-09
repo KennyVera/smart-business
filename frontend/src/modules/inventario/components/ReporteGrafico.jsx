@@ -25,18 +25,42 @@ function etiquetaPorcentaje({ percent }) {
   return percent >= 0.05 ? `${Math.round(percent * 100)}%` : "";
 }
 
-function ReporteGrafico({ tipo, titulo, datos, innerRef }) {
+function acortarNombre(nombre = "", max = 22) {
+  const texto = String(nombre);
+  return texto.length > max ? `${texto.slice(0, max - 1)}…` : texto;
+}
+
+function ReporteGrafico({
+  tipo,
+  titulo,
+  datos,
+  innerRef,
+  medida = "dinero",
+  horizontal = false,
+}) {
   const { colorGraficos } = usePreferences();
   const acento = colorGraficos || ACENTO_DEF;
   const paleta = paletaDesdeAcento(acento);
   if (!datos?.length) return null;
 
+  const formatear = (valor) =>
+    medida === "dinero" ? formatearDinero(valor) : String(valor);
+  const filas = horizontal
+    ? datos.map((item) => ({
+        ...item,
+        etiqueta: acortarNombre(item.nombre, 24),
+      }))
+    : datos;
+  const altoBarras = horizontal
+    ? Math.min(520, Math.max(280, filas.length * 38 + 40))
+    : 280;
+
   return (
-    <div className="rep-grafico" ref={innerRef}>
+    <div className={`rep-grafico${horizontal ? " is-horizontal" : ""}`} ref={innerRef}>
       <p className="rep-grafico-titulo">{titulo}</p>
-      <ResponsiveContainer width="100%" height={tipo === "pastel" ? 260 : 280}>
+      <ResponsiveContainer width="100%" height={tipo === "pastel" ? 260 : altoBarras}>
         {tipo === "pastel" ? (
-          <PieChart>
+          <PieChart key={`pie-${acento}`}>
             <Pie
               data={datos}
               dataKey="valor"
@@ -56,11 +80,55 @@ function ReporteGrafico({ tipo, titulo, datos, innerRef }) {
             </Pie>
             <Tooltip
               contentStyle={TOOLTIP}
-              formatter={(valor) => formatearDinero(valor)}
+              formatter={(valor) => formatear(valor)}
             />
           </PieChart>
+        ) : horizontal ? (
+          <BarChart
+            key={`hbar-${acento}`}
+            layout="vertical"
+            data={filas}
+            margin={{ top: 8, right: 28, left: 4, bottom: 8 }}
+          >
+            <CartesianGrid stroke="#eef1f3" horizontal={false} />
+            <XAxis
+              type="number"
+              tick={EJE}
+              tickLine={false}
+              axisLine={{ stroke: "#e6eaee" }}
+              tickFormatter={(valor) =>
+                medida === "dinero" ? `$ ${valor}` : String(valor)
+              }
+            />
+            <YAxis
+              type="category"
+              dataKey="etiqueta"
+              width={148}
+              tick={{ ...EJE, fontSize: 12, fill: "#343a40" }}
+              tickLine={false}
+              axisLine={false}
+              interval={0}
+            />
+            <Tooltip
+              contentStyle={TOOLTIP}
+              cursor={{ fill: `${acento}14` }}
+              formatter={(valor) => formatear(valor)}
+              labelFormatter={(_, payload) => payload?.[0]?.payload?.nombre || ""}
+            />
+            <Bar
+              dataKey="valor"
+              fill={acento}
+              radius={[0, 6, 6, 0]}
+              maxBarSize={28}
+              isAnimationActive={false}
+            />
+          </BarChart>
         ) : (
-          <BarChart data={datos} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
+          <BarChart
+            key={`bar-${acento}`}
+            data={datos}
+            margin={{ top: 10, right: 12, left: 0, bottom: 64 }}
+          >
             <CartesianGrid stroke="#eef1f3" vertical={false} />
             <XAxis
               dataKey="nombre"
@@ -68,18 +136,24 @@ function ReporteGrafico({ tipo, titulo, datos, innerRef }) {
               tickLine={false}
               axisLine={{ stroke: "#e6eaee" }}
               interval={0}
+              angle={-35}
+              textAnchor="end"
+              height={70}
+              tickFormatter={(valor) => acortarNombre(valor, 14)}
             />
             <YAxis
               tick={EJE}
               tickLine={false}
               axisLine={false}
               width={64}
-              tickFormatter={(valor) => `$ ${valor}`}
+              tickFormatter={(valor) =>
+                medida === "dinero" ? `$ ${valor}` : String(valor)
+              }
             />
             <Tooltip
               contentStyle={TOOLTIP}
               cursor={{ fill: `${acento}14` }}
-              formatter={(valor) => formatearDinero(valor)}
+              formatter={(valor) => formatear(valor)}
             />
             <Bar
               dataKey="valor"

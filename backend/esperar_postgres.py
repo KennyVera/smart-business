@@ -11,7 +11,7 @@ import sys
 import time
 
 HOST = os.environ.get("POSTGRES_HOST", "localhost")
-PUERTO = int(os.environ.get("POSTGRES_PORT", "5432"))
+PUERTO = int(os.environ.get("POSTGRES_PORT", "5434"))
 INTENTOS = 30
 
 

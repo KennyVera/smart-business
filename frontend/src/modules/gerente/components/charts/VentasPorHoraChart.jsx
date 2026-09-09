@@ -17,7 +17,7 @@ function VentasPorHoraChart({ series = [] }) {
       <h2 className="mb-3">Ventas por hora</h2>
       <div className="gerente-chart">
         <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={datos} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+          <LineChart key={colorGraficos || "line"} data={datos} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e9ecef" />
             <XAxis dataKey="hora" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />

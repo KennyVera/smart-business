@@ -14,7 +14,7 @@ import ProductoList from "../components/ProductoList";
 import SeleccionBarra from "../components/SeleccionBarra";
 import { exportarProductosCsv } from "../csv";
 import { imprimirEtiquetas } from "../etiquetas";
-import { useCategoriasTodas, useProductos } from "../hooks/useInventario";
+import { useCategoriasTodas, useProductos, useProveedoresTodos } from "../hooks/useInventario";
 import { useDebounce } from "../hooks/useRecurso";
 import { sucursalDeSesion } from "../sucursal";
 import "../inventario.css";
@@ -34,6 +34,7 @@ function CatalogoPage() {
   const buscar = useDebounce(texto, 250);
   const [pagina, setPagina] = usePagina(`${buscar}|${categoria}|${margen}`);
   const { datos: categorias } = useCategoriasTodas();
+  const { datos: proveedores } = useProveedoresTodos();
   const { items: productos, total, error, cargando, recargar } = useProductos({
     buscar,
     categoria,
@@ -140,6 +141,7 @@ function CatalogoPage() {
         show={form.open}
         producto={form.producto}
         categorias={categorias}
+        proveedores={proveedores}
         onClose={() => setForm({ open: false, producto: null })}
         onSaved={() => {
           setForm({ open: false, producto: null });

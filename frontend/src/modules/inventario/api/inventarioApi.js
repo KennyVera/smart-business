@@ -7,6 +7,26 @@ export function fetchCategorias(params) {
   return api.get(`${BASE}/categorias/`, { params });
 }
 
+export function fetchProveedores(params) {
+  return api.get(`${BASE}/proveedores/`, { params });
+}
+
+/** Para los <select>: catálogo de proveedores sin paginar. */
+export async function fetchProveedoresTodos() {
+  const { data } = await api.get(`${BASE}/proveedores/`, {
+    params: { page_size: TODOS },
+  });
+  return { data: leerPagina(data).items };
+}
+
+export function createProveedor(payload) {
+  return api.post(`${BASE}/proveedores/`, payload);
+}
+
+export function updateProveedor(id, payload) {
+  return api.patch(`${BASE}/proveedores/${id}/`, payload);
+}
+
 /** Para los <select>: trae el catálogo de categorías sin paginar. */
 export async function fetchCategoriasTodas() {
   const { data } = await api.get(`${BASE}/categorias/`, {
@@ -88,4 +108,8 @@ export function fetchAlertas(params) {
 
 export function fetchReporte(ruta, params) {
   return api.get(`${BASE}/reportes/${ruta}/`, { params });
+}
+
+export function fetchReporteClientesCrm(params) {
+  return api.get("/api/crm/reportes/clientes/", { params });
 }

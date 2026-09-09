@@ -7,6 +7,7 @@ import SucursalesPage from "./modules/geografia/pages/SucursalesPage";
 import UsuariosPage from "./modules/usuarios/pages/UsuariosPage";
 import CatalogoPage from "./modules/inventario/pages/CatalogoPage";
 import CategoriasPage from "./modules/inventario/pages/CategoriasPage";
+import ProveedoresList from "./modules/inventario/pages/ProveedoresList";
 import StockPage from "./modules/inventario/pages/StockPage";
 import AlertasPage from "./modules/inventario/pages/AlertasPage";
 import ReportesInventario from "./modules/inventario/pages/ReportesInventario";
@@ -55,6 +56,7 @@ function App() {
               <Route element={<RequireRol roles={ROLES_INVENTARIO_OPS} />}>
                 <Route path="inventario/catalogo" element={<CatalogoPage />} />
                 <Route path="inventario/categorias" element={<CategoriasPage />} />
+                <Route path="inventario/proveedores" element={<ProveedoresList />} />
                 <Route path="inventario/stock" element={<StockPage />} />
               </Route>
               <Route element={<RequireRol roles={ROLES_INVENTARIO_LECTURA} />}>

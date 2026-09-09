@@ -1,6 +1,11 @@
 from django.db import models
 
-from core.validators_negocio import NO_NEGATIVO
+from core.validators_negocio import (
+    NO_NEGATIVO,
+    NOMBRE_PERSONA,
+    RUC_EMPRESA,
+    TELEFONO_MOVIL,
+)
 
 
 class Categoria(models.Model):
@@ -18,6 +23,27 @@ class Categoria(models.Model):
         return self.nombre
 
 
+class Proveedor(models.Model):
+    """Proveedor del catálogo (bodega / compras)."""
+
+    id_proveedor = models.AutoField(primary_key=True)
+    ruc = models.CharField(max_length=13, unique=True, validators=[RUC_EMPRESA])
+    razon_social = models.CharField(max_length=150)
+    nombre_contacto = models.CharField(max_length=100, validators=[NOMBRE_PERSONA])
+    telefono = models.CharField(max_length=10, validators=[TELEFONO_MOVIL])
+    email = models.EmailField(max_length=100)
+    direccion = models.TextField()
+
+    class Meta:
+        db_table = "proveedor"
+        verbose_name = "Proveedor"
+        verbose_name_plural = "Proveedores"
+        ordering = ["razon_social"]
+
+    def __str__(self):
+        return self.razon_social
+
+
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
     categoria = models.ForeignKey(
@@ -25,6 +51,14 @@ class Producto(models.Model):
         db_column="id_categoria",
         on_delete=models.PROTECT,
         related_name="productos",
+    )
+    proveedor = models.ForeignKey(
+        Proveedor,
+        db_column="id_proveedor",
+        on_delete=models.SET_NULL,
+        related_name="productos",
+        null=True,
+        blank=True,
     )
     sku = models.CharField(max_length=50, unique=True)
     nombre = models.CharField(max_length=150)

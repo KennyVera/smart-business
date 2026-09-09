@@ -1,4 +1,4 @@
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
 import { useFilasPorPagina } from "../../../context/PreferencesContext";
@@ -8,7 +8,14 @@ import { fetchKardex } from "../api/inventarioApi";
 import { formatearDinero } from "../margen";
 import KardexMovimientos from "./KardexMovimientos";
 
-const VACIO = { stock_actual: 0, stock_por_sucursal: [], movimientos: null };
+const VACIO = { stock_actual: 0, stock_por_sucursal: [], movimientos: null, producto: null };
+
+function whatsappProveedor(telefono) {
+  const digitos = String(telefono || "").replace(/\D/g, "");
+  if (digitos.length < 9) return null;
+  const local = digitos.startsWith("0") ? digitos.slice(1) : digitos;
+  return `https://wa.me/593${local}`;
+}
 
 function KardexOffcanvas({ show, producto, sucursal, onClose }) {
   const pageSize = useFilasPorPagina();
@@ -33,6 +40,9 @@ function KardexOffcanvas({ show, producto, sucursal, onClose }) {
 
   const movimientos = leerPagina(datos.movimientos);
   const paginacionUi = useDatosPaginacion(pagina, movimientos.total);
+  const ficha = datos.producto || producto;
+  const proveedor = ficha?.proveedor_info;
+  const wa = whatsappProveedor(proveedor?.telefono);
 
   return (
     <Offcanvas show={show} onHide={onClose} placement="end" className="inv-kardex">
@@ -54,6 +64,28 @@ function KardexOffcanvas({ show, producto, sucursal, onClose }) {
             <dd className="inv-sku">{producto?.sku}</dd>
             <dt>Precio</dt>
             <dd>{formatearDinero(producto?.precio_venta)}</dd>
+            <dt>Proveedor</dt>
+            <dd>
+              {proveedor?.razon_social ? (
+                <span className="inv-kardex-proveedor">
+                  {proveedor.razon_social}
+                  {wa ? (
+                    <a
+                      className="btn btn-sm btn-success ms-2"
+                      href={wa}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Contactar por WhatsApp"
+                    >
+                      <MessageCircle size={14} />
+                      Contactar
+                    </a>
+                  ) : null}
+                </span>
+              ) : (
+                <span className="text-muted">Sin proveedor</span>
+              )}
+            </dd>
           </dl>
         </div>
 

@@ -64,6 +64,30 @@
   flex-wrap: wrap;
 }
 
+.rep-card-crm-controles {
+  margin: 0 0 0.85rem;
+}
+
+.rep-card-crm-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.rep-card-crm-campo span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #8a9096;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.rep-card-crm-campo input[type="number"] {
+  width: 5.5rem;
+}
+
+
 .btn-rep {
   border: 0;
   background: var(--rep-verde);

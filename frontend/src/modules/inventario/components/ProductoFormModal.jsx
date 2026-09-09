@@ -1,8 +1,10 @@
 import { PackagePlus, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { createProducto, updateProducto } from "../api/inventarioApi";
+import { createProducto, fetchProductos, updateProducto } from "../api/inventarioApi";
 import { mensajeApi } from "../../usuarios/rol";
+import { leerPagina, TODOS } from "../../../shared/paginado";
+import { generarSkuUnico } from "../sku";
 import { filtrarCampo, validarProducto } from "../validacion";
 import ProductoFormCampos from "./ProductoFormCampos";
 
@@ -10,26 +12,30 @@ const VACIO = {
   sku: "",
   nombre: "",
   categoria: "",
+  proveedor: "",
   costo_actual: "",
   precio_venta: "",
   imagen: null,
   aplica_iva: true,
 };
 
-function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
+function ProductoFormModal({ show, producto, categorias, proveedores = [], onClose, onSaved }) {
   const [form, setForm] = useState(VACIO);
   const [error, setError] = useState("");
+  const [generandoSku, setGenerandoSku] = useState(false);
   const editando = Boolean(producto);
 
   useEffect(() => {
     if (!show) return;
     setError("");
+    setGenerandoSku(false);
     setForm(
       producto
         ? {
             sku: producto.sku,
             nombre: producto.nombre,
             categoria: String(producto.categoria),
+            proveedor: producto.proveedor ? String(producto.proveedor) : "",
             costo_actual: String(producto.costo_actual),
             precio_venta: String(producto.precio_venta),
             imagen: null,
@@ -43,6 +49,25 @@ function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
     setForm((actual) => ({ ...actual, [campo]: filtrarCampo(campo, valor) }));
   }
 
+  async function onGenerarSku() {
+    setGenerandoSku(true);
+    setError("");
+    try {
+      const { data } = await fetchProductos({ page_size: TODOS });
+      const usados = new Set(
+        leerPagina(data).items.map((item) => String(item.sku || "").toUpperCase()),
+      );
+      if (editando && producto?.sku) {
+        usados.delete(String(producto.sku).toUpperCase());
+      }
+      onCampo("sku", generarSkuUnico(usados));
+    } catch {
+      onCampo("sku", generarSkuUnico());
+    } finally {
+      setGenerandoSku(false);
+    }
+  }
+
   async function onSubmit(event) {
     event.preventDefault();
     const aviso = validarProducto(form);
@@ -54,6 +79,7 @@ function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
       sku: form.sku.trim(),
       nombre: form.nombre.trim(),
       categoria: Number(form.categoria),
+      proveedor: Number(form.proveedor),
       costo_actual: Number(form.costo_actual).toFixed(2),
       precio_venta: Number(form.precio_venta).toFixed(2),
       aplica_iva: Boolean(form.aplica_iva),
@@ -90,7 +116,14 @@ function ProductoFormModal({ show, producto, categorias, onClose, onSaved }) {
         </Modal.Header>
         <Modal.Body>
           {error ? <p className="text-danger">{error}</p> : null}
-          <ProductoFormCampos form={form} categorias={categorias} onCampo={onCampo} />
+          <ProductoFormCampos
+            form={form}
+            categorias={categorias}
+            proveedores={proveedores}
+            onCampo={onCampo}
+            onGenerarSku={onGenerarSku}
+            generandoSku={generandoSku}
+          />
         </Modal.Body>
         <Modal.Footer>
           <button type="button" className="btn btn-light" onClick={onClose}>

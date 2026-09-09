@@ -46,8 +46,8 @@ COLORES = [
 ]
 
 ETIQUETAS_CAT = {
-    "lacteos": "Lacteos",
-    "panaderia": "Panaderia",
+    "lacteos": "Lácteos",
+    "panaderia": "Panadería",
     "bebidas": "Bebidas",
     "abarrotes": "Abarrotes",
     "limpieza": "Limpieza",

@@ -2,8 +2,16 @@ from decimal import Decimal
 
 from rest_framework import serializers
 
-from .models import Categoria, Producto
-from .validadores import exigir_nombre_categoria, exigir_nombre_libre, exigir_sku
+from .models import Categoria, Producto, Proveedor
+from .validadores import (
+    clave_categoria,
+    exigir_direccion,
+    exigir_email,
+    exigir_nombre_categoria,
+    exigir_nombre_contacto,
+    exigir_nombre_libre,
+    exigir_sku,
+)
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -19,17 +27,69 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
     def validate_nombre(self, value):
         nombre = exigir_nombre_categoria(value)
-        consulta = Categoria.objects.filter(nombre__iexact=nombre)
+        clave = clave_categoria(nombre)
+        for existente in Categoria.objects.all():
+            if self.instance and existente.pk == self.instance.pk:
+                continue
+            if clave_categoria(existente.nombre) == clave:
+                raise serializers.ValidationError(
+                    "Esa categoría ya existe (incluye variantes sin tilde)."
+                )
+        return nombre
+
+
+class ProveedorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Proveedor
+        fields = (
+            "id_proveedor",
+            "ruc",
+            "razon_social",
+            "nombre_contacto",
+            "telefono",
+            "email",
+            "direccion",
+        )
+        extra_kwargs = {
+            "razon_social": {"max_length": 150},
+            "nombre_contacto": {"max_length": 100},
+            "email": {"max_length": 100},
+        }
+
+    def validate_ruc(self, value):
+        ruc = "".join(ch for ch in str(value or "") if ch.isdigit())
+        if len(ruc) != 13:
+            raise serializers.ValidationError("El RUC debe tener 13 dígitos.")
+        consulta = Proveedor.objects.filter(ruc=ruc)
         if self.instance:
             consulta = consulta.exclude(pk=self.instance.pk)
         if consulta.exists():
-            raise serializers.ValidationError("Esa categoría ya existe.")
-        return nombre
+            raise serializers.ValidationError("Ese RUC ya está registrado.")
+        return ruc
+
+    def validate_telefono(self, value):
+        telefono = "".join(ch for ch in str(value or "") if ch.isdigit())
+        if len(telefono) != 10:
+            raise serializers.ValidationError("El teléfono debe tener 10 dígitos.")
+        return telefono
+
+    def validate_razon_social(self, value):
+        return exigir_nombre_libre(value, "La razón social")
+
+    def validate_nombre_contacto(self, value):
+        return exigir_nombre_contacto(value)
+
+    def validate_email(self, value):
+        return exigir_email(value)
+
+    def validate_direccion(self, value):
+        return exigir_direccion(value)
 
 
 class ProductoSerializer(serializers.ModelSerializer):
     categoria_nombre = serializers.CharField(source="categoria.nombre", read_only=True)
     margen_porcentaje = serializers.SerializerMethodField()
+    proveedor_info = ProveedorSerializer(source="proveedor", read_only=True)
 
     class Meta:
         model = Producto
@@ -39,6 +99,8 @@ class ProductoSerializer(serializers.ModelSerializer):
             "nombre",
             "categoria",
             "categoria_nombre",
+            "proveedor",
+            "proveedor_info",
             "costo_actual",
             "precio_venta",
             "imagen",
@@ -52,11 +114,18 @@ class ProductoSerializer(serializers.ModelSerializer):
             "precio_venta": {"min_value": Decimal("0.01")},
             "imagen": {"required": False, "allow_null": True},
             "aplica_iva": {"required": False},
+            "proveedor": {"required": False, "allow_null": True},
         }
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["imagen"] = instance.imagen.url if instance.imagen else None
+        if data.get("proveedor_info"):
+            data["proveedor_info"] = {
+                "id_proveedor": data["proveedor_info"]["id_proveedor"],
+                "razon_social": data["proveedor_info"]["razon_social"],
+                "telefono": data["proveedor_info"]["telefono"],
+            }
         return data
 
     def get_margen_porcentaje(self, obj):

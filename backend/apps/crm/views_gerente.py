@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Max, Q, Sum
@@ -27,6 +28,8 @@ TOTAL_LINEA = ExpressionWrapper(
 )
 VIP_GASTO = Decimal("500.00")
 VIP_VISITAS = 10
+TOP_N = 50
+REPORTES_SIN_VENTA = frozenset({"cumpleanos_mes", "cumpleanos_hoy"})
 
 
 def _local(dt):
@@ -57,6 +60,53 @@ def clientes_con_metricas(sucursal_id):
     )
 
 
+def _top_ids(qs, orden, n=TOP_N):
+    return list(qs.order_by(*orden).values_list("pk", flat=True)[:n])
+
+
+def aplicar_reporte(qs, reporte, limite=None):
+    """Filtros estratégicos CRM (?reporte=). Conserva annotations previas."""
+    hoy = timezone.localdate()
+    tope = limite if limite is not None else TOP_N
+    if reporte == "top_gastos":
+        ids = _top_ids(qs, ("-total_gastado", "apellidos", "nombres"), tope)
+        return qs.filter(pk__in=ids).order_by("-total_gastado", "apellidos", "nombres")
+    if reporte == "top_frecuentes":
+        ids = _top_ids(qs, ("-frecuencia_visitas", "-total_gastado", "apellidos"), tope)
+        return qs.filter(pk__in=ids).order_by(
+            "-frecuencia_visitas",
+            "-total_gastado",
+            "apellidos",
+            "nombres",
+        )
+    if reporte == "riesgo_abandono":
+        corte = timezone.now() - timedelta(days=30)
+        return qs.filter(
+            frecuencia_visitas__gt=3,
+            ultima_compra__lt=corte,
+        ).order_by("ultima_compra", "apellidos", "nombres")
+    if reporte == "cumpleanos_mes":
+        filtrado = qs.filter(fecha_nacimiento__month=hoy.month).order_by(
+            "fecha_nacimiento__day",
+            "apellidos",
+            "nombres",
+        )
+        if limite is not None:
+            ids = list(filtrado.values_list("pk", flat=True)[:limite])
+            return qs.filter(pk__in=ids).order_by(
+                "fecha_nacimiento__day",
+                "apellidos",
+                "nombres",
+            )
+        return filtrado
+    if reporte == "cumpleanos_hoy":
+        return qs.filter(
+            fecha_nacimiento__month=hoy.month,
+            fecha_nacimiento__day=hoy.day,
+        ).order_by("apellidos", "nombres")
+    return qs.order_by("-total_gastado", "apellidos", "nombres")
+
+
 class GerenteClienteViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -78,6 +128,7 @@ class GerenteClienteViewSet(
         qs = clientes_con_metricas(sucursal_id)
         if self.action in ("retrieve", "partial_update", "update"):
             return qs
+        reporte = (self.request.query_params.get("reporte") or "todos").strip()
         busqueda = (self.request.query_params.get("q") or "").strip()
         if busqueda:
             qs = qs.filter(
@@ -85,9 +136,9 @@ class GerenteClienteViewSet(
                 | Q(apellidos__icontains=busqueda)
                 | Q(cedula_ruc__icontains=busqueda)
             )
-        else:
+        elif reporte not in REPORTES_SIN_VENTA:
             qs = qs.filter(frecuencia_visitas__gt=0)
-        return qs.order_by("-total_gastado", "apellidos", "nombres")
+        return aplicar_reporte(qs, reporte)
 
     def get_serializer_class(self):
         if self.action in ("partial_update", "update"):

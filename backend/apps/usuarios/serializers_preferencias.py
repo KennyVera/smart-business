@@ -50,10 +50,14 @@ class PreferenciaSerializer(serializers.ModelSerializer):
         texto = (value or defecto).strip()
         if not re.fullmatch(HEX, texto):
             raise serializers.ValidationError("Color hex inválido (#RRGGBB).")
-        return texto.upper()
+        # Minúsculas: <input type="color"> de React exige #rrggbb en lowercase.
+        return texto.lower()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         logo = instance.logo_personalizado
         data["logo_personalizado"] = logo.url if logo else None
+        for campo in ("color_sidebar", "color_graficos", "color_logs"):
+            if data.get(campo):
+                data[campo] = str(data[campo]).lower()
         return data

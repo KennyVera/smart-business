@@ -16,10 +16,25 @@
     0 24px 60px rgba(15, 23, 42, 0.12);
 }
 
+.inv-form-dialog--wide {
+  max-width: min(760px, 96vw);
+}
+
 .inv-form-dialog .modal-header,
 .inv-form-dialog .modal-footer {
   border: 0;
   background: transparent;
+}
+
+.inv-form-dialog--wide .modal-header,
+.inv-form-dialog--wide .modal-footer {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.inv-form-dialog--wide .modal-body {
+  padding-top: 0.35rem;
+  padding-bottom: 0.5rem;
 }
 
 .inv-form-title {
@@ -29,16 +44,42 @@
   font-size: 1.02rem;
 }
 
+.inv-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 1rem;
+}
+
+.inv-form-grid .inv-field {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .inv-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .inv-field {
   margin-bottom: 0.85rem;
 }
 
 .inv-field-label {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 0.78rem;
   font-weight: 600;
   color: #5c636a;
   margin-bottom: 0.35rem;
+}
+
+.inv-field-contador {
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: #8a9096;
+  white-space: nowrap;
 }
 
 .inv-field-control {
@@ -67,6 +108,42 @@
 .inv-field-control .form-select:focus {
   border-color: #111;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.inv-field-control .inv-field-textarea {
+  height: auto;
+  min-height: 64px;
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+  resize: vertical;
+}
+
+.inv-field-control:has(.inv-field-textarea) > svg {
+  top: 0.9rem;
+  transform: none;
+}
+
+.inv-sku-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.inv-sku-row .form-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.inv-sku-generar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 42px;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.82rem;
 }
 
 .inv-field-ayuda {

@@ -1,4 +1,4 @@
-import { PackageX, ShoppingCart, TrendingDown, Wallet } from "lucide-react";
+import { PackageX, ShoppingCart, TrendingDown, Users, Wallet } from "lucide-react";
 import { formatearDinero } from "./margen";
 
 const SKU = { clave: "sku", etiqueta: "SKU", tipo: "sku" };
@@ -7,6 +7,23 @@ const CATEGORIA = { clave: "categoria", etiqueta: "Categoría", tipo: "chip" };
 const SUCURSAL = { clave: "sucursal", etiqueta: "Sucursal", multi: true };
 
 export const VERDE = "#00AA5D";
+export const CLAVE_CRM = "crm-clientes";
+
+export const REPORTE_CRM = {
+  clave: CLAVE_CRM,
+  ruta: "crm-clientes",
+  titulo: "Inteligencia de Clientes (CRM)",
+  detalle:
+    "Filtra y exporta el listado de tus mejores clientes o cumpleañeros para campañas de fidelización.",
+  icono: Users,
+  grafico: { tipo: "barras", titulo: "Ranking de clientes", medida: "dinero" },
+  columnas: [
+    { clave: "cedula", etiqueta: "Cédula", tipo: "sku" },
+    { clave: "cliente", etiqueta: "Nombres", tipo: "nombre" },
+    { clave: "visitas", etiqueta: "Visitas", tipo: "numero" },
+    { clave: "total_gastado", etiqueta: "Total gastado", tipo: "dinero", fuerte: true },
+  ],
+};
 export const PALETA = [
   "#00AA5D",
   "#0F5132",
@@ -105,6 +122,7 @@ export const VENTANAS_ROTACION = [
 ];
 
 export function buscarReporte(clave) {
+  if (clave === CLAVE_CRM) return REPORTE_CRM;
   return REPORTES.find((reporte) => reporte.clave === clave) || null;
 }
 

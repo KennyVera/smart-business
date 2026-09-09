@@ -16,10 +16,20 @@ import OffcanvasCliente from "../components/OffcanvasCliente";
 import TablaClientes from "../components/TablaClientes";
 import "../gerente.css";
 
+const REPORTES = [
+  { value: "todos", label: "Todos los clientes" },
+  { value: "top_gastos", label: "Top Gastos (Mayor valor)" },
+  { value: "top_frecuentes", label: "Top Frecuentes (Más visitas)" },
+  { value: "riesgo_abandono", label: "En riesgo de abandono (+30 días)" },
+  { value: "cumpleanos_mes", label: "Cumpleañeros del mes" },
+  { value: "cumpleanos_hoy", label: "Cumpleañeros de hoy" },
+];
+
 function ClientesList() {
   const [q, setQ] = useState("");
   const [busqueda, setBusqueda] = useState("");
-  const [pagina, setPagina] = usePagina(busqueda);
+  const [reporte, setReporte] = useState("todos");
+  const [pagina, setPagina] = usePagina(`${busqueda}|${reporte}`);
   const pageSize = useFilasPorPagina();
   const [clientes, setClientes] = useState([]);
   const [total, setTotal] = useState(0);
@@ -31,12 +41,13 @@ function ClientesList() {
   const paginacionUi = useDatosPaginacion(pagina, total);
 
   const cargar = useCallback(
-    (texto, page) => {
+    (texto, page, tipo) => {
       setCargando(true);
       setError("");
       const params = {
         page,
         page_size: pageSize,
+        reporte: tipo || "todos",
       };
       if (texto) params.q = texto;
       fetchClientesGerente(params)
@@ -56,8 +67,8 @@ function ClientesList() {
   );
 
   useEffect(() => {
-    cargar(busqueda, pagina);
-  }, [cargar, busqueda, pagina]);
+    cargar(busqueda, pagina, reporte);
+  }, [cargar, busqueda, pagina, reporte]);
 
   function buscar(e) {
     e.preventDefault();
@@ -68,14 +79,14 @@ function ClientesList() {
     setExportando(true);
     setError("");
     try {
-      const { data } = await exportarClientesGerente(
-        busqueda ? { q: busqueda } : {}
-      );
+      const params = { reporte };
+      if (busqueda) params.q = busqueda;
+      const { data } = await exportarClientesGerente(params);
       const blob = new Blob([data], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "clientes_sucursal.csv";
+      link.download = `clientes_${reporte}.csv`;
       link.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -145,6 +156,21 @@ function ClientesList() {
             />
           </div>
         </label>
+        <label className="gerente-filtro-campo gerente-filtro-reporte">
+          <span>Reporte estratégico</span>
+          <select
+            className="form-select"
+            value={reporte}
+            onChange={(e) => setReporte(e.target.value)}
+            aria-label="Reporte estratégico"
+          >
+            {REPORTES.map((op) => (
+              <option key={op.value} value={op.value}>
+                {op.label}
+              </option>
+            ))}
+          </select>
+        </label>
         <button type="submit" className="btn gerente-btn">
           Filtrar
         </button>
@@ -163,7 +189,11 @@ function ClientesList() {
       {cargando ? <p className="text-muted">Cargando clientes…</p> : null}
       {!cargando ? (
         <>
-          <TablaClientes clientes={clientes} onVerDetalle={setActivo} />
+          <TablaClientes
+            clientes={clientes}
+            onVerDetalle={setActivo}
+            resaltarRiesgo={reporte === "riesgo_abandono"}
+          />
           <Paginacion
             {...paginacionUi}
             etiqueta="clientes"

@@ -6,6 +6,8 @@ import {
   fetchCategorias,
   fetchCategoriasTodas,
   fetchProductos,
+  fetchProveedores,
+  fetchProveedoresTodos,
   fetchStock,
 } from "../api/inventarioApi";
 import { useRecurso } from "./useRecurso";
@@ -24,6 +26,20 @@ export function useCategorias(pagina = 1) {
     [pagina, pageSize],
   );
   return usePaginado(cargar, "No se pudieron cargar las categorías.");
+}
+
+export function useProveedores(pagina = 1) {
+  const pageSize = useFilasPorPagina();
+  const cargar = useCallback(
+    () => fetchProveedores({ page: pagina, page_size: pageSize }),
+    [pagina, pageSize],
+  );
+  return usePaginado(cargar, "No se pudieron cargar los proveedores.");
+}
+
+export function useProveedoresTodos() {
+  const cargar = useCallback(() => fetchProveedoresTodos(), []);
+  return useRecurso(cargar, [], "No se pudieron cargar los proveedores.");
 }
 
 /** Catálogo completo de categorías para los <select>. */

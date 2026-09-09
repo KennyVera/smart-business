@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from core.paginacion import entero, pagina_manual, tamano_pedido
 
 from .filters import ProductoFilter
-from .models import Categoria, HistorialMovimiento, InventarioStock, Producto
+from .models import Categoria, HistorialMovimiento, InventarioStock, Producto, Proveedor
 from .permisos import PuedeGestionarInventario, limitar_a_sucursal
-from .serializers import CategoriaSerializer, ProductoSerializer
+from .serializers import CategoriaSerializer, ProductoSerializer, ProveedorSerializer
 from .serializers_kardex import MovimientoSerializer
 from .serializers_stock import StockSerializer
 
@@ -22,8 +22,15 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     http_method_names = SIN_BORRADO
 
 
+class ProveedorViewSet(viewsets.ModelViewSet):
+    queryset = Proveedor.objects.all()
+    serializer_class = ProveedorSerializer
+    permission_classes = [PuedeGestionarInventario]
+    http_method_names = SIN_BORRADO
+
+
 class ProductoViewSet(viewsets.ModelViewSet):
-    queryset = Producto.objects.select_related("categoria")
+    queryset = Producto.objects.select_related("categoria", "proveedor")
     serializer_class = ProductoSerializer
     permission_classes = [PuedeGestionarInventario]
     filter_backends = [DjangoFilterBackend]
@@ -37,7 +44,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
         stock = limitar_a_sucursal(
             InventarioStock.objects.select_related(
-                "sucursal", "producto", "producto__categoria"
+                "sucursal", "producto", "producto__categoria", "producto__proveedor"
             ).filter(producto=producto),
             request.user,
             solicitada,

@@ -13,11 +13,18 @@ class PreferenciasMeView(APIView):
 
     def get(self, request):
         prefs, _ = PreferenciaUsuario.objects.get_or_create(usuario=request.user)
-        return Response(PreferenciaSerializer(prefs).data)
+        return Response(PreferenciaSerializer(prefs, context={"request": request}).data)
 
     def patch(self, request):
         prefs, _ = PreferenciaUsuario.objects.get_or_create(usuario=request.user)
-        serializer = PreferenciaSerializer(prefs, data=request.data, partial=True)
+        serializer = PreferenciaSerializer(
+            prefs,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        # Releer de BD para devolver el valor persistido (no solo el del serializer).
+        prefs.refresh_from_db()
+        return Response(PreferenciaSerializer(prefs, context={"request": request}).data)

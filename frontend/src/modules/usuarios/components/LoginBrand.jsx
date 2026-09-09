@@ -1,9 +1,15 @@
+import logoSmartBusiness from "../../../assets/logo-smart-business.png";
+
 function LoginBrand() {
   return (
     <div className="login-brand">
-      <span className="login-logo" aria-hidden="true" />
-      <h1>Smart Business</h1>
-      <p>ERP &amp; POS</p>
+      <img
+        className="login-logo"
+        src={logoSmartBusiness}
+        alt="Smart Business"
+        width={220}
+        height={220}
+      />
     </div>
   );
 }

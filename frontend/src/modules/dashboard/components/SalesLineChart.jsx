@@ -29,7 +29,7 @@ function SalesLineChart({ series = [], lineas = [] }) {
       </div>
       <div className="dashboard-chart-wrap">
         <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={datos} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+          <LineChart key={acento} data={datos} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e9ecef" />
             <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
             <YAxis

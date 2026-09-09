@@ -24,9 +24,10 @@ Seed: `python manage.py seed_inventario` (dentro del contenedor backend).
 |------|-------|
 | `/inventario/catalogo` | admin, bodeguero |
 | `/inventario/categorias` | admin, bodeguero |
+| `/inventario/proveedores` | admin, bodeguero |
 | `/inventario/stock` | admin, bodeguero |
 | `/inventario/alertas` | admin, gerente, bodeguero |
-| `/inventario/reportes` | admin, gerente, bodeguero |
+| `/inventario/reportes` | admin, gerente, bodeguero (tarjeta CRM solo admin/gerente) |
 
 ## Endpoints clave
 

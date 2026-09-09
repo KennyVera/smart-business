@@ -13,7 +13,7 @@ Dar al almacén un maestro de productos por sucursal, visibilidad de stock,
 control de caducidades, registro de mermas y un kardex auditable. La UI
 prioriza tablas, filtros y paneles Offcanvas; los reportes salen a PDF/Excel.
 
-**RBAC UI:** Catálogo, Categorías y Stock requieren rol bodeguero o admin.
+**RBAC UI:** Catálogo, Categorías, Proveedores y Stock requieren rol bodeguero o admin.
 Alertas y Reportes son compartidos; el gerente no ve botones de merma ni alta
 de productos (guarda `RequireRol` + `puedeOperarInventario()`).
 
@@ -23,8 +23,16 @@ Cada `Producto` pertenece a una `Categoria` y tiene:
 
 - `sku` único (código de barras / identificador de pistola).
 - `nombre`, `costo_actual`, `precio_venta`.
+- `proveedor` (FK opcional en BD / obligatorio en alta UI) → `Proveedor`.
 - `aplica_iva` (true = gravado 15 %; false = tarifa 0).
 - `imagen` (`ImageField`, `upload_to="productos/"`) — archivo real en `media/`.
+
+### Proveedores
+
+Tabla `proveedor` (`managed=True`): RUC 13 dígitos, razón social, contacto,
+teléfono 10 dígitos, email, dirección. UI: `/inventario/proveedores`.
+API: `/api/inventario/proveedores/`. En Kardex se muestra la razón social y un
+enlace WhatsApp `https://wa.me/593` + teléfono sin el 0 inicial.
 
 El formulario de alta/edición calcula un margen estimado en cliente (no se
 persiste; 3FN). El POS consume el mismo maestro vía `/api/pos/catalogo/`.

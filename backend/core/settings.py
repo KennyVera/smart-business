@@ -60,15 +60,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
 
-# PostgreSQL existente en el host (no se crea una BD nueva).
+# PostgreSQL en Docker (compose: puerto host 5434 → contenedor 5432).
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "requeson_erp_db"),
+        "NAME": os.environ.get("POSTGRES_DB", "smart_business_db"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgreAdmin19"),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5434"),
     }
 }
 

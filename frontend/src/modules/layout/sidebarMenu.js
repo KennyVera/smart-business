@@ -9,6 +9,7 @@ import {
   RotateCcw,
   Store,
   Tags,
+  Truck,
   Users,
 } from "lucide-react";
 import {
@@ -75,6 +76,12 @@ export const SIDEBAR_MODULOS = [
         to: "/inventario/categorias",
         label: "Categorías",
         icon: Tags,
+        roles: ROLES_INVENTARIO_OPS,
+      },
+      {
+        to: "/inventario/proveedores",
+        label: "Proveedores",
+        icon: Truck,
         roles: ROLES_INVENTARIO_OPS,
       },
       {

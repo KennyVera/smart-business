@@ -10,7 +10,7 @@ function iniciales(nombre = "") {
     .join("");
 }
 
-function TablaClientes({ clientes = [], onVerDetalle }) {
+function TablaClientes({ clientes = [], onVerDetalle, resaltarRiesgo = false }) {
   return (
     <div className="page-card gerente-clientes-card">
       <div className="table-responsive">
@@ -76,7 +76,13 @@ function TablaClientes({ clientes = [], onVerDetalle }) {
                   <td className={`text-end${cliente.es_vip ? " gerente-gasto-vip" : ""}`}>
                     {dineroGerente(cliente.total_gastado)}
                   </td>
-                  <td className="text-muted">{fechaHoraCorta(cliente.ultima_compra)}</td>
+                  <td
+                    className={
+                      resaltarRiesgo ? "text-danger fw-semibold" : "text-muted"
+                    }
+                  >
+                    {fechaHoraCorta(cliente.ultima_compra)}
+                  </td>
                   <td className="text-end text-muted">
                     <ChevronRight size={16} />
                   </td>
