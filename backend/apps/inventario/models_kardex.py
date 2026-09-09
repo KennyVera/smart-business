@@ -10,11 +10,13 @@ class HistorialMovimiento(models.Model):
 
     ENTRADA_LOTE = "ENTRADA_LOTE"
     VENTA_POS = "VENTA_POS"
+    DEVOLUCION_POS = "DEVOLUCION_POS"
     MERMA = "MERMA"
     AJUSTE = "AJUSTE"
     TIPOS = [
         (ENTRADA_LOTE, "Entrada por lote"),
         (VENTA_POS, "Venta en POS"),
+        (DEVOLUCION_POS, "Devolución / anulación POS"),
         (MERMA, "Baja por merma"),
         (AJUSTE, "Ajuste manual"),
     ]

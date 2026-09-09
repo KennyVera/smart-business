@@ -47,6 +47,9 @@ class TerminalPOS(models.Model):
 class TurnoCaja(models.Model):
     """Turno de un cajero en una terminal: se abre, se vende y se cierra."""
 
+    ABIERTO = "Abierto"
+    CERRADO = "Cerrado"
+
     id_turno = models.AutoField(primary_key=True)
     terminal = models.ForeignKey(
         TerminalPOS,
@@ -63,12 +66,22 @@ class TurnoCaja(models.Model):
     fecha_apertura = models.DateTimeField(auto_now_add=True)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
     monto_apertura = models.DecimalField(max_digits=10, decimal_places=2)
+    monto_esperado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_cierre_real = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
     monto_cierre_declarado = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
     )
+    descuadre = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    estado = models.CharField(max_length=20, default=ABIERTO)
+    auditado = models.BooleanField(default=False)
 
     class Meta:
         db_table = "turno_caja"
@@ -82,7 +95,7 @@ class TurnoCaja(models.Model):
 
     @property
     def esta_abierto(self):
-        return self.fecha_cierre is None
+        return self.estado == self.ABIERTO and self.fecha_cierre is None
 
     @property
     def sucursal_id(self):

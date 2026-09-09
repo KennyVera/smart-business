@@ -6,3 +6,6 @@ class PosConfig(AppConfig):
     name = "apps.pos"
     label = "pos"
     verbose_name = "Punto de venta"
+
+    def ready(self):
+        from . import signals  # noqa: F401

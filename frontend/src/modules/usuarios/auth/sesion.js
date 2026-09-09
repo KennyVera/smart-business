@@ -23,18 +23,34 @@ export function guardarSesion(usuario, recordar) {
   destino.setItem(CLAVE_SESION, JSON.stringify(usuario));
 }
 
+/** Actualiza campos del perfil en la sesión sin perder el token. */
+export function actualizarSesion(cambios) {
+  const actual = leerSesion();
+  if (!actual) return null;
+  const enLocal = Boolean(localStorage.getItem(CLAVE_SESION));
+  const siguiente = { ...actual, ...cambios };
+  guardarSesion(siguiente, enLocal);
+  return siguiente;
+}
+
 export function borrarSesion() {
   sessionStorage.removeItem(CLAVE_SESION);
   localStorage.removeItem(CLAVE_SESION);
 }
 
+/** Normaliza "Gerente de Sucursal" → gerente, etc. */
 export function rolDeSesion() {
-  return (leerSesion()?.rol_nombre || "").trim().toLowerCase();
+  const crudo = (leerSesion()?.rol_nombre || "").trim().toLowerCase();
+  for (const clave of ["administrador", "gerente", "cajero", "bodeguero"]) {
+    if (crudo.includes(clave)) return clave;
+  }
+  return crudo;
 }
 
 export function inicioDeRol(rol = rolDeSesion()) {
   if (rol === "cajero") return "/pos";
   if (rol === "bodeguero") return "/inventario/alertas";
+  if (rol === "gerente") return "/gerente";
   return "/";
 }
 

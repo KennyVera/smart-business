@@ -22,10 +22,11 @@ class SesionJWTAuthentication(BaseAuthentication):
         jti = payload.get("jti")
         if not jti or jti_en_lista_negra(jti):
             raise AuthenticationFailed("La sesión fue cerrada.")
-        usuario = Usuario.objects.filter(
-            pk=payload.get("uid"),
-            estado_activo=True,
-        ).first()
+        usuario = (
+            Usuario.objects.select_related("rol", "sucursal")
+            .filter(pk=payload.get("uid"), estado_activo=True)
+            .first()
+        )
         if usuario is None:
             raise AuthenticationFailed("Usuario inactivo.")
         sesion = SesionUsuario.objects.filter(token_sesion=jti, is_active=True).first()

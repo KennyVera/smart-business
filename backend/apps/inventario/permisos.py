@@ -5,8 +5,12 @@ ROLES_INVENTARIO = ("administrador", "gerente", "bodeguero")
 
 
 def nombre_rol(usuario):
-    rol = getattr(usuario, "rol", None)
-    return (getattr(rol, "nombre", "") or "").strip().lower()
+    """Normaliza 'Gerente de Sucursal' → 'gerente', etc."""
+    crudo = (getattr(getattr(usuario, "rol", None), "nombre", "") or "").strip().lower()
+    for clave in ("administrador", "gerente", "cajero", "bodeguero"):
+        if clave in crudo:
+            return clave
+    return crudo
 
 
 def es_admin(usuario):

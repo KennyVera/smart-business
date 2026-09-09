@@ -33,6 +33,7 @@ class Venta(models.Model):
     total_factura = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     monto_recibido = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     cambio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    anulada = models.BooleanField(default=False)
 
     class Meta:
         db_table = "venta"

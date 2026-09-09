@@ -857,6 +857,14 @@
   font-weight: 800;
 }
 
+.pos-descuadre {
+  font-size: 0.88rem;
+}
+
+.pos-descuadre.text-warning {
+  color: #c47b00 !important;
+}
+
 .pos-exito {
   text-align: center;
   padding-top: 1.4rem;

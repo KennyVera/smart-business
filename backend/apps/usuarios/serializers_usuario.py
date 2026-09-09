@@ -23,7 +23,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
             "username",
             "nombre",
             "apellido",
+            "email",
             "nombre_completo",
+            "foto_perfil",
             "rol",
             "rol_nombre",
             "sucursal",
@@ -36,11 +38,19 @@ class UsuarioSerializer(serializers.ModelSerializer):
             "nombre": {"max_length": 40},
             "apellido": {"max_length": 40},
             "sucursal": {"required": False, "allow_null": True},
+            "foto_perfil": {"read_only": True},
         }
         read_only_fields = ("estado_activo",)
 
     def get_nombre_completo(self, obj):
         return f"{obj.nombre} {obj.apellido}".strip()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["foto_perfil"] = (
+            instance.foto_perfil.url if instance.foto_perfil else None
+        )
+        return data
 
     def validate_username(self, value):
         username = exigir_username(value)

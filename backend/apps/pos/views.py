@@ -4,8 +4,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from .models import Venta
-from .permisos import PuedeVender, es_cajero
+from .permisos import EsGerenteSucursal, PuedeVender, es_cajero, es_gerente
 from .serializers import ProcesarVentaSerializer, VentaSerializer
+from .services.devoluciones import anular_venta
 from .services.turnos import resumen_turno, turno_abierto
 from .services.ventas import procesar_venta
 
@@ -61,3 +62,16 @@ class VentaViewSet(
             },
             status=status.HTTP_201_CREATED,
         )
+
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=[EsGerenteSucursal],
+    )
+    def anular(self, request, pk=None):
+        """Autoriza devolución: restockea la sucursal del ticket y anula."""
+        if es_gerente(request.user) and not request.user.sucursal_id:
+            raise ValidationError({"detail": "Gerente sin sucursal asignada."})
+        venta = self.get_object()
+        anulada = anular_venta(venta, request.user)
+        return Response({"venta": VentaSerializer(anulada).data})

@@ -11,7 +11,7 @@ ROLES = [
     (1, "Administrador", "Acceso completo al módulo de administración."),
     (2, "Cajero", "Operación de caja y ventas en sucursal."),
     (3, "Bodeguero", "Inventario, ingresos y mermas de sucursal."),
-    (4, "Gerente", "Supervisión operativa de una sucursal."),
+    (4, "Gerente de Sucursal", "Supervisión operativa de una sucursal."),
 ]
 
 

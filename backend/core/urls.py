@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import include, path
 
+from apps.usuarios.urls import urlpatterns_notificaciones
+
 
 def health(_request):
     return JsonResponse({"status": "ok", "service": "smart-business"})
@@ -17,6 +19,7 @@ urlpatterns = [
     path("api/inventario/", include("apps.inventario.urls")),
     path("api/pos/", include("apps.pos.urls")),
     path("api/crm/", include("apps.crm.urls")),
+    path("api/", include((urlpatterns_notificaciones, "notificaciones"))),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

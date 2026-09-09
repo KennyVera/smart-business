@@ -11,8 +11,8 @@ export function abrirTurno(payload) {
   return api.post(`${BASE}/turnos/abrir/`, payload);
 }
 
-export function cerrarTurno(payload) {
-  return api.post(`${BASE}/turnos/cerrar/`, payload);
+export function cerrarTurno(idTurno, payload) {
+  return api.post(`${BASE}/turnos/${idTurno}/cerrar/`, payload);
 }
 
 export function fetchCatalogo(params) {

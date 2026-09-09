@@ -1,42 +1,51 @@
-import { useMemo, useState } from "react";
-import { NavLink } from "react-router-dom";
-import {
-  AlertTriangle,
-  Boxes,
-  FileBarChart,
-  LayoutDashboard,
-  MapPinned,
-  Menu,
-  Package,
-  Store,
-  Tags,
-  Users,
-} from "lucide-react";
-
+import { useEffect, useMemo, useState } from "react";
+import { Menu } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { rolDeSesion } from "../../usuarios/auth/sesion";
+import { SIDEBAR_MODULOS, grupoContieneRuta } from "../sidebarMenu";
+import SidebarGrupo from "./SidebarGrupo";
 import SidebarLogout from "./SidebarLogout";
 
-const ADMIN = ["administrador"];
-const INVENTARIO = ["administrador", "gerente", "bodeguero"];
-
-const ITEMS = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true, roles: ADMIN },
-  { to: "/geografia/zonas", label: "Zonas", icon: MapPinned, roles: ADMIN },
-  { to: "/geografia/sucursales", label: "Sucursales", icon: Store, roles: ADMIN },
-  { to: "/usuarios", label: "Usuarios", icon: Users, roles: ADMIN },
-  { to: "/inventario/catalogo", label: "Catálogo", icon: Package, roles: INVENTARIO },
-  { to: "/inventario/categorias", label: "Categorías", icon: Tags, roles: INVENTARIO },
-  { to: "/inventario/stock", label: "Stock", icon: Boxes, roles: INVENTARIO },
-  { to: "/inventario/alertas", label: "Alertas", icon: AlertTriangle, roles: INVENTARIO },
-  { to: "/inventario/reportes", label: "Reportes", icon: FileBarChart, roles: INVENTARIO },
-];
+function estadoInicial(modulos, pathname) {
+  const abierto = {};
+  let hayActivo = false;
+  for (const mod of modulos) {
+    const activo = grupoContieneRuta(mod.items, pathname);
+    abierto[mod.id] = activo;
+    if (activo) hayActivo = true;
+  }
+  if (!hayActivo && modulos[0]) abierto[modulos[0].id] = true;
+  return abierto;
+}
 
 function Sidebar() {
+  const { pathname } = useLocation();
   const [abierto, setAbierto] = useState(false);
-  const visibles = useMemo(() => {
+  const modulos = useMemo(() => {
     const rol = rolDeSesion();
-    return ITEMS.filter((item) => item.roles.includes(rol));
+    return SIDEBAR_MODULOS.map((mod) => ({
+      ...mod,
+      items: mod.items.filter((item) => item.roles.includes(rol)),
+    })).filter((mod) => mod.items.length > 0);
   }, []);
+
+  const [gruposAbiertos, setGruposAbiertos] = useState(() =>
+    estadoInicial(modulos, pathname),
+  );
+
+  useEffect(() => {
+    setGruposAbiertos((prev) => {
+      const next = { ...prev };
+      for (const mod of modulos) {
+        if (grupoContieneRuta(mod.items, pathname)) next[mod.id] = true;
+      }
+      return next;
+    });
+  }, [pathname, modulos]);
+
+  function alternarGrupo(id) {
+    setGruposAbiertos((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
 
   return (
     <aside className={`admin-sidebar${abierto ? " is-open" : ""}`}>
@@ -50,19 +59,15 @@ function Sidebar() {
         <Menu size={20} />
       </button>
       <nav className="sidebar-nav">
-        {visibles.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            title={label}
-            className={({ isActive }) =>
-              `sidebar-link${isActive ? " is-active" : ""}`
-            }
-          >
-            <Icon size={20} strokeWidth={1.75} />
-            <span>{label}</span>
-          </NavLink>
+        {modulos.map((mod) => (
+          <SidebarGrupo
+            key={mod.id}
+            titulo={mod.titulo}
+            items={mod.items}
+            expandido={Boolean(gruposAbiertos[mod.id])}
+            sidebarAbierto={abierto}
+            onToggle={() => alternarGrupo(mod.id)}
+          />
         ))}
       </nav>
       <SidebarLogout />

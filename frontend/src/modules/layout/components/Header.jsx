@@ -1,13 +1,8 @@
-import { Bell, Search } from "lucide-react";
-import { iniciales, leerSesion } from "../../usuarios/auth/sesion";
-
-const NOTIFICACIONES = 0;
+import { Search } from "lucide-react";
+import NotificacionesBell from "./NotificacionesBell";
+import UserProfileDropdown from "../../usuarios/components/UserProfileDropdown";
 
 function Header() {
-  const sesion = leerSesion();
-  const nombre = sesion?.nombre_completo || "Usuario";
-  const rol = sesion?.rol_nombre || "";
-
   return (
     <header className="admin-header">
       <div className="header-brand">
@@ -19,19 +14,8 @@ function Header() {
         <input type="search" placeholder="Buscar sucursales, zonas o usuarios" />
       </label>
       <div className="header-actions">
-        <button type="button" className="header-bell" aria-label="Notificaciones">
-          <Bell size={18} strokeWidth={1.75} />
-          {NOTIFICACIONES > 0 ? (
-            <span className="header-badge">{NOTIFICACIONES}</span>
-          ) : null}
-        </button>
-        <div className="header-user">
-          <div>
-            <strong>{nombre}</strong>
-            <small>{rol}</small>
-          </div>
-          <span className="header-avatar">{iniciales(nombre)}</span>
-        </div>
+        <NotificacionesBell />
+        <UserProfileDropdown variant="admin" />
       </div>
     </header>
   );

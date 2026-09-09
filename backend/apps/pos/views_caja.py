@@ -2,8 +2,8 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import MetodoPago
-from .permisos import PuedeVender
+from .models import MetodoPago, TurnoCaja
+from .permisos import PuedeVender, es_cajero
 from .serializers import (
     AbrirTurnoSerializer,
     CerrarTurnoSerializer,
@@ -32,6 +32,25 @@ class TurnoViewSet(viewsets.GenericViewSet):
     serializer_class = TurnoSerializer
     permission_classes = [PuedeVender]
 
+    def get_queryset(self):
+        turnos = TurnoCaja.objects.select_related(
+            "terminal",
+            "terminal__sucursal",
+            "usuario",
+        )
+        if es_cajero(self.request.user):
+            return turnos.filter(usuario=self.request.user)
+        if self.request.user.sucursal_id:
+            return turnos.filter(terminal__sucursal_id=self.request.user.sucursal_id)
+        return turnos
+
+    def _cerrar(self, turno, monto_cierre_real):
+        resumen = resumen_turno(turno)
+        cerrado = cerrar_turno(turno, monto_cierre_real)
+        resumen["diferencia"] = cerrado.descuadre
+        resumen["descuadre"] = cerrado.descuadre
+        return Response({"turno": TurnoSerializer(cerrado).data, "resumen": resumen})
+
     @action(detail=False, methods=["get"])
     def actual(self, request):
         turno = turno_abierto(request.user)
@@ -59,19 +78,8 @@ class TurnoViewSet(viewsets.GenericViewSet):
             {"turno": TurnoSerializer(turno).data, "resumen": resumen_turno(turno)}
         )
 
-    @action(detail=False, methods=["post"])
-    def cerrar(self, request):
+    @action(detail=True, methods=["post"])
+    def cerrar(self, request, pk=None):
         datos = CerrarTurnoSerializer(data=request.data)
         datos.is_valid(raise_exception=True)
-        turno = turno_abierto(request.user)
-        if turno is None:
-            return Response({"detail": "No tienes un turno abierto."}, status=400)
-        resumen = resumen_turno(turno)
-        cerrado = cerrar_turno(turno, datos.validated_data["monto_cierre_declarado"])
-        resumen["diferencia"] = round(
-            cerrado.monto_cierre_declarado - resumen["efectivo_esperado"],
-            2,
-        )
-        return Response(
-            {"turno": TurnoSerializer(cerrado).data, "resumen": resumen}
-        )
+        return self._cerrar(self.get_object(), datos.validated_data["monto_cierre_real"])

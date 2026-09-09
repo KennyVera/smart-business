@@ -54,6 +54,13 @@ class Usuario(models.Model):
     password_hash = models.CharField(max_length=255)
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
+    email = models.CharField(max_length=100, blank=True, null=True)
+    foto_perfil = models.ImageField(
+        upload_to="perfiles/",
+        max_length=255,
+        blank=True,
+        null=True,
+    )
     estado_activo = models.BooleanField(default=True)
 
     class Meta:
@@ -97,3 +104,37 @@ class SesionUsuario(models.Model):
 
     def __str__(self):
         return f"{self.usuario_id} {self.token_sesion[:8]}"
+
+
+class Notificacion(models.Model):
+    """Avisos in-app para el gerente (descuadres, inventario, sistema)."""
+
+    CAJA = "CAJA"
+    INVENTARIO = "INVENTARIO"
+    SISTEMA = "SISTEMA"
+    TIPOS = [
+        (CAJA, "Caja"),
+        (INVENTARIO, "Inventario"),
+        (SISTEMA, "Sistema"),
+    ]
+
+    id_notificacion = models.AutoField(primary_key=True)
+    usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name="notificaciones",
+    )
+    titulo = models.CharField(max_length=100)
+    mensaje = models.TextField()
+    tipo = models.CharField(max_length=20, choices=TIPOS, default=SISTEMA)
+    leida = models.BooleanField(default=False)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "notificacion"
+        verbose_name = "Notificación"
+        verbose_name_plural = "Notificaciones"
+        ordering = ["-fecha_creacion", "-id_notificacion"]
+
+    def __str__(self):
+        return f"{self.titulo} → {self.usuario_id}"

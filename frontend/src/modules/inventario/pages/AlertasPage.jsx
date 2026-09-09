@@ -2,6 +2,7 @@ import { AlertTriangle, CalendarClock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { usePagina } from "../../../shared/paginado";
 import { fetchSucursalesAsignables } from "../../usuarios/api/usuariosApi";
+import { puedeOperarInventario } from "../../usuarios/rbac";
 import AlertasInventario from "../components/AlertasInventario";
 import AlertasResumen from "../components/AlertasResumen";
 import InventarioHeader from "../components/InventarioHeader";
@@ -16,6 +17,7 @@ const VENTANAS = [7, 15, 30, 60];
 
 function AlertasPage() {
   const fija = useMemo(() => sucursalDeSesion(), []);
+  const puedeMerma = puedeOperarInventario();
   const [sucursales, setSucursales] = useState([]);
   const [sucursal, setSucursal] = useState(fija ? String(fija.id) : "");
   const [dias, setDias] = useState(30);
@@ -80,20 +82,24 @@ function AlertasPage() {
           paginaCaducar={paginaCaducar}
           onPaginaCritico={setPaginaCritico}
           onPaginaCaducar={setPaginaCaducar}
-          onMerma={(fila) => setMerma({ open: true, fila })}
+          onMerma={
+            puedeMerma ? (fila) => setMerma({ open: true, fila }) : undefined
+          }
         />
       ) : null}
 
-      <MermaFormModal
-        show={merma.open}
-        fila={merma.fila}
-        onClose={() => setMerma({ open: false, fila: null })}
-        onSaved={() => {
-          setAviso(`Merma registrada para ${merma.fila?.producto_nombre}.`);
-          setMerma({ open: false, fila: null });
-          recargar();
-        }}
-      />
+      {puedeMerma ? (
+        <MermaFormModal
+          show={merma.open}
+          fila={merma.fila}
+          onClose={() => setMerma({ open: false, fila: null })}
+          onSaved={() => {
+            setAviso(`Merma registrada para ${merma.fila?.producto_nombre}.`);
+            setMerma({ open: false, fila: null });
+            recargar();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

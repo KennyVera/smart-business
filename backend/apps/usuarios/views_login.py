@@ -38,4 +38,5 @@ class LoginView(APIView):
         )
         data = UsuarioSerializer(cuenta).data
         data["access_token"] = token
+        data["correo"] = data.get("email") or ""
         return Response(data)

@@ -54,7 +54,12 @@ class TurnoSerializer(serializers.ModelSerializer):
             "fecha_apertura",
             "fecha_cierre",
             "monto_apertura",
+            "monto_esperado",
+            "monto_cierre_real",
             "monto_cierre_declarado",
+            "descuadre",
+            "estado",
+            "auditado",
             "abierto",
         )
 
@@ -85,9 +90,27 @@ class AbrirTurnoSerializer(serializers.Serializer):
 
 
 class CerrarTurnoSerializer(serializers.Serializer):
+    monto_cierre_real = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        min_value=Decimal("0"),
+        max_value=MONTO_MAXIMO,
+        required=False,
+    )
     monto_cierre_declarado = serializers.DecimalField(
         max_digits=10,
         decimal_places=2,
         min_value=Decimal("0"),
         max_value=MONTO_MAXIMO,
+        required=False,
     )
+
+    def validate(self, attrs):
+        real = attrs.get("monto_cierre_real")
+        declarado = attrs.get("monto_cierre_declarado")
+        if real is None and declarado is None:
+            raise serializers.ValidationError(
+                {"monto_cierre_real": "Indica el efectivo contado en caja."}
+            )
+        attrs["monto_cierre_real"] = real if real is not None else declarado
+        return attrs

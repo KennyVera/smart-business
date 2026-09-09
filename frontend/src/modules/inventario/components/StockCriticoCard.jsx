@@ -30,7 +30,7 @@ function StockCriticoCard({ filas, total, pagina, mostrarSucursal, onPagina, onM
                   <th className="text-end">Actual</th>
                   <th className="text-end">Mínimo</th>
                   <th className="text-end">Faltan</th>
-                  <th className="text-end">Merma</th>
+                  {onMerma ? <th className="text-end">Merma</th> : null}
                 </tr>
               </thead>
               <tbody>
@@ -47,18 +47,20 @@ function StockCriticoCard({ filas, total, pagina, mostrarSucursal, onPagina, onM
                     <td className="inv-num inv-num-fuerte">{fila.cantidad_actual}</td>
                     <td className="inv-num text-muted">{fila.stock_minimo}</td>
                     <td className="inv-num">{fila.faltante}</td>
-                    <td>
-                      <div className="inv-acciones">
-                        <button
-                          type="button"
-                          title="Registrar merma"
-                          disabled={fila.cantidad_actual <= 0}
-                          onClick={() => onMerma(fila)}
-                        >
-                          <PackageMinus size={15} strokeWidth={1.75} />
-                        </button>
-                      </div>
-                    </td>
+                    {onMerma ? (
+                      <td>
+                        <div className="inv-acciones">
+                          <button
+                            type="button"
+                            title="Registrar merma"
+                            disabled={fila.cantidad_actual <= 0}
+                            onClick={() => onMerma(fila)}
+                          >
+                            <PackageMinus size={15} strokeWidth={1.75} />
+                          </button>
+                        </div>
+                      </td>
+                    ) : null}
                   </tr>
                 ))}
               </tbody>

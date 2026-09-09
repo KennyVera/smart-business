@@ -54,13 +54,23 @@
   border: 0;
   background: transparent;
   color: #495057;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.header-bell::after {
+  display: none;
+}
+
+.header-bell-dropdown .dropdown-toggle {
+  box-shadow: none;
 }
 
 .header-badge {
   position: absolute;
   top: -4px;
   right: -6px;
-  background: var(--sb-accent);
+  background: #dc3545;
   color: #fff;
   border-radius: 999px;
   font-size: 0.65rem;
@@ -68,6 +78,99 @@
   height: 16px;
   display: grid;
   place-items: center;
+  font-weight: 700;
+}
+
+.header-badge.bg-danger {
+  background: #dc3545;
+}
+
+.header-notif-menu {
+  width: min(360px, 92vw);
+  padding: 0;
+  border: 1px solid #e8ecef;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+  overflow: hidden;
+}
+
+.header-notif-head {
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-bottom: 1px solid #f0f0f0;
+  color: #1c1f24;
+}
+
+.header-notif-vacio {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.header-notif-item {
+  width: 100%;
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fff;
+  padding: 0.75rem 1rem;
+}
+
+.header-notif-item:hover {
+  background: #f7faf8;
+}
+
+.header-notif-item.is-nueva {
+  background: #f3f4f6;
+}
+
+.header-notif-item.is-nueva strong {
+  font-weight: 800;
+}
+
+.header-notif-icono {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #eef2f0;
+  color: #495057;
+}
+
+.header-notif-icono[data-tipo="CAJA"] {
+  background: #e8f7ef;
+  color: #00aa5d;
+}
+
+.header-notif-icono[data-tipo="INVENTARIO"] {
+  background: #fff4e5;
+  color: #c47b00;
+}
+
+.header-notif-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.header-notif-texto strong {
+  font-size: 0.84rem;
+  color: #1c1f24;
+}
+
+.header-notif-texto small {
+  font-size: 0.78rem;
+  color: #6c757d;
+  line-height: 1.35;
+  white-space: normal;
 }
 
 .header-user {

@@ -159,6 +159,7 @@ class VentaSerializer(serializers.ModelSerializer):
             "total",
             "monto_recibido",
             "cambio",
+            "anulada",
             "detalles",
         )
 

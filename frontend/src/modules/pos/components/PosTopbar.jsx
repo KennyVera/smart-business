@@ -2,24 +2,21 @@ import {
   FileBarChart,
   LayoutDashboard,
   LockKeyhole,
-  LogOut,
   Package,
   ShoppingCart,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { logout } from "../../usuarios/api/authApi";
-import { borrarSesion, iniciales, leerSesion, rolDeSesion } from "../../usuarios/auth/sesion";
+import { NavLink } from "react-router-dom";
+import { rolDeSesion } from "../../usuarios/auth/sesion";
+import UserProfileDropdown from "../../usuarios/components/UserProfileDropdown";
 import RelojPos from "./RelojPos";
 
-/** El cajero solo vende: catálogo y reportes quedan fuera de su menú. */
-const ROLES_CATALOGO = ["administrador", "gerente", "bodeguero"];
+const ROLES_CATALOGO = ["administrador", "bodeguero"];
 const ROLES_REPORTES = ["administrador", "gerente"];
+const ROLES_PANEL = ["administrador", "gerente"];
 
 function PosTopbar({ turno, onCerrarTurno }) {
-  const navigate = useNavigate();
-  const sesion = leerSesion();
   const rol = rolDeSesion();
-  const nombre = sesion?.nombre_completo || "Cajero";
+  const extraCaja = turno ? ` · Caja ${turno.terminal_serie}` : "";
 
   const enlaces = [
     { to: "/pos", label: "Ventas", icon: ShoppingCart, visible: true },
@@ -36,22 +33,12 @@ function PosTopbar({ turno, onCerrarTurno }) {
       visible: ROLES_REPORTES.includes(rol),
     },
     {
-      to: "/",
+      to: rol === "gerente" ? "/gerente" : "/",
       label: "Panel",
       icon: LayoutDashboard,
-      visible: ROLES_REPORTES.includes(rol),
+      visible: ROLES_PANEL.includes(rol),
     },
   ].filter((enlace) => enlace.visible);
-
-  async function cerrarSesion() {
-    try {
-      await logout();
-    } catch {
-      /* la sesión local se limpia igual */
-    }
-    borrarSesion();
-    navigate("/login", { replace: true });
-  }
 
   return (
     <header className="pos-topbar">
@@ -81,16 +68,7 @@ function PosTopbar({ turno, onCerrarTurno }) {
 
       <div className="pos-topbar-derecha">
         <RelojPos />
-        <div className="pos-cajero">
-          <span className="pos-avatar">{iniciales(nombre)}</span>
-          <div>
-            <strong>{nombre}</strong>
-            <small>
-              {sesion?.rol_nombre || "Cajero"}
-              {turno ? ` · Caja ${turno.terminal_serie}` : ""}
-            </small>
-          </div>
-        </div>
+        <UserProfileDropdown variant="pos" extraRol={extraCaja} />
         <button
           type="button"
           className="pos-btn-borde"
@@ -100,14 +78,6 @@ function PosTopbar({ turno, onCerrarTurno }) {
         >
           <LockKeyhole size={16} strokeWidth={1.75} />
           Cerrar turno
-        </button>
-        <button
-          type="button"
-          className="pos-btn-icono"
-          onClick={cerrarSesion}
-          title="Cerrar sesión"
-        >
-          <LogOut size={18} strokeWidth={1.75} />
         </button>
       </div>
     </header>
