@@ -31,14 +31,14 @@ import {
   buscarReporte,
   columnasVisibles,
   parametrosDe,
-  rangoPorDefecto,
+  rangoMesActual,
 } from "../reportes";
 import { sucursalDeSesion } from "../sucursal";
 import "../inventario.css";
 import "../reportes.css";
 
 const ESPERA_GRAFICO = 450;
-const COLS_LANDSCAPE = 6;
+const COLS_LANDSCAPE = 5;
 
 function limiteCrm(valor) {
   const n = Number(valor);
@@ -56,10 +56,11 @@ function ReportesInventario() {
   const [filtros, setFiltros] = useState(() => ({
     sucursal: fija ? String(fija.id) : "",
     dias: 60,
-    ...rangoPorDefecto(30),
+    ...rangoMesActual(),
   }));
   const [crmTipo, setCrmTipo] = useState("top_gastos");
   const [crmLimite, setCrmLimite] = useState(10);
+  const [crmFechas, setCrmFechas] = useState(() => rangoMesActual());
   const [activo, setActivo] = useState(null);
   const [datos, setDatos] = useState(null);
   const [cargando, setCargando] = useState(false);
@@ -74,7 +75,12 @@ function ReportesInventario() {
   const columnas = reporte ? columnasVisibles(reporte, !fija && !esCrm) : [];
   const landscape = columnas.length >= COLS_LANDSCAPE;
   const params = reporte && !esCrm ? parametrosDe(reporte, filtros) : null;
-  const crmParams = { tipo: crmTipo, limite: limiteCrm(crmLimite) };
+  const crmParams = {
+    tipo: crmTipo,
+    limite: limiteCrm(crmLimite),
+    fecha_desde: crmFechas.desde,
+    fecha_hasta: crmFechas.hasta,
+  };
   const consulta = JSON.stringify(
     esCrm ? [activo, crmParams] : [activo, params],
   );
@@ -90,7 +96,9 @@ function ReportesInventario() {
         titulo:
           crmTipo === "cumpleanos_mes"
             ? "Cumpleañeros del mes"
-            : "Ranking de clientes",
+            : crmTipo === "clientes_perdidos"
+              ? "Clientes en riesgo de abandono"
+              : "Ranking de clientes",
         medida: crmTipo === "top_gastos" ? "dinero" : "numero",
       }
     : reporte?.grafico;
@@ -205,6 +213,8 @@ function ReportesInventario() {
             activo={activo === item.clave}
             generando={trabajo?.clave === item.clave}
             bloqueado={Boolean(trabajo)}
+            filtros={item.filtros === "fechas" ? filtros : undefined}
+            onFiltros={item.filtros === "fechas" ? cambiar : undefined}
             onVer={() => setActivo(item.clave)}
             onPdf={() => descargar(item.clave)}
           />
@@ -216,8 +226,12 @@ function ReportesInventario() {
             bloqueado={Boolean(trabajo)}
             tipo={crmTipo}
             limite={crmLimite}
+            desde={crmFechas.desde}
+            hasta={crmFechas.hasta}
             onTipo={setCrmTipo}
             onLimite={setCrmLimite}
+            onDesde={(valor) => setCrmFechas((a) => ({ ...a, desde: valor }))}
+            onHasta={(valor) => setCrmFechas((a) => ({ ...a, hasta: valor }))}
             onVer={() => setActivo(CLAVE_CRM)}
             onPdf={() => descargar(CLAVE_CRM)}
           />
@@ -235,9 +249,36 @@ function ReportesInventario() {
               <p>{alcance}</p>
             </div>
             <div className="rep-vista-acciones">
-              {!esCrm ? (
+              {esCrm ? (
+                <div className="rep-filtros">
+                  <label>
+                    Desde
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={crmFechas.desde}
+                      max={crmFechas.hasta}
+                      onChange={(e) =>
+                        setCrmFechas((a) => ({ ...a, desde: e.target.value }))
+                      }
+                    />
+                  </label>
+                  <label>
+                    Hasta
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={crmFechas.hasta}
+                      min={crmFechas.desde}
+                      onChange={(e) =>
+                        setCrmFechas((a) => ({ ...a, hasta: e.target.value }))
+                      }
+                    />
+                  </label>
+                </div>
+              ) : (
                 <ReporteFiltros reporte={reporte} filtros={filtros} onCambio={cambiar} />
-              ) : null}
+              )}
               <button
                 type="button"
                 className="btn-rep"

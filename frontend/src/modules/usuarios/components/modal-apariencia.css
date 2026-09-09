@@ -2,6 +2,20 @@
   width: 3.5rem;
   height: 2.5rem;
   padding: 0.2rem;
+  flex-shrink: 0;
+}
+
+.upd-color-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.upd-color-hex {
+  max-width: 7.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
 }
 
 .upd-logo-preview {

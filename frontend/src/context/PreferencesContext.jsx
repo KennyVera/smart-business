@@ -61,7 +61,7 @@ export function PreferencesProvider({ children }) {
   const updatePreferences = useCallback(async (cambios) => {
     const { data } = await actualizarMisPreferencias(cambios);
     const siguiente = mapear(data);
-    setPrefs(siguiente);
+    setPrefs((prev) => ({ ...prev, ...siguiente }));
     return siguiente;
   }, []);
 

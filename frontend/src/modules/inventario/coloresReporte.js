@@ -1,6 +1,6 @@
 /** Utilidades de color para reportes (acento de preferencias del usuario). */
 
-export const ACENTO_DEF = "#00AA5D";
+export const ACENTO_DEF = "#00aa5d";
 
 function hexARgb(hex) {
   const limpio = String(hex || "")
@@ -23,7 +23,7 @@ function hexARgb(hex) {
 
 function rgbAHex({ r, g, b }) {
   const a = (n) => n.toString(16).padStart(2, "0");
-  return `#${a(r)}${a(g)}${a(b)}`.toUpperCase();
+  return `#${a(r)}${a(g)}${a(b)}`;
 }
 
 /** Mezcla un color con blanco (t=0) o negro (t=1) vía factor 0..1 hacia `otro`. */

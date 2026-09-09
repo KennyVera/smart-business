@@ -10,16 +10,23 @@ import {
 } from "recharts";
 import { Settings } from "lucide-react";
 import { usePreferences } from "../../../context/PreferencesContext";
+import { paletaDesdeAcento } from "../../inventario/coloresReporte";
 
 function SalesLineChart({ series = [], lineas = [] }) {
   const { colorGraficos } = usePreferences();
-  const acento = colorGraficos || "#00AA5D";
+  const acento = colorGraficos || "#00aa5d";
+  const paleta = paletaDesdeAcento(acento);
   const datos = series.length ? series : [{ mes: "—", total: 0 }];
-  const keys = lineas.length
-    ? lineas
-    : Object.keys(datos[0] || {})
-        .filter((k) => k !== "mes")
-        .map((key, i) => ({ key, color: i === 0 ? acento : "#6c757d" }));
+  const keys = (
+    lineas.length
+      ? lineas
+      : Object.keys(datos[0] || {})
+          .filter((k) => k !== "mes")
+          .map((key) => ({ key }))
+  ).map((line, i) => ({
+    key: line.key,
+    color: paleta[i % paleta.length],
+  }));
 
   return (
     <div className="page-card h-100">
@@ -39,12 +46,12 @@ function SalesLineChart({ series = [], lineas = [] }) {
             />
             <Tooltip />
             <Legend />
-            {keys.map((line, i) => (
+            {keys.map((line) => (
               <Line
-                key={line.key}
+                key={`${line.key}-${line.color}`}
                 type="monotone"
                 dataKey={line.key}
-                stroke={i === 0 ? acento : line.color}
+                stroke={line.color}
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4 }}

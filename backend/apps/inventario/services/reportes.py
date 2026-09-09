@@ -116,17 +116,16 @@ def mermas(registros, desde, hasta):
     }
 
 
-def stock_muerto(stock, ultimas_salidas, ultimos_movimientos, dias):
+def stock_muerto(stock, vendidos, ultimas_ventas, desde, hasta):
+    """Stock > 0 sin ventas POS en el rango [desde, hasta]."""
     ahora = timezone.now()
     filas = []
     for fila in stock.filter(cantidad_actual__gt=0):
         clave = (fila.producto_id, fila.sucursal_id)
-        referencia = con_zona(
-            ultimas_salidas.get(clave) or ultimos_movimientos.get(clave)
-        )
-        sin_mover = (ahora - referencia).days if referencia else None
-        if sin_mover is not None and sin_mover < dias:
+        if clave in vendidos:
             continue
+        referencia = con_zona(ultimas_ventas.get(clave))
+        sin_mover = (ahora - referencia).days if referencia else None
         filas.append(
             {
                 "sku": fila.producto.sku,
@@ -134,7 +133,7 @@ def stock_muerto(stock, ultimas_salidas, ultimos_movimientos, dias):
                 "categoria": fila.producto.categoria.nombre,
                 "sucursal": fila.sucursal.nombre,
                 "cantidad": fila.cantidad_actual,
-                "dias_sin_salida": sin_mover if sin_mover is not None else "Sin registros",
+                "dias_sin_salida": sin_mover if sin_mover is not None else "Sin ventas",
                 "capital": plata(fila.cantidad_actual * fila.producto.costo_actual),
             }
         )
@@ -142,7 +141,7 @@ def stock_muerto(stock, ultimas_salidas, ultimos_movimientos, dias):
     grafico = agrupar(filas, "categoria", "capital")
     return {
         "titulo": "Stock muerto / sin rotación",
-        "dias": dias,
+        "periodo": {"desde": desde.isoformat(), "hasta": hasta.isoformat()},
         "resumen": [
             dato("Capital inmovilizado", round(sum(f["capital"] for f in filas), 2), "dinero"),
             dato("Productos sin rotar", len(filas)),

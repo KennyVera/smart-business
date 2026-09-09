@@ -1,6 +1,6 @@
 import { usePreferences } from "../../../context/PreferencesContext";
 import { ACENTO_DEF, varsAcento } from "../coloresReporte";
-import { formatearValor } from "../reportes";
+import { formatearValor, textoPeriodo } from "../reportes";
 import ReporteLeyenda from "./ReporteLeyenda";
 import ReporteTabla from "./ReporteTabla";
 
@@ -21,6 +21,7 @@ function ReportePdfDocumento({
   const { colorGraficos, logoPersonalizado } = usePreferences();
   const acento = colorGraficos || ACENTO_DEF;
   const tema = varsAcento(acento);
+  const periodo = textoPeriodo(datos?.periodo);
   if (!datos) return null;
 
   return (
@@ -70,6 +71,7 @@ function ReportePdfDocumento({
         </header>
 
         <h1 className="rep-pdf-titulo">{datos.titulo}</h1>
+        {periodo ? <p className="rep-pdf-periodo">{periodo}</p> : null}
         <p className="rep-pdf-alcance">{alcance}</p>
 
         <div className="rep-pdf-resumen">

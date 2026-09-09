@@ -20,6 +20,13 @@ export const REPORTE_CRM = {
   columnas: [
     { clave: "cedula", etiqueta: "Cédula", tipo: "sku" },
     { clave: "cliente", etiqueta: "Nombres", tipo: "nombre" },
+    {
+      clave: "productos_frecuentes",
+      etiqueta: "Productos frecuentes",
+      tipo: "truncado",
+      pdfAncho: "28%",
+    },
+    { clave: "ultima_visita", etiqueta: "Última visita", tipo: "fecha" },
     { clave: "visitas", etiqueta: "Visitas", tipo: "numero" },
     { clave: "total_gastado", etiqueta: "Total gastado", tipo: "dinero", fuerte: true },
   ],
@@ -79,9 +86,9 @@ export const REPORTES = [
     ruta: "stock-muerto",
     titulo: "Stock muerto / sin rotación",
     detalle:
-      "Productos con existencias que no registran salidas en el periodo. Capital dormido en la percha.",
+      "Productos con existencias sin ventas POS en el rango de fechas. Capital dormido en la percha.",
     icono: PackageX,
-    filtros: "dias",
+    filtros: "fechas",
     grafico: { tipo: "barras", titulo: "Capital inmovilizado por categoría", medida: "dinero" },
     columnas: [
       SKU,
@@ -147,6 +154,13 @@ export function rangoPorDefecto(dias = 30) {
   return { desde: iso(desde), hasta: iso(hasta) };
 }
 
+/** Primer día del mes actual → hoy (demo BI / sustentación). */
+export function rangoMesActual() {
+  const hasta = new Date();
+  const desde = new Date(hasta.getFullYear(), hasta.getMonth(), 1);
+  return { desde: iso(desde), hasta: iso(hasta) };
+}
+
 export function iso(fecha) {
   return fecha.toISOString().slice(0, 10);
 }
@@ -155,6 +169,8 @@ export function parametrosDe(reporte, filtros) {
   const params = {};
   if (filtros.sucursal) params.sucursal = filtros.sucursal;
   if (reporte.filtros === "fechas") {
+    params.fecha_desde = filtros.desde;
+    params.fecha_hasta = filtros.hasta;
     params.start_date = filtros.desde;
     params.end_date = filtros.hasta;
   }
@@ -173,7 +189,22 @@ export function alcanceDe(reporte, datos, sucursal) {
   return partes.join("  ·  ");
 }
 
+export function textoPeriodo(periodo) {
+  if (!periodo?.desde || !periodo?.hasta) return "";
+  return `Período analizado: ${fechaLarga(periodo.desde)} al ${fechaLarga(periodo.hasta)}`;
+}
+
 function fechaCorta(texto) {
   const [anio, mes, dia] = String(texto).split("-");
   return `${dia}/${mes}/${anio}`;
+}
+
+function fechaLarga(texto) {
+  const fecha = new Date(`${texto}T12:00:00`);
+  if (Number.isNaN(fecha.getTime())) return fechaCorta(texto);
+  return fecha.toLocaleDateString("es-EC", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }

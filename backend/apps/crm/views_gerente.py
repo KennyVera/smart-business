@@ -40,15 +40,20 @@ def _local(dt):
     return timezone.localtime(dt)
 
 
-def _filtro_ventas_sucursal(sucursal_id):
-    return Q(
+def _filtro_ventas_sucursal(sucursal_id, desde=None, hasta=None):
+    filtro = Q(
         ventas__anulada=False,
         ventas__turno__terminal__sucursal_id=sucursal_id,
     )
+    if desde is not None:
+        filtro &= Q(ventas__fecha_hora__gte=desde)
+    if hasta is not None:
+        filtro &= Q(ventas__fecha_hora__lte=hasta)
+    return filtro
 
 
-def clientes_con_metricas(sucursal_id):
-    filtro = _filtro_ventas_sucursal(sucursal_id)
+def clientes_con_metricas(sucursal_id, desde=None, hasta=None):
+    filtro = _filtro_ventas_sucursal(sucursal_id, desde=desde, hasta=hasta)
     return Cliente.objects.annotate(
         total_gastado=Coalesce(
             Sum("ventas__total_factura", filter=filtro),
@@ -80,9 +85,9 @@ def aplicar_reporte(qs, reporte, limite=None):
             "nombres",
         )
     if reporte == "riesgo_abandono":
-        corte = timezone.now() - timedelta(days=30)
+        corte = timezone.now() - timedelta(days=45)
         return qs.filter(
-            frecuencia_visitas__gt=3,
+            frecuencia_visitas__gt=0,
             ultima_compra__lt=corte,
         ).order_by("ultima_compra", "apellidos", "nombres")
     if reporte == "cumpleanos_mes":

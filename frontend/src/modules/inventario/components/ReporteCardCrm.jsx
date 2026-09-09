@@ -3,6 +3,7 @@ import { Eye, FileDown, Loader2, Users } from "lucide-react";
 const TIPOS = [
   { value: "top_gastos", label: "Top Mayor Gasto" },
   { value: "top_visitas", label: "Top Más Frecuentes" },
+  { value: "clientes_perdidos", label: "Clientes perdidos (+45 días)" },
   { value: "cumpleanos_mes", label: "Cumpleañeros del mes" },
 ];
 
@@ -12,8 +13,12 @@ function ReporteCardCrm({
   bloqueado,
   tipo,
   limite,
+  desde,
+  hasta,
   onTipo,
   onLimite,
+  onDesde,
+  onHasta,
   onVer,
   onPdf,
 }) {
@@ -55,6 +60,31 @@ function ReporteCardCrm({
             placeholder="Ej: 10"
             onChange={(e) => onLimite(e.target.value)}
             disabled={bloqueado}
+          />
+        </label>
+      </div>
+
+      <div className="rep-card-crm-controles d-flex gap-2 align-items-end flex-wrap">
+        <label className="rep-card-crm-campo flex-grow-1">
+          <span>Desde</span>
+          <input
+            type="date"
+            className="form-control form-control-sm"
+            value={desde}
+            max={hasta}
+            disabled={bloqueado}
+            onChange={(e) => onDesde(e.target.value)}
+          />
+        </label>
+        <label className="rep-card-crm-campo flex-grow-1">
+          <span>Hasta</span>
+          <input
+            type="date"
+            className="form-control form-control-sm"
+            value={hasta}
+            min={desde}
+            disabled={bloqueado}
+            onChange={(e) => onHasta(e.target.value)}
           />
         </label>
       </div>

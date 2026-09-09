@@ -6,6 +6,40 @@ import "./modal-apariencia.css";
 
 const FILAS = [10, 25, 50, 100];
 
+function CampoColor({ label, value, onChange, defecto }) {
+  const seguro = /^#[0-9A-Fa-f]{6}$/.test(value) ? value.toLowerCase() : defecto;
+  return (
+    <div className="upd-color-campo mb-3">
+      <label className="form-label">{label}</label>
+      <div className="upd-color-fila">
+        <input
+          type="color"
+          className="form-control form-control-color"
+          value={seguro}
+          onChange={(e) => onChange(normalizarHex(e.target.value, defecto))}
+          onInput={(e) => onChange(normalizarHex(e.target.value, defecto))}
+        />
+        <input
+          type="text"
+          className="form-control upd-color-hex"
+          value={value}
+          maxLength={7}
+          spellCheck={false}
+          aria-label={`${label} (hex)`}
+          onChange={(e) => {
+            let crudo = e.target.value.trim();
+            if (!crudo.startsWith("#")) crudo = `#${crudo}`;
+            if (/^#[0-9A-Fa-f]{0,6}$/.test(crudo)) {
+              onChange(crudo.length === 7 ? crudo.toLowerCase() : crudo);
+            }
+          }}
+          onBlur={() => onChange(normalizarHex(value, defecto))}
+        />
+      </div>
+    </div>
+  );
+}
+
 function ModalApariencia({ show, onClose }) {
   const {
     colorSidebar,
@@ -24,6 +58,7 @@ function ModalApariencia({ show, onClose }) {
   const [error, setError] = useState("");
   const [guardando, setGuardando] = useState(false);
 
+  // Solo reseedar al abrir el modal (no al actualizar prefs mid-edit / post-save).
   useEffect(() => {
     if (!show) return;
     setSidebar(normalizarHex(colorSidebar, "#000000"));
@@ -33,7 +68,8 @@ function ModalApariencia({ show, onClose }) {
     setLogo(null);
     setPreview(logoPersonalizado || "");
     setError("");
-  }, [show, colorSidebar, colorGraficos, colorLogs, filasPorPagina, logoPersonalizado]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al abrir
+  }, [show]);
 
   function alElegirLogo(archivo) {
     setLogo(archivo);
@@ -44,11 +80,14 @@ function ModalApariencia({ show, onClose }) {
     evento.preventDefault();
     setGuardando(true);
     setError("");
+    const colorSidebarOk = normalizarHex(sidebar, "#000000");
+    const colorGraficosOk = normalizarHex(graficos, "#00aa5d");
+    const colorLogsOk = normalizarHex(logs, "#00aa5d");
     try {
       await updatePreferences({
-        color_sidebar: normalizarHex(sidebar, "#000000"),
-        color_graficos: normalizarHex(graficos, "#00aa5d"),
-        color_logs: normalizarHex(logs, "#00aa5d"),
+        color_sidebar: colorSidebarOk,
+        color_graficos: colorGraficosOk,
+        color_logs: colorLogsOk,
         filas_por_pagina: Number(filas),
         ...(logo instanceof File ? { logo_personalizado: logo } : {}),
       });
@@ -68,30 +107,29 @@ function ModalApariencia({ show, onClose }) {
         </Modal.Header>
         <Modal.Body className="upd-apariencia">
           {error ? <p className="text-danger">{error}</p> : null}
-          <label className="form-label">Color del menú</label>
-          <input
-            type="color"
-            className="form-control form-control-color mb-3"
+
+          <CampoColor
+            label="Color del menú"
             value={sidebar}
-            onChange={(e) => setSidebar(normalizarHex(e.target.value, "#000000"))}
+            defecto="#000000"
+            onChange={setSidebar}
           />
-          <label className="form-label">Color de gráficos</label>
-          <input
-            type="color"
-            className="form-control form-control-color mb-3"
+          <CampoColor
+            label="Color de gráficos"
             value={graficos}
-            onChange={(e) => setGraficos(normalizarHex(e.target.value, "#00aa5d"))}
+            defecto="#00aa5d"
+            onChange={setGraficos}
           />
-          <label className="form-label">Color de los logs</label>
-          <input
-            type="color"
-            className="form-control form-control-color mb-3"
+          <CampoColor
+            label="Color de los logs"
             value={logs}
-            onChange={(e) => setLogs(normalizarHex(e.target.value, "#00aa5d"))}
+            defecto="#00aa5d"
+            onChange={setLogs}
           />
           <small className="text-muted d-block mb-3">
             Confirmaciones y avisos del sistema (aparte de los gráficos).
           </small>
+
           <label className="form-label">Logo personalizado</label>
           {preview ? (
             <img src={preview} alt="" className="upd-logo-preview mb-2" />

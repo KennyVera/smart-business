@@ -14,4 +14,11 @@ class ReporteClientesView(APIView):
     def get(self, request):
         tipo = (request.query_params.get("tipo") or "top_gastos").strip()
         limite = request.query_params.get("limite")
-        return Response(armar_reporte(request.user, tipo=tipo, limite=limite))
+        return Response(
+            armar_reporte(
+                request.user,
+                tipo=tipo,
+                limite=limite,
+                params=request.query_params,
+            )
+        )

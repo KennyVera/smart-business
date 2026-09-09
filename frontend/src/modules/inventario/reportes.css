@@ -441,6 +441,14 @@
   margin: 16px 0 4px;
 }
 
+.rep-pdf-periodo {
+  text-align: center;
+  font-size: 11px;
+  color: #6c757d;
+  margin: 0 0 6px;
+  font-weight: 500;
+}
+
 .rep-pdf-alcance {
   text-align: center;
   font-size: 10px;
@@ -582,6 +590,24 @@
 .rep-pdf-tabla tbody td.inv-nombre {
   font-weight: 600;
   color: #111;
+}
+
+.rep-pdf-tabla tbody td.rep-celda-truncada {
+  width: 30%;
+  max-width: 220px;
+  white-space: normal;
+  word-break: break-word;
+  font-size: 8.5px;
+  line-height: 1.35;
+}
+
+.rep-celda-truncada {
+  max-width: 280px;
+}
+
+.rep-truncado {
+  max-width: 280px;
+  vertical-align: bottom;
 }
 
 .rep-pdf-pie {
