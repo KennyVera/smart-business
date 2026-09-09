@@ -1,10 +1,9 @@
 import { Settings } from "lucide-react";
 import Paginacion from "../../../shared/Paginacion";
 import { usePaginacion } from "../../../shared/usePaginacion";
-import { RECENT_BRANCHES } from "../data/recentBranches";
 
-function DashboardTable() {
-  const pagina = usePaginacion(RECENT_BRANCHES);
+function DashboardTable({ sucursales = [] }) {
+  const pagina = usePaginacion(sucursales);
 
   return (
     <div className="page-card">
@@ -24,7 +23,7 @@ function DashboardTable() {
             </tr>
           </thead>
           <tbody>
-            {RECENT_BRANCHES.length === 0 ? (
+            {sucursales.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-muted">
                   Aún no hay registros.

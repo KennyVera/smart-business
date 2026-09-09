@@ -1,15 +1,15 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { CATEGORY_SHARES, pieSlices } from "../data/categoryShares";
+import { pieSlices } from "../data/categoryShares";
 
-function CategoriesDonut() {
-  const slices = pieSlices(CATEGORY_SHARES);
+function CategoriesDonut({ categorias = [] }) {
+  const slices = pieSlices(categorias);
   const vacio = slices.length === 1 && slices[0].name === "Sin datos";
 
   return (
     <div className="page-card h-100">
       <h2 className="mb-2">Categorías populares</h2>
       <div className="donut-legend">
-        {CATEGORY_SHARES.map((item) => (
+        {(categorias.length ? categorias : slices).map((item) => (
           <span key={item.name} className="donut-legend__item">
             <i style={{ background: item.color }} />
             {item.name}

@@ -1,14 +1,24 @@
 const LETRAS_NOMBRE = /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]/g;
 const CORREO_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-const NOMBRE_MAX = 25;
-const CORREO_MAX = 25;
+const NOMBRE_MAX = 100;
+const CORREO_MAX = 100;
+const TELEFONO_MAX = 10;
+const CEDULA_MAX = 13;
 const CORREO_PERMITIDO = /[^A-Za-z0-9._%+\-@]/g;
 const COEF_CEDULA = [2, 1, 2, 1, 2, 1, 2, 1, 2];
 const COEF_RUC_PRIVADO = [4, 3, 2, 7, 6, 5, 4, 3, 2];
 const COEF_RUC_PUBLICO = [3, 2, 7, 6, 5, 4, 3, 2];
 
-function soloDigitos(valor) {
+export function soloDigitos(valor) {
   return String(valor || "").replace(/\D/g, "");
+}
+
+export function filtrarCedula(valor) {
+  return soloDigitos(valor).slice(0, CEDULA_MAX);
+}
+
+export function filtrarTelefono(valor) {
+  return soloDigitos(valor).slice(0, TELEFONO_MAX);
 }
 
 function provinciaOk(codigo) {
@@ -59,7 +69,11 @@ export function identificacionValida(valor) {
 }
 
 export function filtrarNombre(valor) {
-  return valor.replace(LETRAS_NOMBRE, "").replace(/^\s+/, "").replace(/\s+/g, " ").slice(0, NOMBRE_MAX);
+  return valor
+    .replace(LETRAS_NOMBRE, "")
+    .replace(/^\s+/, "")
+    .replace(/\s+/g, " ")
+    .slice(0, NOMBRE_MAX);
 }
 
 export function filtrarCorreo(valor) {
@@ -73,8 +87,14 @@ function nombrePersonaOk(valor) {
   return /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:[ '\-][A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)*$/.test(texto);
 }
 
-export function validarCliente({ cedula, nombres, apellidos, correo }) {
-  const errores = { cedula: "", nombres: "", apellidos: "", correo: "" };
+export function validarCliente({ cedula, nombres, apellidos, correo, telefono }) {
+  const errores = {
+    cedula: "",
+    nombres: "",
+    apellidos: "",
+    correo: "",
+    telefono: "",
+  };
   const identificacion = soloDigitos(cedula);
   if (identificacion.length !== 10 && identificacion.length !== 13) {
     errores.cedula = "La cédula debe tener 10 dígitos o el RUC 13.";
@@ -84,23 +104,24 @@ export function validarCliente({ cedula, nombres, apellidos, correo }) {
   }
   if (!nombres.trim()) {
     errores.nombres = "Indica los nombres del cliente.";
-  } else if (nombres.trim().length > NOMBRE_MAX) {
-    errores.nombres = "Los nombres admiten hasta 25 caracteres.";
   } else if (!nombrePersonaOk(nombres)) {
-    errores.nombres = "Los nombres solo admiten letras, espacios y guiones.";
+    errores.nombres = "Los nombres solo admiten letras, espacios y guiones (máx. 100).";
   }
   if (!apellidos.trim()) {
     errores.apellidos = "Indica los apellidos del cliente.";
-  } else if (apellidos.trim().length > NOMBRE_MAX) {
-    errores.apellidos = "Los apellidos admiten hasta 25 caracteres.";
   } else if (!nombrePersonaOk(apellidos)) {
-    errores.apellidos = "Los apellidos solo admiten letras, espacios y guiones.";
+    errores.apellidos =
+      "Los apellidos solo admiten letras, espacios y guiones (máx. 100).";
   }
-  const mail = correo.trim();
+  const mail = (correo || "").trim();
   if (mail && mail.length > CORREO_MAX) {
-    errores.correo = "El correo admite hasta 25 caracteres.";
+    errores.correo = `El correo admite hasta ${CORREO_MAX} caracteres.`;
   } else if (mail && !CORREO_RE.test(mail)) {
     errores.correo = "Escribe un correo válido para la factura electrónica.";
+  }
+  const tel = soloDigitos(telefono);
+  if (tel && tel.length !== TELEFONO_MAX) {
+    errores.telefono = "El teléfono móvil debe tener exactamente 10 dígitos.";
   }
   return errores;
 }
@@ -108,3 +129,5 @@ export function validarCliente({ cedula, nombres, apellidos, correo }) {
 export function hayErrores(errores) {
   return Object.values(errores).some(Boolean);
 }
+
+export { NOMBRE_MAX, CORREO_MAX, TELEFONO_MAX, CEDULA_MAX };

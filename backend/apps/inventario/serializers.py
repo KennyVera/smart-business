@@ -3,7 +3,7 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from .models import Categoria, Producto
-from .validadores import exigir_nombre_libre, exigir_sku
+from .validadores import exigir_nombre_categoria, exigir_nombre_libre, exigir_sku
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -15,10 +15,10 @@ class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categoria
         fields = ("id_categoria", "nombre", "total_productos")
-        extra_kwargs = {"nombre": {"max_length": 100}}
+        extra_kwargs = {"nombre": {"max_length": 40}}
 
     def validate_nombre(self, value):
-        nombre = exigir_nombre_libre(value, "La categoría")
+        nombre = exigir_nombre_categoria(value)
         consulta = Categoria.objects.filter(nombre__iexact=nombre)
         if self.instance:
             consulta = consulta.exclude(pk=self.instance.pk)
@@ -48,6 +48,8 @@ class ProductoSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "sku": {"max_length": 50},
             "nombre": {"max_length": 150},
+            "costo_actual": {"min_value": Decimal("0")},
+            "precio_venta": {"min_value": Decimal("0.01")},
             "imagen": {"required": False, "allow_null": True},
             "aplica_iva": {"required": False},
         }

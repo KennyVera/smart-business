@@ -362,12 +362,16 @@
   height: 40px;
   border-radius: 10px;
   background: var(--rep-verde);
-  color: #fff;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.03em;
-  display: grid;
-  place-items: center;
+  flex-shrink: 0;
+}
+
+.rep-pdf-logo-img {
+  height: 40px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .rep-pdf-marca strong {

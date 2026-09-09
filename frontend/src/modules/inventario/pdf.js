@@ -6,6 +6,26 @@ export function esperar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** Espera a que el logo y demás <img> del nodo estén listos para html2canvas. */
+export function esperarImagenes(nodo) {
+  if (!nodo) return Promise.resolve();
+  const imagenes = [...nodo.querySelectorAll("img")];
+  return Promise.all(
+    imagenes.map(
+      (img) =>
+        new Promise((resolve) => {
+          if (img.complete && img.naturalWidth > 0) {
+            resolve();
+            return;
+          }
+          const listo = () => resolve();
+          img.addEventListener("load", listo, { once: true });
+          img.addEventListener("error", listo, { once: true });
+        }),
+    ),
+  );
+}
+
 /**
  * html2canvas no dibuja SVG de forma confiable, así que el gráfico de recharts
  * se convierte antes a PNG y al PDF entra como imagen.

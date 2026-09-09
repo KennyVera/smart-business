@@ -1,5 +1,7 @@
 from django.db import models
 
+from core.validators_negocio import NO_NEGATIVO
+
 
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
@@ -26,8 +28,16 @@ class Producto(models.Model):
     )
     sku = models.CharField(max_length=50, unique=True)
     nombre = models.CharField(max_length=150)
-    precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
-    costo_actual = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_venta = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[NO_NEGATIVO],
+    )
+    costo_actual = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[NO_NEGATIVO],
+    )
     imagen = models.ImageField(
         upload_to="productos/",
         max_length=255,

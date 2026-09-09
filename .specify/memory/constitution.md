@@ -4,7 +4,7 @@ Documento rector para el ERP/POS/CRM multi-sucursal de retail en Ecuador.
 Todo cambio de código, API o interfaz debe respetar estas reglas. Si una
 historia de usuario las contradice, se actualiza primero esta constitución.
 
-**Versión:** 1.5  
+**Versión:** 1.6  
 **Vigencia:** 2026-09-09  
 **Alcance:** `backend/`, `frontend/`, `specs/`
 
@@ -228,6 +228,39 @@ cerrados del rango (default: últimos 7 días).
 `GET /api/pos/gerente/auditoria-cajas/<id>/desglose/` entrega el desglose
 (apertura, efectivo, tarjeta/transferencia, esperado, real, descuadre y
 últimos tickets) solo si el turno pertenece a la sucursal del gerente.
+
+### 4.7 Seguridad y validaciones (obligatorio — 3 capas)
+
+**Validación estricta:** todo campo de entrada debe estar tipado, limitado y
+validado en **tres capas**:
+
+1. **Base de datos / ORM** — `max_length`, `validators` (`MinValueValidator`,
+   `RegexValidator`) y restricciones coherentes con el esquema legacy.
+2. **API (serializers)** — rechazan payload inválido con **HTTP 400** y
+   mensajes claros por campo.
+3. **Frontend** — `maxLength` / `min` / `pattern`, filtros `onChange` y botón
+   de guardar deshabilitado o error `text-danger` visible.
+
+**Reglas específicas de Ecuador**
+
+| Campo | Regla |
+|-------|--------|
+| Cédula | Exactamente **10** dígitos numéricos (+ dígito verificador). |
+| RUC | Exactamente **13** dígitos numéricos (+ reglas SRI). |
+| Teléfono móvil | Exactamente **10** dígitos numéricos. |
+
+**Montos y cantidades**
+
+- Precios, costos, stock, efectivo recibido, montos de apertura/cierre y
+  cantidades de venta/lote/merma: **estrictamente ≥ 0**.
+- No se permiten valores negativos en esos campos de entrada.
+- El `descuadre` calculado (real − esperado) **sí puede ser negativo**
+  (faltante); no se captura como monto manual negativo.
+
+**Textos**
+
+- Nombres y apellidos: sin caracteres de código (`<>{}[];\` etc.); preferir
+  letras, espacios y guiones. `max_length` alineado al ORM (nombres ≤ 100).
 
 ---
 

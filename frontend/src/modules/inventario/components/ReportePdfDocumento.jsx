@@ -18,7 +18,7 @@ function ReportePdfDocumento({
   alcance,
   landscape = false,
 }) {
-  const { colorGraficos } = usePreferences();
+  const { colorGraficos, logoPersonalizado } = usePreferences();
   const acento = colorGraficos || ACENTO_DEF;
   const tema = varsAcento(acento);
   if (!datos) return null;
@@ -35,9 +35,19 @@ function ReportePdfDocumento({
       >
         <header className="rep-pdf-head" style={{ borderBottomColor: acento }}>
           <div className="rep-pdf-marca">
-            <span className="rep-pdf-logo" style={{ background: acento }}>
-              SB
-            </span>
+            {logoPersonalizado ? (
+              <img
+                src={logoPersonalizado}
+                alt="Logo"
+                className="rep-pdf-logo-img"
+              />
+            ) : (
+              <span
+                className="rep-pdf-logo"
+                style={{ background: acento }}
+                aria-hidden="true"
+              />
+            )}
             <div>
               <strong>Smart Business</strong>
               <small>Módulo de Inventario · Reportes operativos</small>

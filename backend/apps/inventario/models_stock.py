@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.usuarios.models import SucursalExistente, Usuario
+from core.validators_negocio import NO_NEGATIVO_INT
 
 from .models_catalogo import Producto
 
@@ -19,8 +20,14 @@ class InventarioStock(models.Model):
         on_delete=models.PROTECT,
         related_name="stock",
     )
-    cantidad_actual = models.IntegerField(default=0)
-    stock_minimo = models.IntegerField(default=5)
+    cantidad_actual = models.IntegerField(
+        default=0,
+        validators=[NO_NEGATIVO_INT],
+    )
+    stock_minimo = models.IntegerField(
+        default=5,
+        validators=[NO_NEGATIVO_INT],
+    )
 
     class Meta:
         db_table = "inventario_stock"
@@ -49,7 +56,7 @@ class LoteCaducidad(models.Model):
     )
     codigo_lote = models.CharField(max_length=50)
     fecha_vencimiento = models.DateField()
-    cantidad = models.IntegerField()
+    cantidad = models.IntegerField(validators=[NO_NEGATIVO_INT])
 
     class Meta:
         db_table = "lote_caducidad"
@@ -82,7 +89,7 @@ class RegistroMerma(models.Model):
         on_delete=models.PROTECT,
         related_name="mermas",
     )
-    cantidad = models.IntegerField()
+    cantidad = models.IntegerField(validators=[NO_NEGATIVO_INT])
     motivo = models.CharField(max_length=255)
     fecha = models.DateTimeField(auto_now_add=True)
 

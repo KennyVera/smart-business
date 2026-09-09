@@ -9,8 +9,9 @@ PROVINCIAS = frozenset(range(1, 25)) | {30}
 COEF_CEDULA = (2, 1, 2, 1, 2, 1, 2, 1, 2)
 COEF_RUC_PRIVADO = (4, 3, 2, 7, 6, 5, 4, 3, 2)
 COEF_RUC_PUBLICO = (3, 2, 7, 6, 5, 4, 3, 2)
-NOMBRE_MAX = 25
-CORREO_MAX = 25
+NOMBRE_MAX = 100
+CORREO_MAX = 100
+TELEFONO_MAX = 10
 NOMBRE_RE = re.compile(
     r"^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:[ '\-][A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)*$"
 )
@@ -117,4 +118,13 @@ def mensaje_correo(valor):
         return "Escribe un correo válido para la factura electrónica."
     if correo.count("@") != 1:
         return "Escribe un correo válido para la factura electrónica."
+    return ""
+
+
+def mensaje_telefono(valor):
+    telefono = solo_digitos(valor)
+    if not telefono:
+        return ""
+    if len(telefono) != TELEFONO_MAX:
+        return f"El teléfono móvil debe tener exactamente {TELEFONO_MAX} dígitos."
     return ""

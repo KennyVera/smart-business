@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.usuarios.models import SucursalExistente, Usuario
+from core.validators_negocio import NO_NEGATIVO
 
 
 class MetodoPago(models.Model):
@@ -65,20 +66,32 @@ class TurnoCaja(models.Model):
     )
     fecha_apertura = models.DateTimeField(auto_now_add=True)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
-    monto_apertura = models.DecimalField(max_digits=10, decimal_places=2)
-    monto_esperado = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    monto_apertura = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[NO_NEGATIVO],
+    )
+    monto_esperado = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
     monto_cierre_real = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
+        validators=[NO_NEGATIVO],
     )
     monto_cierre_declarado = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
+        validators=[NO_NEGATIVO],
     )
+    # Calculado (real - esperado): puede ser negativo (faltante).
     descuadre = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     estado = models.CharField(max_length=20, default=ABIERTO)
     auditado = models.BooleanField(default=False)

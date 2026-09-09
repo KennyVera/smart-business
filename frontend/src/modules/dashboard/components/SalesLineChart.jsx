@@ -10,11 +10,16 @@ import {
 } from "recharts";
 import { Settings } from "lucide-react";
 import { usePreferences } from "../../../context/PreferencesContext";
-import { SALES_LINES, SALES_SERIES } from "../data/salesSeries";
 
-function SalesLineChart() {
+function SalesLineChart({ series = [], lineas = [] }) {
   const { colorGraficos } = usePreferences();
   const acento = colorGraficos || "#00AA5D";
+  const datos = series.length ? series : [{ mes: "—", total: 0 }];
+  const keys = lineas.length
+    ? lineas
+    : Object.keys(datos[0] || {})
+        .filter((k) => k !== "mes")
+        .map((key, i) => ({ key, color: i === 0 ? acento : "#6c757d" }));
 
   return (
     <div className="page-card h-100">
@@ -24,7 +29,7 @@ function SalesLineChart() {
       </div>
       <div className="dashboard-chart-wrap">
         <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={SALES_SERIES} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+          <LineChart data={datos} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e9ecef" />
             <XAxis dataKey="mes" tick={{ fontSize: 12 }} />
             <YAxis
@@ -34,7 +39,7 @@ function SalesLineChart() {
             />
             <Tooltip />
             <Legend />
-            {SALES_LINES.map((line, i) => (
+            {keys.map((line, i) => (
               <Line
                 key={line.key}
                 type="monotone"

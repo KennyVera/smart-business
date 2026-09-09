@@ -109,7 +109,10 @@ function CerrarTurnoModal({ show, turno, resumen, onClose, onCerrado }) {
             </span>
             <input
               className="form-control"
+              type="number"
               inputMode="decimal"
+              min="0"
+              step="0.01"
               autoFocus
               value={efectivoContado}
               onChange={(evento) =>
@@ -118,6 +121,9 @@ function CerrarTurnoModal({ show, turno, resumen, onClose, onCerrado }) {
                 )
               }
             />
+            {Number(efectivoContado) < 0 ? (
+              <small className="pos-campo-error">El efectivo contado no puede ser negativo.</small>
+            ) : null}
             <AvisoDescuadre vacio={vacio} diferencia={diferencia} />
           </label>
         </Modal.Body>
@@ -125,7 +131,11 @@ function CerrarTurnoModal({ show, turno, resumen, onClose, onCerrado }) {
           <button type="button" className="pos-btn-borde" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="pos-btn-negro" disabled={guardando}>
+          <button
+            type="submit"
+            className="pos-btn-negro"
+            disabled={guardando || vacio || Number(efectivoContado) < 0}
+          >
             {guardando ? "Cerrando..." : "Cerrar turno"}
           </button>
         </Modal.Footer>

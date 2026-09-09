@@ -2,6 +2,7 @@ from django.db import models
 
 from apps.crm.models import Cliente
 from apps.inventario.models import Producto
+from core.validators_negocio import NO_NEGATIVO, NO_NEGATIVO_INT
 
 from .models_caja import MetodoPago, TurnoCaja
 
@@ -27,12 +28,42 @@ class Venta(models.Model):
         blank=True,
     )
     fecha_hora = models.DateTimeField(auto_now_add=True)
-    subtotal_iva_0 = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    subtotal_iva_15 = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    monto_iva = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    total_factura = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    monto_recibido = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    cambio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    subtotal_iva_0 = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
+    subtotal_iva_15 = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
+    monto_iva = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
+    total_factura = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
+    monto_recibido = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
+    cambio = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[NO_NEGATIVO],
+    )
     anulada = models.BooleanField(default=False)
 
     class Meta:
@@ -62,9 +93,17 @@ class VentaDetalle(models.Model):
         on_delete=models.PROTECT,
         related_name="ventas",
     )
-    cantidad = models.IntegerField()
-    precio_unitario_historico = models.DecimalField(max_digits=10, decimal_places=2)
-    costo_unitario_historico = models.DecimalField(max_digits=10, decimal_places=2)
+    cantidad = models.IntegerField(validators=[NO_NEGATIVO_INT])
+    precio_unitario_historico = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[NO_NEGATIVO],
+    )
+    costo_unitario_historico = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[NO_NEGATIVO],
+    )
 
     class Meta:
         db_table = "venta_detalle"
@@ -97,7 +136,11 @@ class PagoVenta(models.Model):
         on_delete=models.PROTECT,
         related_name="pagos",
     )
-    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    monto = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[NO_NEGATIVO],
+    )
 
     class Meta:
         db_table = "pago_venta"

@@ -108,8 +108,10 @@ function TicketVenta({
         <label>
           <span className="pos-etiqueta">Recibido</span>
           <input
-            type="text"
+            type="number"
             inputMode="decimal"
+            min="0"
+            step="0.01"
             placeholder={
               conEfectivo
                 ? "Monto entregado por el cliente"

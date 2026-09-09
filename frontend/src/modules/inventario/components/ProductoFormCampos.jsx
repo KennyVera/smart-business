@@ -60,6 +60,9 @@ function ProductoFormCampos({ form, categorias, onCampo }) {
           <InventarioCampo icon={CircleDollarSign} label="Costo actual">
             <input
               className="form-control"
+              type="number"
+              min="0"
+              step="0.01"
               value={form.costo_actual}
               inputMode="decimal"
               placeholder="0.00"
@@ -71,6 +74,9 @@ function ProductoFormCampos({ form, categorias, onCampo }) {
           <InventarioCampo icon={CircleDollarSign} label="Precio de venta">
             <input
               className="form-control"
+              type="number"
+              min="0"
+              step="0.01"
               value={form.precio_venta}
               inputMode="decimal"
               placeholder="0.00"

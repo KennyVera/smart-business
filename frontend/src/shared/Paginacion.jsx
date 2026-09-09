@@ -17,6 +17,7 @@ const SINGULAR = {
   terminales: "terminal",
   usuarios: "usuario",
   zonas: "zona",
+  clientes: "cliente",
 };
 
 function numeros(pagina, paginas) {

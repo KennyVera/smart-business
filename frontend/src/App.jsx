@@ -18,6 +18,7 @@ import PosWorkspace from "./modules/pos/pages/PosWorkspace";
 import DashboardGerente from "./modules/gerente/pages/DashboardGerente";
 import AuditoriaCajas from "./modules/gerente/pages/AuditoriaCajas";
 import Devoluciones from "./modules/gerente/pages/Devoluciones";
+import ClientesList from "./modules/gerente/pages/ClientesList";
 import {
   ROLES_ADMIN,
   ROLES_GERENCIAL,
@@ -49,6 +50,7 @@ function App() {
                 <Route path="gerente" element={<DashboardGerente />} />
                 <Route path="gerente/auditoria" element={<AuditoriaCajas />} />
                 <Route path="gerente/devoluciones" element={<Devoluciones />} />
+                <Route path="gerente/clientes" element={<ClientesList />} />
               </Route>
               <Route element={<RequireRol roles={ROLES_INVENTARIO_OPS} />}>
                 <Route path="inventario/catalogo" element={<CatalogoPage />} />

@@ -221,3 +221,237 @@
   color: #6c757d;
   text-align: center;
 }
+
+.gerente-clientes-head {
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.gerente-clientes-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.gerente-clientes-kpis article {
+  min-width: 110px;
+  background: #fff;
+  border: 1px solid #e8ecef;
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+}
+
+.gerente-clientes-kpis small {
+  display: block;
+  color: #6c757d;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.gerente-clientes-kpis strong {
+  font-size: 1.05rem;
+  color: #1c1f24;
+}
+
+.gerente-clientes-filtros {
+  padding: 1rem 1.1rem;
+}
+
+.gerente-clientes-card {
+  overflow: hidden;
+}
+
+.gerente-clientes-table thead th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6c757d;
+  border-bottom: 1px solid #edf1f4;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.gerente-fila-cliente {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.gerente-fila-cliente:hover {
+  background: #f4faf7;
+}
+
+.gerente-fila-cliente.is-vip {
+  background: linear-gradient(90deg, #f3fbf7 0%, #fff 55%);
+}
+
+.gerente-cliente-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.gerente-cliente-miniavatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eef1f4;
+  color: #495057;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.gerente-cliente-miniavatar.is-vip {
+  background: #e8f7ef;
+  color: #00aa5d;
+}
+
+.gerente-cedula {
+  font-size: 0.82rem;
+  background: #f5f7f9;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+}
+
+.gerente-metric-pill {
+  display: inline-block;
+  min-width: 2rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #f1f3f5;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.gerente-gasto-vip {
+  color: #00aa5d;
+  font-weight: 700;
+}
+
+.gerente-vip-badge {
+  background: #00aa5d !important;
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.gerente-cumple {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gerente-cumple.is-hoy {
+  color: #00aa5d;
+  font-weight: 600;
+}
+
+.gerente-cake {
+  color: #00aa5d;
+  flex-shrink: 0;
+}
+
+.gerente-btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.gerente-offcanvas-cliente {
+  width: min(460px, 100vw) !important;
+}
+
+.gerente-cliente-off-head {
+  border-bottom: 1px solid #eef1f4;
+}
+
+.gerente-cliente-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e8f7ef;
+  color: #00aa5d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gerente-cliente-avatar.is-vip {
+  background: #00aa5d;
+  color: #fff;
+}
+
+.gerente-cliente-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gerente-cliente-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.gerente-cliente-form label span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.gerente-cliente-form .gerente-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.gerente-habitos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.gerente-habitos-grid article {
+  border: 1px solid #e8ecef;
+  border-radius: 12px;
+  padding: 0.65rem 0.55rem;
+  text-align: center;
+  background: #fbfcfd;
+}
+
+.gerente-habitos-grid svg {
+  color: #00aa5d;
+  margin-bottom: 0.2rem;
+}
+
+.gerente-habitos-grid small {
+  display: block;
+  color: #6c757d;
+  font-size: 0.68rem;
+  margin-bottom: 0.15rem;
+}
+
+.gerente-habitos-grid strong {
+  font-size: 0.92rem;
+}
+
+@media (max-width: 576px) {
+  .gerente-habitos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,13 +1,15 @@
 export const LIMITES = {
   sku: 50,
   nombre: 150,
-  categoria: 100,
+  categoria: 40,
   codigo_lote: 50,
   motivo: 255,
 };
 
 const SKU_RE = /^[A-Za-z0-9-]{4,50}$/;
 const NOMBRE_RE = /^[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ .,%°\-/()]{3,150}$/;
+const CATEGORIA_RE =
+  /^(?=.*[A-Za-zÁÉÍÓÚÜÑáéíóúüñ])[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .,&\-/()]{3,40}$/;
 const MOTIVO_RE = /^[0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ .,;:%°\-/()]{5,255}$/;
 
 const FILTROS = {
@@ -16,6 +18,11 @@ const FILTROS = {
     valor.replace(/[^A-Za-z0-9-]/g, "").toUpperCase().slice(0, LIMITES.codigo_lote),
   nombre: (valor) =>
     valor.replace(/[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ .,%°\-/()]/g, "").slice(0, LIMITES.nombre),
+  categoria: (valor) =>
+    valor
+      .replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .,&\-/()]/g, "")
+      .replace(/\s{2,}/g, " ")
+      .slice(0, LIMITES.categoria),
   motivo: (valor) =>
     valor.replace(/[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ .,;:%°\-/()]/g, "").slice(0, LIMITES.motivo),
   costo_actual: (valor) => valor.replace(/[^0-9.]/g, "").slice(0, 10),
@@ -30,6 +37,23 @@ export function filtrarCampo(campo, valor) {
   return filtro ? filtro(valor) : valor;
 }
 
+export function validarCategoria(nombre) {
+  const texto = (nombre || "").trim().replace(/\s{2,}/g, " ");
+  if (texto.length < 3) {
+    return "La categoría necesita al menos 3 caracteres.";
+  }
+  if (texto.length > LIMITES.categoria) {
+    return `La categoría admite máximo ${LIMITES.categoria} caracteres.`;
+  }
+  if (!CATEGORIA_RE.test(texto)) {
+    return "Usa un nombre claro (letras; números y signos básicos opcionales).";
+  }
+  if (/^(.)\1+$/.test(texto.replace(/\s/g, ""))) {
+    return "El nombre no puede ser un solo carácter repetido.";
+  }
+  return "";
+}
+
 export function validarProducto(form) {
   if (!SKU_RE.test(form.sku)) {
     return "El SKU necesita 4 a 50 caracteres entre letras, números y guiones.";
@@ -40,8 +64,11 @@ export function validarProducto(form) {
   if (!form.categoria) return "Selecciona la categoría del producto.";
   const costo = Number(form.costo_actual);
   const precio = Number(form.precio_venta);
-  if (!Number.isFinite(costo) || costo < 0) return "Registra un costo válido.";
-  if (!Number.isFinite(precio) || precio <= 0) {
+  if (!Number.isFinite(costo) || costo < 0) return "Registra un costo válido (≥ 0).";
+  if (!Number.isFinite(precio) || precio < 0) {
+    return "El precio de venta no puede ser negativo.";
+  }
+  if (precio <= 0) {
     return "El precio de venta debe ser mayor a 0.";
   }
   return "";

@@ -1,9 +1,13 @@
 import { UserPlus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { mensajeApi } from "../../usuarios/rol";
 import { crearCliente } from "../api/posApi";
 import {
+  CEDULA_MAX,
+  CORREO_MAX,
+  NOMBRE_MAX,
+  filtrarCedula,
   filtrarCorreo,
   filtrarNombre,
   hayErrores,
@@ -23,13 +27,19 @@ function ModalNuevoCliente({ show, cedulaInicial, onClose, onCreado }) {
 
   useEffect(() => {
     if (!show) return;
-    setCedula(String(cedulaInicial || "").replace(/\D/g, "").slice(0, 13));
+    setCedula(filtrarCedula(cedulaInicial || ""));
     setNombres("");
     setApellidos("");
     setCorreo("");
     setErrores(VACIO);
     setErrorApi("");
   }, [show, cedulaInicial]);
+
+  const avisosActuales = useMemo(
+    () => validarCliente({ cedula, nombres, apellidos, correo }),
+    [cedula, nombres, apellidos, correo]
+  );
+  const formInvalido = hayErrores(avisosActuales);
 
   async function onSubmit(evento) {
     evento.preventDefault();
@@ -70,6 +80,8 @@ function ModalNuevoCliente({ show, cedulaInicial, onClose, onCreado }) {
               className={`form-control${errores.cedula ? " is-invalido" : ""}`}
               type="text"
               inputMode="numeric"
+              pattern="\d*"
+              maxLength={CEDULA_MAX}
               value={cedula}
               readOnly
               aria-readonly="true"
@@ -83,7 +95,7 @@ function ModalNuevoCliente({ show, cedulaInicial, onClose, onCreado }) {
               className={`form-control${errores.nombres ? " is-invalido" : ""}`}
               type="text"
               autoComplete="off"
-              maxLength={25}
+              maxLength={NOMBRE_MAX}
               value={nombres}
               autoFocus
               placeholder="Nombres"
@@ -103,7 +115,7 @@ function ModalNuevoCliente({ show, cedulaInicial, onClose, onCreado }) {
               className={`form-control${errores.apellidos ? " is-invalido" : ""}`}
               type="text"
               autoComplete="off"
-              maxLength={25}
+              maxLength={NOMBRE_MAX}
               value={apellidos}
               placeholder="Apellidos"
               aria-invalid={Boolean(errores.apellidos)}
@@ -122,7 +134,7 @@ function ModalNuevoCliente({ show, cedulaInicial, onClose, onCreado }) {
               className={`form-control${errores.correo ? " is-invalido" : ""}`}
               type="email"
               autoComplete="off"
-              maxLength={25}
+              maxLength={CORREO_MAX}
               value={correo}
               placeholder="Opcional"
               aria-invalid={Boolean(errores.correo)}
@@ -147,7 +159,7 @@ function ModalNuevoCliente({ show, cedulaInicial, onClose, onCreado }) {
           <button
             type="submit"
             className="pos-btn-guardar-cliente"
-            disabled={guardando}
+            disabled={guardando || formInvalido}
           >
             {guardando ? "Guardando..." : "Guardar Cliente"}
           </button>

@@ -123,7 +123,9 @@ function ClienteBuscador({ cliente, onCliente }) {
         <input
           type="text"
           inputMode="numeric"
-          placeholder="Cédula o RUC (opcional)"
+          pattern="\d*"
+          maxLength={13}
+          placeholder="Cédula (10) o RUC (13)"
           value={texto}
           onChange={(evento) => {
             setTexto(evento.target.value.replace(SOLO_DIGITOS, "").slice(0, 13));

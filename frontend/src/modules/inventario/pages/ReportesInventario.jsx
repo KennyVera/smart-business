@@ -16,6 +16,7 @@ import ReporteTabla from "../components/ReporteTabla";
 import SucursalSelector from "../components/SucursalSelector";
 import {
   esperar,
+  esperarImagenes,
   generarPdf,
   graficoAImagen,
   nombreArchivo,
@@ -128,6 +129,9 @@ function ReportesInventario() {
     let vivo = true;
     (async () => {
       try {
+        await esperarImagenes(pdfRef.current);
+        await esperar(80);
+        if (!vivo) return;
         await generarPdf(pdfRef.current, nombreArchivo(datos.titulo), {
           landscape,
         });

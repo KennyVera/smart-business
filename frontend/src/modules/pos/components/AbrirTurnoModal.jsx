@@ -77,12 +77,20 @@ function AbrirTurnoModal({ show, terminales, onClose, onAbierto }) {
                 </span>
                 <input
                   className="form-control"
+                  type="number"
                   inputMode="decimal"
+                  min="0"
+                  step="0.01"
                   value={monto}
-                  onChange={(evento) =>
-                    setMonto(evento.target.value.replace(SOLO_MONTO, "").slice(0, 9))
-                  }
+                  onChange={(evento) => {
+                    const limpio = evento.target.value.replace(SOLO_MONTO, "").slice(0, 9);
+                    setMonto(limpio);
+                    setError("");
+                  }}
                 />
+                {Number(monto) < 0 ? (
+                  <small className="pos-campo-error">El monto no puede ser negativo.</small>
+                ) : null}
               </label>
               <p className="pos-nota mb-0">
                 Es el efectivo con el que arranca la caja; se usará al cuadrar el
@@ -98,7 +106,7 @@ function AbrirTurnoModal({ show, terminales, onClose, onAbierto }) {
           <button
             type="submit"
             className="pos-btn-negro"
-            disabled={guardando || terminales.length === 0}
+            disabled={guardando || terminales.length === 0 || Number(monto) < 0}
           >
             {guardando ? "Abriendo..." : "Abrir turno"}
           </button>

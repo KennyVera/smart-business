@@ -53,6 +53,12 @@ export const SIDEBAR_MODULOS = [
         icon: RotateCcw,
         roles: ROLES_GERENCIAL,
       },
+      {
+        to: "/gerente/clientes",
+        label: "Clientes",
+        icon: Users,
+        roles: ROLES_GERENCIAL,
+      },
     ],
   },
   {

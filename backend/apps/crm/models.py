@@ -1,5 +1,12 @@
 from django.db import models
 
+from core.validators_negocio import (
+    CEDULA_O_RUC,
+    NOMBRE_PERSONA,
+    NO_NEGATIVO_INT,
+    TELEFONO_MOVIL,
+)
+
 
 class Cliente(models.Model):
     """Afiliado del CRM: cédula/RUC para facturación electrónica."""
@@ -11,17 +18,33 @@ class Cliente(models.Model):
         db_column="cedula",
         null=True,
         blank=True,
+        validators=[CEDULA_O_RUC],
     )
-    nombres = models.CharField(max_length=100)
-    apellidos = models.CharField(max_length=100, blank=True, default="")
+    nombres = models.CharField(
+        max_length=100,
+        validators=[NOMBRE_PERSONA],
+    )
+    apellidos = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+    )
     correo = models.CharField(
         max_length=100,
         db_column="email",
         null=True,
         blank=True,
     )
-    telefono = models.CharField(max_length=15, null=True, blank=True)
-    puntos_acumulados = models.IntegerField(default=0)
+    telefono = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+        validators=[TELEFONO_MOVIL],
+    )
+    puntos_acumulados = models.IntegerField(
+        default=0,
+        validators=[NO_NEGATIVO_INT],
+    )
     fecha_nacimiento = models.DateField(null=True, blank=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
