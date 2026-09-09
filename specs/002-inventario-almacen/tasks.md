@@ -13,9 +13,9 @@ Leyenda: `[x]` COMPLETADO · `[ ]` PENDIENTE
 - [x] Reportes operativos en PDF.
 - [x] Stock por sucursal, alertas de mínimo, lotes/caducidad y mermas
       (flujos ya presentes en el módulo de inventario).
+- [x] Importación masiva por **CSV** del catálogo (`ImportarCsvModal`).
+- [x] Exportación masiva por **CSV** del catálogo (`exportarProductosCsv`).
 
 ## Pendiente
 
-- [ ] Importación masiva por **CSV** (catálogo y/o stock inicial).
-- [ ] Exportación masiva por **CSV** (mismo contrato, para intercambio con
-      proveedores o planillas de conteo).
+_(Ninguna.)_

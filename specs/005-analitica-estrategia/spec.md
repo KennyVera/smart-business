@@ -1,7 +1,7 @@
 # 005 — Analítica y estrategia (panel admin)
 
-**Estado:** parcial (shell de dashboard admin; KPIs de negocio aún mock/limitados).  
-**Apps:** `frontend/src/modules/dashboard` (+ endpoints de sesiones en usuarios).  
+**Estado:** operativo con datos reales de POS; faltan filtros de periodo/sucursal.  
+**Apps:** `frontend/src/modules/dashboard`, `backend/apps/pos` (`admin-dashboard`).  
 **Roles:** `administrador`.
 
 ---
@@ -9,9 +9,8 @@
 ## 1. Objetivo
 
 Dar al administrador una vista estratégica de la cadena: KPIs de ventas,
-ingresos, sesiones y tendencias. Hoy existe el layout de tarjetas + gráfico
-(`recharts`) + tabla; la mayoría de métricas de negocio aún no consumen
-agregados reales de POS.
+ingresos, sesiones y tendencias, con acento `#00AA5D` y colores de gráficos
+desde preferencias (`008`).
 
 ## 2. Superficie de UI
 
@@ -20,18 +19,17 @@ agregados reales de POS.
 | `/` (admin) | `AdminDashboardPage` vía `InicioSegunRol` |
 
 Componentes: `DashboardKpis`, `DashboardChart` (`SalesLineChart`),
-`DashboardTable`. Acento `#00AA5D`; respeta `color_graficos` de preferencias.
+`CategoriesDonut`, `DashboardTable`.
 
 ## 3. Datos actuales
 
 - KPI **Sesiones**: `GET /api/usuarios/sesiones/resumen/` (real).
-- Ventas / ingresos / conversión: placeholders o series demo en
-  `dashboard/data/` hasta cablear agregados POS.
+- Ventas / ingresos / conversión / series / categorías / ranking sucursales:
+  `GET /api/pos/admin-dashboard/` (`reportes_admin.dashboard_global`).
+- Fallback demo solo si la API no responde o viene vacía.
 
-## 4. Fuera de alcance actual
+## 4. Fuera de alcance / pendiente
 
+- Filtros UI por rango de fechas y sucursal(es) — ver `tasks.md`.
 - Cubo OLAP / data warehouse.
-- Comparativos multi-sucursal con drill-down completo.
 - Export ejecutivo programado.
-
-Ver `tasks.md`.

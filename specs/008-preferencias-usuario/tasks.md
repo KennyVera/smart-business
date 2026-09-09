@@ -1,4 +1,10 @@
-# 008 — Tasks
+# 008 — Tareas: preferencias de usuario
+
+Leyenda: `[x]` COMPLETADO · `[ ]` PENDIENTE
+
+---
+
+## Completado
 
 - [x] Modelo `PreferenciaUsuario` + migración
 - [x] Signal `post_save` al crear usuario
@@ -7,3 +13,7 @@
 - [x] Sidebar / Header / recharts / paginación
 - [x] Modal Apariencia en `UserProfileDropdown`
 - [x] Spec + constitución
+
+## Pendiente
+
+_(Ninguna.)_

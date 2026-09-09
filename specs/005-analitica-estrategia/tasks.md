@@ -10,11 +10,12 @@ Leyenda: `[x]` COMPLETADO · `[ ]` PENDIENTE
 - [x] KPIs shell + gráfico recharts + tabla.
 - [x] KPI sesiones cableado a `/api/usuarios/sesiones/resumen/`.
 - [x] Integración con preferencias de color de gráficos (`008`).
+- [x] Agregados reales de ventas/ingresos (cadena) desde POS
+      (`GET /api/pos/admin-dashboard/`).
+- [x] Serie temporal real (sustituye demo cuando la API responde).
+- [x] Tabla / ranking multi-sucursal (`sucursales_recientes`).
+- [x] Endpoint dedicado `/api/pos/admin-dashboard/`.
 
 ## Pendiente
 
-- [ ] Agregados reales de ventas/ingresos (cadena) desde POS.
-- [ ] Filtros por rango de fechas y sucursal(es).
-- [ ] Serie temporal real (sustituir `salesSeries` demo).
-- [ ] Tabla de ranking multi-sucursal.
-- [ ] Endpoint dedicado `/api/.../analitica/` si el volumen lo exige.
+- [ ] Filtros por rango de fechas y sucursal(es) en el dashboard admin.

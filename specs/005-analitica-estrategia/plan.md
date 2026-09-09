@@ -32,8 +32,9 @@ evitar app monolítica nueva hasta que existan contratos estables.
 | Fase | Entrega | Estado |
 |------|---------|--------|
 | A | Shell UI + KPI sesiones | Hecho |
-| B | Agregados ventas cadena + filtros | Pendiente |
-| C | Rankings / export ejecutivo | Planificado |
+| B | Agregados ventas cadena (`admin-dashboard`) | Hecho |
+| C | Filtros fecha / sucursal | Pendiente (`tasks.md`) |
+| D | Export ejecutivo programado | Planificado |
 
 ## Referencias
 

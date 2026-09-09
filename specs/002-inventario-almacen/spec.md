@@ -82,6 +82,8 @@ abandonar la grilla.
 El bodeguero exporta listados operativos a **PDF** (y Excel donde el módulo
 ya lo expone). No sustituyen el kardex en pantalla; lo complementan.
 
-## 8. Fuera de alcance (ver `tasks.md`)
+## 8. Intercambio CSV
 
-Importación y exportación **masiva por CSV** del catálogo y del stock.
+Importación y exportación masiva del **catálogo** (`ImportarCsvModal` +
+`exportarProductosCsv` en Catálogo). Stock inicial masivo por CSV no es un
+flujo separado: el stock sigue entrando por lotes / ajustes.

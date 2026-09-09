@@ -18,7 +18,7 @@ existentes.
 | Endpoint | Estado |
 |----------|--------|
 | `GET /api/usuarios/sesiones/resumen/` | Implementado |
-| `GET /api/pos/...` agregados cadena | Pendiente / parcial (gerente ya tiene dashboard de **una** sucursal) |
+| `GET /api/pos/admin-dashboard/` | Implementado (KPIs, series, categorías, sucursales) |
 
 ## Notas
 

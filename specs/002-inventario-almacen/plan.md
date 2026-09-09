@@ -37,7 +37,7 @@ UI `frontend/src/modules/inventario`.
 | A | CRUD productos + imágenes | Hecho |
 | B | Stock, lotes, mermas, kardex | Hecho |
 | C | Alertas + reportes PDF | Hecho |
-| D | Import/export masivo CSV | Pendiente |
+| D | Import/export masivo CSV (catálogo) | Hecho |
 
 ## Referencias
 

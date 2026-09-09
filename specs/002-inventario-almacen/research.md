@@ -14,13 +14,12 @@ el kardex es la pista de auditoría. IVA 15 % / 0 % vive en el maestro
 | Stock global único | **Rechazado** — multi-sucursal exige (sucursal, producto) |
 | URL de imagen en texto | **Rechazado** — `ImageField` + disco (`media/productos/`) |
 | Módulo merma separado en v1 | **Aplazado** — merma operativa vive en inventario; ver `006` |
-| CSV masivo en MVP | **Aplazado** — CRUD + PDF primero |
+| CSV masivo en MVP | **Hecho** — import/export de catálogo en UI |
 
 ## Riesgos / deuda técnica
 
 - Tablas `managed = False` alineadas al esquema legado.
 - FIFO de lotes en venta: sensible a inconsistencias de cantidad lote vs stock.
-- Import/export CSV pendiente (`tasks.md`).
 - Gerente solo lectura: fácil romper RBAC si se reutilizan botones de ops.
 
 ## Dependencias con otros specs

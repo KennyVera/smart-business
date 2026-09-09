@@ -13,6 +13,7 @@ Leyenda: `[x]` COMPLETADO · `[ ]` PENDIENTE
       `monto_recibido` / `cambio` y filas en el modal de éxito.
 - [x] Cobro atómico `POST /api/pos/ventas/procesar/`.
 - [x] Catálogo POS con imagen local e `aplica_iva`.
+- [x] Abrir / cerrar turno mínimo (`/api/pos/turnos/` + modales) para poder vender.
 
 ## Pendiente
 
@@ -21,6 +22,6 @@ Leyenda: `[x]` COMPLETADO · `[ ]` PENDIENTE
 - [ ] **Arqueo de caja** (conteo físico por denominación, comparación contra
       teórico de efectivo, reporte de cierre imprimible).
 
-> Nota para el equipo: ya existe un abrir/cerrar mínimo (`/api/pos/turnos/` +
-> modales) suficiente para vender. Lo pendiente es el ciclo de arqueo y
-> control de caja, no el primer “abrir para poder cobrar”.
+> Nota para el equipo: ya existe un abrir/cerrar mínimo suficiente para vender.
+> Lo pendiente es el ciclo de arqueo y control de caja, no el primer
+> “abrir para poder cobrar”.
