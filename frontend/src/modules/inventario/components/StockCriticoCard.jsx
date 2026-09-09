@@ -1,9 +1,10 @@
 import { PackageMinus, ShieldAlert } from "lucide-react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion } from "../../../shared/paginado";
+import { useDatosPaginacion } from "../../../shared/paginado";
 import { nivelStock } from "../margen";
 
 function StockCriticoCard({ filas, total, pagina, mostrarSucursal, onPagina, onMerma }) {
+  const paginacionUi = useDatosPaginacion(pagina, total);
   return (
     <section className="inv-card">
       <header className="inv-card-head">
@@ -67,7 +68,7 @@ function StockCriticoCard({ filas, total, pagina, mostrarSucursal, onPagina, onM
             </table>
           </div>
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="productos"
             compacta
             onCambio={onPagina}

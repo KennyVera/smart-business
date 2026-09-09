@@ -1,7 +1,7 @@
 import { Plus, Tags } from "lucide-react";
 import { useState } from "react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
 import CategoriaFormModal from "../components/CategoriaFormModal";
 import CategoriasTable from "../components/CategoriasTable";
 import InventarioHeader from "../components/InventarioHeader";
@@ -14,6 +14,7 @@ function CategoriasPage() {
   const { items: categorias, total, error, cargando, recargar } = useCategorias(pagina);
   const [form, setForm] = useState({ open: false, categoria: null });
 
+  const paginacionUi = useDatosPaginacion(pagina, total);
   return (
     <div className="page-card">
       <InventarioHeader
@@ -40,7 +41,7 @@ function CategoriasPage() {
             onEditar={(categoria) => setForm({ open: true, categoria })}
           />
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="categorías"
             onCambio={setPagina}
           />

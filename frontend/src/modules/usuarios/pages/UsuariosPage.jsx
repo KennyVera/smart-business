@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, usePagina } from "../../../shared/paginado";
+import { confirmar } from "../../../shared/confirm";
+import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
 import { desactivarUsuario, fetchRoles, fetchSucursalesAsignables, restablecerClave } from "../api/usuariosApi";
 import { leerSesion } from "../auth/sesion";
 import { mensajeApi } from "../rol";
@@ -18,6 +19,7 @@ import "../sesiones.css";
 function UsuariosPage() {
   const [pagina, setPagina] = usePagina();
   const { items, total, error, cargando, recargar } = useUsuarios(pagina);
+  const paginacionUi = useDatosPaginacion(pagina, total);
   const [roles, setRoles] = useState([]);
   const [sucursales, setSucursales] = useState([]);
   const [form, setForm] = useState({ open: false, usuario: null });
@@ -38,8 +40,13 @@ function UsuariosPage() {
       setAviso("No puedes suspender tu propia sesión.");
       return;
     }
-    const ok = window.confirm(
+    const ok = await confirmar(
       `¿Suspender a "${usuario.username}"? No se borrará el historial de ventas ni los cierres de caja.`,
+      {
+        titulo: "Suspender usuario",
+        aceptar: "Suspender",
+        variante: "peligro",
+      },
     );
     if (!ok) return;
     try {
@@ -76,7 +83,7 @@ function UsuariosPage() {
             onSesiones={(item) => setHistorial({ open: true, usuario: item })}
           />
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="usuarios"
             onCambio={setPagina}
           />

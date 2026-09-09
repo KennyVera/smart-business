@@ -1,0 +1,37 @@
+.campo-clave {
+  position: relative;
+  width: 100%;
+}
+
+.campo-clave .form-control {
+  padding-right: 2.6rem;
+}
+
+.campo-clave-ojo {
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #6c757d;
+  padding: 0.25rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.campo-clave-ojo:hover {
+  color: #111;
+  background: rgba(15, 23, 42, 0.05);
+}
+
+.campo-clave-ojo svg {
+  pointer-events: none;
+}
+
+.usuario-field-control .campo-clave .form-control {
+  padding-right: 2.6rem;
+}

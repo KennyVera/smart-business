@@ -1,6 +1,6 @@
 import { CalendarClock } from "lucide-react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion } from "../../../shared/paginado";
+import { useDatosPaginacion } from "../../../shared/paginado";
 import { nivelCaducidad, textoCaducidad } from "../margen";
 
 function fecha(valor) {
@@ -9,6 +9,7 @@ function fecha(valor) {
 }
 
 function CaducidadCard({ lotes, total, pagina, dias, mostrarSucursal, onPagina }) {
+  const paginacionUi = useDatosPaginacion(pagina, total);
   return (
     <section className="inv-card">
       <header className="inv-card-head">
@@ -62,7 +63,7 @@ function CaducidadCard({ lotes, total, pagina, dias, mostrarSucursal, onPagina }
             </table>
           </div>
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="lotes"
             compacta
             onCambio={onPagina}

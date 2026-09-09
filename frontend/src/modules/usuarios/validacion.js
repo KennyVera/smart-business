@@ -7,7 +7,10 @@ export const LIMITES = {
 
 const USERNAME_RE = /^[A-Za-z][A-Za-z0-9._-]{3,29}$/;
 const NOMBRE_RE = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+(?:[ '\-][A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)*$/;
-const CLAVE_RE = /^(?=.*[A-Za-zÁÉÍÓÚáéíóúÑñÜü])(?=.*\d).{8,64}$/;
+export const CLAVE_RE = /^(?=.*[A-Za-zÁÉÍÓÚáéíóúÑñÜü])(?=.*\d).{8,64}$/;
+
+export const MSG_CLAVE =
+  "Contraseña: 8 a 64 caracteres, con al menos una letra y un número.";
 
 export function filtrarCampo(campo, valor) {
   if (campo === "username") {
@@ -23,6 +26,11 @@ export function filtrarCampo(campo, valor) {
     return valor.slice(0, LIMITES.clave);
   }
   return valor;
+}
+
+/** True si la clave cumple reglas del ERP (8–64, letra y número). */
+export function claveValida(valor) {
+  return CLAVE_RE.test(valor || "");
 }
 
 export function validarFormulario(form, { editando, esAdmin }) {
@@ -41,8 +49,28 @@ export function validarFormulario(form, { editando, esAdmin }) {
   if (!esAdmin && !form.sucursal) {
     return "Asigna una sucursal al empleado.";
   }
-  if (!editando && !CLAVE_RE.test(form.clave)) {
-    return "Contraseña: mínimo 8 caracteres, con al menos una letra y un número.";
+  if (!editando && !claveValida(form.clave)) {
+    return MSG_CLAVE;
+  }
+  return "";
+}
+
+/** Validación del modal de cambio de clave. */
+export function validarCambioClave({ actual, nueva, confirmacion }) {
+  if (!actual) {
+    return "Escribe tu clave actual.";
+  }
+  if (actual.length > LIMITES.clave) {
+    return `La clave actual no puede superar ${LIMITES.clave} caracteres.`;
+  }
+  if (!claveValida(nueva)) {
+    return MSG_CLAVE;
+  }
+  if (nueva !== confirmacion) {
+    return "La nueva clave y la confirmación no coinciden.";
+  }
+  if (actual === nueva) {
+    return "La nueva clave debe ser distinta a la actual.";
   }
   return "";
 }

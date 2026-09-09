@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { confirmar } from "../../../shared/confirm";
 import { mensajeApi } from "../../usuarios/rol";
 import { anularVenta, fetchVentaPorId } from "../api/gerenteApi";
 import DetalleTicket from "../components/DetalleTicket";
@@ -32,8 +33,13 @@ function Devoluciones() {
 
   async function onAnular() {
     if (!venta) return;
-    const ok = window.confirm(
-      `¿Autorizar devolución y anular la factura #${venta.id_venta}? Se devolverá el stock a tu sucursal.`
+    const ok = await confirmar(
+      `¿Autorizar devolución y anular la factura #${venta.id_venta}? Se devolverá el stock a tu sucursal.`,
+      {
+        titulo: "Autorizar devolución",
+        aceptar: "Anular factura",
+        variante: "peligro",
+      },
     );
     if (!ok) return;
     setAnulando(true);

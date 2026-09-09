@@ -1,5 +1,7 @@
+import { usePreferences } from "../../../context/PreferencesContext";
 import Paginacion from "../../../shared/Paginacion";
 import { usePaginacion } from "../../../shared/usePaginacion";
+import { ACENTO_DEF } from "../coloresReporte";
 import { alineado, formatearValor } from "../reportes";
 
 function clase(columna) {
@@ -11,7 +13,9 @@ function clase(columna) {
   return undefined;
 }
 
-function ReporteTabla({ columnas, filas, paraPdf }) {
+function ReporteTabla({ columnas, filas, paraPdf, colorAcento }) {
+  const { colorGraficos } = usePreferences();
+  const acento = colorAcento || colorGraficos || ACENTO_DEF;
   const pagina = usePaginacion(filas);
 
   if (!filas?.length) {
@@ -22,8 +26,8 @@ function ReporteTabla({ columnas, filas, paraPdf }) {
     );
   }
 
-  // El PDF es un documento de auditoría: lleva todas las filas, sin paginar.
   const cuerpo = paraPdf ? filas : pagina.visibles;
+  const estiloCabecera = paraPdf ? { background: acento, color: "#fff" } : undefined;
 
   const tabla = (
     <table className={paraPdf ? "rep-pdf-tabla" : "table inv-table inv-table-densa align-middle mb-0"}>
@@ -33,6 +37,7 @@ function ReporteTabla({ columnas, filas, paraPdf }) {
             <th
               key={columna.clave}
               className={alineado(columna.tipo) ? "text-end" : undefined}
+              style={estiloCabecera}
             >
               {columna.etiqueta}
             </th>

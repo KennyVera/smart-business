@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, usePagina } from "../../../shared/paginado";
+import { confirmar } from "../../../shared/confirm";
+import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
 import { desactivarSucursal, fetchCantones, fetchSucursalDetalle } from "../api/geografiaApi";
 import { useSucursales } from "../hooks/useSucursales";
-import SucursalDetalleModal from "../components/SucursalDetalleModal";
+import SucursalDetalleOffcanvas from "../components/SucursalDetalleOffcanvas";
 import SucursalFormModal from "../components/SucursalFormModal";
 import SucursalesHeader from "../components/SucursalesHeader";
 import SucursalesTable from "../components/SucursalesTable";
@@ -13,6 +14,7 @@ import "../sucursales-acciones.css";
 function SucursalesPage() {
   const [pagina, setPagina] = usePagina();
   const { items, total, error, cargando, recargar } = useSucursales(pagina);
+  const paginacionUi = useDatosPaginacion(pagina, total);
   const [cantones, setCantones] = useState([]);
   const [form, setForm] = useState({ open: false, sucursal: null });
   const [detalle, setDetalle] = useState({ open: false, data: null });
@@ -24,8 +26,13 @@ function SucursalesPage() {
   }, []);
 
   async function onDesactivar(sucursal) {
-    const ok = window.confirm(
+    const ok = await confirmar(
       `¿Dar de baja "${sucursal.nombre}"? No se eliminará el historial de ventas ni los cierres de caja.`,
+      {
+        titulo: "Dar de baja sucursal",
+        aceptar: "Dar de baja",
+        variante: "peligro",
+      },
     );
     if (!ok) return;
     await desactivarSucursal(sucursal.id_nombre);
@@ -52,7 +59,7 @@ function SucursalesPage() {
             onDetalle={onDetalle}
           />
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="sucursales"
             onCambio={setPagina}
           />
@@ -68,7 +75,7 @@ function SucursalesPage() {
           recargar();
         }}
       />
-      <SucursalDetalleModal
+      <SucursalDetalleOffcanvas
         show={detalle.open}
         detalle={detalle.data}
         onClose={() => setDetalle({ open: false, data: null })}

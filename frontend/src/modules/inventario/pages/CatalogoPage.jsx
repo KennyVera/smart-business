@@ -1,7 +1,7 @@
 import { Package } from "lucide-react";
 import { useMemo, useState } from "react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, leerPagina, TODOS, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, leerPagina, TODOS, usePagina } from "../../../shared/paginado";
 import { fetchProductos } from "../api/inventarioApi";
 import CatalogoFiltros from "../components/CatalogoFiltros";
 import ImportarCsvModal from "../components/ImportarCsvModal";
@@ -40,6 +40,7 @@ function CatalogoPage() {
     margen,
     pagina,
   });
+  const paginacionUi = useDatosPaginacion(pagina, total);
 
   const marcados = productos.filter((producto) => seleccion.has(producto.id_producto));
 
@@ -122,7 +123,7 @@ function CatalogoPage() {
             onKardex={(producto) => setKardex({ open: true, producto })}
           />
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="productos"
             onCambio={setPagina}
           />

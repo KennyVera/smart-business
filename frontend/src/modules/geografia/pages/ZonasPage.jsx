@@ -1,17 +1,22 @@
 import { useCallback } from "react";
+import { useFilasPorPagina } from "../../../context/PreferencesContext";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
 import { fetchZonas } from "../api/geografiaApi";
 import { useLista } from "../hooks/useLista";
 
 function ZonasPage() {
   const [pagina, setPagina] = usePagina();
-  const cargar = useCallback(() => fetchZonas({ page: pagina }), [pagina]);
+  const pageSize = useFilasPorPagina();
+  const cargar = useCallback(
+    () => fetchZonas({ page: pagina, page_size: pageSize }),
+    [pagina, pageSize],
+  );
   const { items: zonas, total, error, cargando } = useLista(
     cargar,
     "No se pudieron cargar las zonas de planificación.",
   );
-
+  const paginacionUi = useDatosPaginacion(pagina, total);
   return (
     <div className="page-card">
       <h2>Zonas de planificación</h2>
@@ -40,7 +45,7 @@ function ZonasPage() {
             </table>
           </div>
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="zonas"
             onCambio={setPagina}
           />

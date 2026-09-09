@@ -1,0 +1,90 @@
+.sb-confirm-dialog {
+  max-width: 440px;
+}
+
+.sb-confirm {
+  border: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
+  background: #fff;
+}
+
+.sb-confirm-barra {
+  height: 4px;
+  width: 100%;
+}
+
+.sb-confirm-cuerpo {
+  display: flex;
+  gap: 1rem;
+  padding: 1.35rem 1.4rem 0.85rem;
+  align-items: flex-start;
+}
+
+.sb-confirm-icono {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.sb-confirm-cuerpo h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.sb-confirm-cuerpo p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.sb-confirm-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  padding: 0.85rem 1.4rem 1.25rem;
+}
+
+.sb-confirm-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease, background 0.12s ease;
+}
+
+.sb-confirm-btn:active {
+  transform: scale(0.98);
+}
+
+.sb-confirm-btn.is-ghost {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.sb-confirm-btn.is-ghost:hover {
+  background: #e2e8f0;
+}
+
+.sb-confirm-btn.is-primary {
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.sb-confirm-btn.is-primary:hover {
+  filter: brightness(1.06);
+}
+
+.modal-backdrop.show {
+  backdrop-filter: blur(2px);
+}

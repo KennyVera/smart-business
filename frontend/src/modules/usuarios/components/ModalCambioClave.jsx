@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { mensajeApi } from "../rol";
 import { cambiarMiClave } from "../api/perfilApi";
+import { LIMITES, MSG_CLAVE, validarCambioClave } from "../validacion";
+import CampoClave from "./CampoClave";
 
 function ModalCambioClave({ show, onClose }) {
   const [actual, setActual] = useState("");
@@ -23,8 +25,9 @@ function ModalCambioClave({ show, onClose }) {
     evento.preventDefault();
     setError("");
     setOk("");
-    if (nueva !== confirmacion) {
-      setError("La nueva clave y la confirmación no coinciden.");
+    const fallo = validarCambioClave({ actual, nueva, confirmacion });
+    if (fallo) {
+      setError(fallo);
       return;
     }
     setGuardando(true);
@@ -57,34 +60,31 @@ function ModalCambioClave({ show, onClose }) {
           {error ? <p className="text-danger">{error}</p> : null}
           {ok ? <p className="text-success">{ok}</p> : null}
           <label className="form-label">Clave actual</label>
-          <input
-            type="password"
-            className="form-control mb-2"
+          <CampoClave
+            wrapperClassName="mb-2"
             value={actual}
             onChange={(e) => setActual(e.target.value)}
             required
+            minLength={1}
             autoComplete="current-password"
           />
           <label className="form-label">Nueva clave</label>
-          <input
-            type="password"
-            className="form-control mb-2"
+          <CampoClave
+            wrapperClassName="mb-2"
             value={nueva}
             onChange={(e) => setNueva(e.target.value)}
             required
             autoComplete="new-password"
           />
           <label className="form-label">Confirmar nueva clave</label>
-          <input
-            type="password"
-            className="form-control"
+          <CampoClave
             value={confirmacion}
             onChange={(e) => setConfirmacion(e.target.value)}
             required
             autoComplete="new-password"
           />
           <small className="text-muted d-block mt-2">
-            Mínimo 8 caracteres, con al menos una letra y un número.
+            {MSG_CLAVE} Máximo {LIMITES.clave} caracteres.
           </small>
         </Modal.Body>
         <Modal.Footer>

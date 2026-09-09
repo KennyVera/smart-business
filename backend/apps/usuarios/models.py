@@ -138,3 +138,6 @@ class Notificacion(models.Model):
 
     def __str__(self):
         return f"{self.titulo} → {self.usuario_id}"
+
+
+from .models_preferencias import PreferenciaUsuario  # noqa: E402,F401

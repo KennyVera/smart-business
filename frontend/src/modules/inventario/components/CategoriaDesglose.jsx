@@ -1,5 +1,5 @@
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
 import { useProductos } from "../hooks/useInventario";
 import { formatearDinero } from "../margen";
 import MargenBadge from "./MargenBadge";
@@ -21,6 +21,7 @@ function CategoriaDesglose({ categoria }) {
   }
 
   if (total === 0) {
+  const paginacionUi = useDatosPaginacion(pagina, total);
     return (
       <p className="inv-desglose-vacio">
         Esta categoría todavía no tiene productos.
@@ -55,7 +56,7 @@ function CategoriaDesglose({ categoria }) {
         </tbody>
       </table>
       <Paginacion
-        {...datosPaginacion(pagina, total)}
+        {...paginacionUi}
         etiqueta="productos"
         compacta
         onCambio={setPagina}

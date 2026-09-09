@@ -4,7 +4,7 @@ Documento rector para el ERP/POS/CRM multi-sucursal de retail en Ecuador.
 Todo cambio de código, API o interfaz debe respetar estas reglas. Si una
 historia de usuario las contradice, se actualiza primero esta constitución.
 
-**Versión:** 1.4  
+**Versión:** 1.5  
 **Vigencia:** 2026-09-09  
 **Alcance:** `backend/`, `frontend/`, `specs/`
 
@@ -35,7 +35,7 @@ servicios/API propios. No se mezclan bounded contexts.
 | Dominio | Backend | Frontend |
 |---------|---------|----------|
 | Geografía / sucursales | `apps.geografia` | `src/modules/` (panel admin) |
-| Identidad y roles | `apps.usuarios` | `src/modules/usuarios` |
+| Identidad y roles | `apps.usuarios` | `src/modules/usuarios` + `src/context/` (preferencias) |
 | Inventario y kardex | `apps.inventario` | `src/modules/inventario` |
 | Punto de venta | `apps.pos` | `src/modules/pos` |
 | Gerente de sucursal | `apps.pos` (reportes / anulación) | `src/modules/gerente` |
@@ -63,6 +63,8 @@ más de **150 líneas**. Si un componente, vista o servicio se acerca al tope:
 - Perfil del autenticado: `GET/PATCH /api/usuarios/me/`,
   `POST /api/usuarios/me/change-password/` (valida `password_hash` en texto plano).
   `PATCH` acepta `foto_perfil` (ImageField → `media/perfiles/`).
+- Preferencias individuales: `GET/PATCH /api/usuarios/preferencias/me/`
+  (sidebar, gráficos, logo, `filas_por_pagina`). Spec: `008-preferencias-usuario`.
 - El CRM de mostrador usa `GET/POST /api/crm/clientes/`.
 - Permisos por rol (`cajero`, `bodeguero`, `administrador`,
   `gerente` / `Gerente de Sucursal`).
@@ -92,7 +94,12 @@ distinta. No se reutiliza el layout del administrador en el POS ni al revés.
 - Navegación amplia (sucursales, usuarios, inventario, reportes, panel) en
   **grupos colapsables** (Administración, Gerencial, Inventario, Consultas).
   El grupo de la ruta activa se abre solo; “Cerrar sesión” queda fijo abajo.
-
+- **Preferencias individuales** (no globales): color de sidebar, color de
+  gráficos, logo del header y filas por página. UI en el menú de cuenta
+  (“Apariencia y configuración”). Spec `008-preferencias-usuario`.
+- Confirmaciones del sistema: modal propio (`confirmar()`), **nunca**
+  `window.confirm`; acento con `color_logs` del usuario (independiente de
+  `color_graficos`).
 ### 3.2 Bodeguero
 
 - Uso intensivo de **DataGrids** (tablas), filtros masivos y paginación.

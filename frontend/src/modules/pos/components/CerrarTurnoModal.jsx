@@ -2,6 +2,7 @@ import { Banknote, LockKeyhole } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { confirmar } from "../../../shared/confirm";
 import { logout } from "../../usuarios/api/authApi";
 import { borrarSesion } from "../../usuarios/auth/sesion";
 import { mensajeApi } from "../../usuarios/rol";
@@ -20,11 +21,16 @@ function Fila({ etiqueta, valor, fuerte }) {
   );
 }
 
-function confirmarDescuadre(diferencia) {
+async function confirmarDescuadre(diferencia) {
   if (diferencia === 0) return true;
   const tipo = diferencia < 0 ? "Faltante" : "Sobrante";
-  return window.confirm(
-    `Tienes un descuadre de ${tipo} de ${dinero(Math.abs(diferencia))}. ¿Estás seguro de que tu conteo físico es correcto?`
+  return confirmar(
+    `Tienes un descuadre de ${tipo} de ${dinero(Math.abs(diferencia))}. ¿Estás seguro de que tu conteo físico es correcto?`,
+    {
+      titulo: "Descuadre de caja",
+      aceptar: "Confirmar cierre",
+      variante: "aviso",
+    },
   );
 }
 
@@ -59,7 +65,7 @@ function CerrarTurnoModal({ show, turno, resumen, onClose, onCerrado }) {
       setError("Escribe el efectivo contado en la caja.");
       return;
     }
-    if (!confirmarDescuadre(diferencia)) return;
+    if (!(await confirmarDescuadre(diferencia))) return;
     setGuardando(true);
     try {
       const { data } = await cerrarTurno(turno.id_turno, {

@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import RolViewSet, UsuarioViewSet
 from .views_login import LoginView
 from .views_notificaciones import NotificacionLeerView, NotificacionListView
+from .views_preferencias import PreferenciasMeView
 from .views_perfil import CambiarClaveView, PerfilMeView
 from .views_sesiones import (
     LogoutView,
@@ -23,6 +24,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("me/", PerfilMeView.as_view(), name="perfil-me"),
     path("me/change-password/", CambiarClaveView.as_view(), name="perfil-clave"),
+    path("preferencias/me/", PreferenciasMeView.as_view(), name="preferencias-me"),
     path("usuarios/<int:pk>/sesiones/", SesionesUsuarioView.as_view(), name="usuario-sesiones"),
     path("sesiones/resumen/", ResumenSesionesView.as_view(), name="sesiones-resumen"),
     path("sesiones/<int:pk>/revocar/", RevocarSesionView.as_view(), name="sesion-revocar"),

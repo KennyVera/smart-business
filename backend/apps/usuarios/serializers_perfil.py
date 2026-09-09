@@ -84,8 +84,15 @@ class PerfilSerializer(serializers.ModelSerializer):
 
 
 class CambiarClaveSerializer(serializers.Serializer):
-    old_password = serializers.CharField(write_only=True)
-    new_password = serializers.CharField(write_only=True)
+    old_password = serializers.CharField(write_only=True, max_length=64)
+    new_password = serializers.CharField(write_only=True, max_length=64)
+
+    def validate_old_password(self, value):
+        if not value:
+            raise serializers.ValidationError("Escribe tu clave actual.")
+        if len(value) > 64:
+            raise serializers.ValidationError("Máximo 64 caracteres.")
+        return value
 
     def validate_new_password(self, value):
         return exigir_clave(value)

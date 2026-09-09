@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
+import { useFilasPorPagina } from "../../../context/PreferencesContext";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, leerPagina, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, leerPagina, usePagina } from "../../../shared/paginado";
 import { fetchSesiones, revocarSesion } from "../api/usuariosApi";
 import { mensajeApi } from "../rol";
 import SesionFiltro from "./SesionFiltro";
 import SesionTarjeta from "./SesionTarjeta";
 
 function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
+  const pageSize = useFilasPorPagina();
   const [sesiones, setSesiones] = useState({ count: 0, results: [] });
   const [soloActivas, setSoloActivas] = useState(false);
   const [aviso, setAviso] = useState("");
@@ -19,10 +21,11 @@ function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
     if (!usuario) return;
     const { data } = await fetchSesiones(usuario.id_usuario, {
       page: pagina,
+      page_size: pageSize,
       activas: soloActivas ? 1 : undefined,
     });
     setSesiones(data);
-  }, [usuario, pagina, soloActivas]);
+  }, [usuario, pagina, soloActivas, pageSize]);
 
   useEffect(() => {
     if (!show || !usuario) return;
@@ -45,6 +48,7 @@ function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
   }
 
   const { items, total } = leerPagina(sesiones);
+  const paginacionUi = useDatosPaginacion(pagina, total);
   const nombre = usuario?.nombre_completo || usuario?.username || "";
 
   return (
@@ -69,7 +73,7 @@ function HistorialSesionesOffcanvas({ show, usuario, onClose }) {
               />
             ))}
             <Paginacion
-              {...datosPaginacion(pagina, total)}
+              {...paginacionUi}
               etiqueta="sesiones"
               compacta
               onCambio={setPagina}

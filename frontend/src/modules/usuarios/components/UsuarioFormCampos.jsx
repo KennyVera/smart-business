@@ -1,5 +1,6 @@
 import { AtSign, IdCard, Lock, Shield, Store, UserRound } from "lucide-react";
 import { LIMITES } from "../validacion";
+import CampoClave from "./CampoClave";
 import UsuarioFormCampo from "./UsuarioFormCampo";
 
 function UsuarioFormCampos({ form, roles, sucursales, editando, esAdmin, onCampo }) {
@@ -61,10 +62,12 @@ function UsuarioFormCampos({ form, roles, sucursales, editando, esAdmin, onCampo
         </select>
       </UsuarioFormCampo>
       {editando ? null : (
-        <UsuarioFormCampo icon={Lock} label="Contraseña inicial" ayuda="Mínimo 8, con letra y número.">
-          <input
-            className="form-control"
-            type="password"
+        <UsuarioFormCampo
+          icon={Lock}
+          label="Contraseña inicial"
+          ayuda="8 a 64 caracteres, con al menos una letra y un número."
+        >
+          <CampoClave
             value={form.clave}
             maxLength={LIMITES.clave}
             minLength={8}

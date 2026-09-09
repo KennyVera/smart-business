@@ -15,7 +15,6 @@ export function graficoAImagen(svg, cuadrado = false) {
   const caja = svg.getBoundingClientRect();
   const ancho = Math.round(caja.width) || 640;
   const alto = Math.round(caja.height) || 280;
-  // El pastel se recorta al centro para que no arrastre el blanco de los lados.
   const visible = cuadrado ? Math.min(ancho, alto) : ancho;
   const desplazamiento = (ancho - visible) / 2;
 
@@ -70,14 +69,27 @@ export function nombreArchivo(titulo) {
   return `smart-business_${base}_${sello}_${hora}.pdf`;
 }
 
-export function generarPdf(nodo, nombre) {
+/** PDF A4; landscape cuando hay muchas columnas para no cortar el detalle. */
+export function generarPdf(nodo, nombre, { landscape = false } = {}) {
   return html2pdf()
     .set({
-      margin: [8, 8, 10, 8],
+      margin: landscape ? [8, 8, 8, 8] : [10, 10, 12, 10],
       filename: nombre,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, backgroundColor: "#ffffff", useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      html2canvas: {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: nodo.scrollWidth,
+        windowHeight: nodo.scrollHeight,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: landscape ? "landscape" : "portrait",
+      },
       pagebreak: { mode: ["css", "legacy"] },
     })
     .from(nodo)

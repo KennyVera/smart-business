@@ -1,10 +1,12 @@
+import { usePreferences } from "../../../context/PreferencesContext";
+import { ACENTO_DEF, varsAcento } from "../coloresReporte";
 import { formatearValor } from "../reportes";
 import ReporteLeyenda from "./ReporteLeyenda";
 import ReporteTabla from "./ReporteTabla";
 
 /**
- * Plantilla oculta que se convierte en PDF. Vive fuera de la pantalla para que
- * html2canvas pueda medirla con el ancho fijo de una hoja A4.
+ * Plantilla oculta que se convierte en PDF. El acento va en el nodo capturado
+ * (html2canvas no hereda bien variables CSS del padre).
  */
 function ReportePdfDocumento({
   innerRef,
@@ -14,15 +16,28 @@ function ReportePdfDocumento({
   imagenGrafico,
   auditoria,
   alcance,
+  landscape = false,
 }) {
+  const { colorGraficos } = usePreferences();
+  const acento = colorGraficos || ACENTO_DEF;
+  const tema = varsAcento(acento);
   if (!datos) return null;
 
   return (
-    <div className="rep-pdf-oculto" aria-hidden="true">
-      <div className="rep-pdf" ref={innerRef}>
-        <header className="rep-pdf-head">
+    <div
+      className={`rep-pdf-oculto${landscape ? " is-landscape" : ""}`}
+      aria-hidden="true"
+    >
+      <div
+        className={`rep-pdf${landscape ? " is-landscape" : ""}`}
+        ref={innerRef}
+        style={tema}
+      >
+        <header className="rep-pdf-head" style={{ borderBottomColor: acento }}>
           <div className="rep-pdf-marca">
-            <span className="rep-pdf-logo">SB</span>
+            <span className="rep-pdf-logo" style={{ background: acento }}>
+              SB
+            </span>
             <div>
               <strong>Smart Business</strong>
               <small>Módulo de Inventario · Reportes operativos</small>
@@ -49,7 +64,7 @@ function ReportePdfDocumento({
 
         <div className="rep-pdf-resumen">
           {datos.resumen.map((dato) => (
-            <div key={dato.etiqueta}>
+            <div key={dato.etiqueta} style={{ borderLeftColor: acento }}>
               <span>{dato.etiqueta}</span>
               <strong>{formatearValor(dato.valor, dato.formato)}</strong>
             </div>
@@ -70,7 +85,12 @@ function ReportePdfDocumento({
 
         <section className="rep-pdf-detalle">
           <h2>Detalle</h2>
-          <ReporteTabla columnas={columnas} filas={datos.filas} paraPdf />
+          <ReporteTabla
+            columnas={columnas}
+            filas={datos.filas}
+            paraPdf
+            colorAcento={acento}
+          />
         </section>
 
         <footer className="rep-pdf-pie">

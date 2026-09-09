@@ -30,6 +30,6 @@ def exigir_nombre(valor, etiqueta="Nombre"):
 def exigir_clave(valor):
     if not CLAVE_RE.fullmatch(valor or ""):
         raise serializers.ValidationError(
-            "Mínimo 8 caracteres, con al menos una letra y un número."
+            "8 a 64 caracteres, con al menos una letra y un número."
         )
     return valor

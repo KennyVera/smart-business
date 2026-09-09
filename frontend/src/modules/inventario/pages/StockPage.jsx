@@ -1,7 +1,7 @@
 import { Boxes } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
 import { fetchSucursalesAsignables } from "../../usuarios/api/usuariosApi";
 import InventarioHeader from "../components/InventarioHeader";
 import MermaFormModal from "../components/MermaFormModal";
@@ -43,6 +43,7 @@ function StockPage() {
     ? `${total} productos bajo el mínimo con estos filtros.`
     : `${total} productos con estos filtros.`;
 
+  const paginacionUi = useDatosPaginacion(pagina, total);
   return (
     <div className="page-card">
       <InventarioHeader icon={Boxes} titulo="Control de stock" detalle={detalle} />
@@ -70,7 +71,7 @@ function StockPage() {
             onMerma={(fila) => setMerma({ open: true, fila })}
           />
           <Paginacion
-            {...datosPaginacion(pagina, total)}
+            {...paginacionUi}
             etiqueta="productos"
             onCambio={setPagina}
           />

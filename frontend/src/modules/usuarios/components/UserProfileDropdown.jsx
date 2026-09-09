@@ -1,4 +1,4 @@
-import { Lock, LogOut, User } from "lucide-react";
+import { Lock, LogOut, Settings, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { logout } from "../api/authApi";
 import { fetchMiPerfil } from "../api/perfilApi";
 import { borrarSesion, leerSesion } from "../auth/sesion";
 import AvatarPerfil from "./AvatarPerfil";
+import ModalApariencia from "./ModalApariencia";
 import ModalCambioClave from "./ModalCambioClave";
 import ModalPerfil from "./ModalPerfil";
 import "./user-profile-dropdown.css";
@@ -17,6 +18,7 @@ function UserProfileDropdown({ variant = "admin", extraRol = "" }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [modalPerfil, setModalPerfil] = useState(false);
   const [modalClave, setModalClave] = useState(false);
+  const [modalApariencia, setModalApariencia] = useState(false);
 
   const nombre =
     perfil?.nombre_completo || sesion?.nombre_completo || "Usuario";
@@ -95,6 +97,17 @@ function UserProfileDropdown({ variant = "admin", extraRol = "" }) {
               <Lock size={16} strokeWidth={1.75} />
               Cambio de clave
             </button>
+            <button
+              type="button"
+              className="upd-item"
+              onClick={() => {
+                setMenuAbierto(false);
+                setModalApariencia(true);
+              }}
+            >
+              <Settings size={16} strokeWidth={1.75} />
+              Apariencia y configuración
+            </button>
             <hr className="dropdown-divider" />
             <button
               type="button"
@@ -114,6 +127,10 @@ function UserProfileDropdown({ variant = "admin", extraRol = "" }) {
         onGuardado={setPerfil}
       />
       <ModalCambioClave show={modalClave} onClose={() => setModalClave(false)} />
+      <ModalApariencia
+        show={modalApariencia}
+        onClose={() => setModalApariencia(false)}
+      />
     </>
   );
 }

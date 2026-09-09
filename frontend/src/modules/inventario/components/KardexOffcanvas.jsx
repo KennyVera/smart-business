@@ -1,8 +1,9 @@
 import { ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Offcanvas } from "react-bootstrap";
+import { useFilasPorPagina } from "../../../context/PreferencesContext";
 import Paginacion from "../../../shared/Paginacion";
-import { datosPaginacion, leerPagina, usePagina } from "../../../shared/paginado";
+import { useDatosPaginacion, leerPagina, usePagina } from "../../../shared/paginado";
 import { fetchKardex } from "../api/inventarioApi";
 import { formatearDinero } from "../margen";
 import KardexMovimientos from "./KardexMovimientos";
@@ -10,6 +11,7 @@ import KardexMovimientos from "./KardexMovimientos";
 const VACIO = { stock_actual: 0, stock_por_sucursal: [], movimientos: null };
 
 function KardexOffcanvas({ show, producto, sucursal, onClose }) {
+  const pageSize = useFilasPorPagina();
   const [datos, setDatos] = useState(VACIO);
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
@@ -19,13 +21,18 @@ function KardexOffcanvas({ show, producto, sucursal, onClose }) {
     if (!show || !producto) return;
     setCargando(true);
     setError("");
-    fetchKardex(producto.id_producto, { sucursal: sucursal?.id, page: pagina })
+    fetchKardex(producto.id_producto, {
+      sucursal: sucursal?.id,
+      page: pagina,
+      page_size: pageSize,
+    })
       .then((response) => setDatos(response.data))
       .catch(() => setError("No se pudo cargar el kardex del producto."))
       .finally(() => setCargando(false));
-  }, [show, producto, sucursal, pagina]);
+  }, [show, producto, sucursal, pagina, pageSize]);
 
   const movimientos = leerPagina(datos.movimientos);
+  const paginacionUi = useDatosPaginacion(pagina, movimientos.total);
 
   return (
     <Offcanvas show={show} onHide={onClose} placement="end" className="inv-kardex">
@@ -57,7 +64,7 @@ function KardexOffcanvas({ show, producto, sucursal, onClose }) {
             <h4 className="inv-kardex-titulo">Historial de movimientos</h4>
             <KardexMovimientos movimientos={movimientos.items} />
             <Paginacion
-              {...datosPaginacion(pagina, movimientos.total)}
+              {...paginacionUi}
               etiqueta="movimientos"
               compacta
               onCambio={setPagina}

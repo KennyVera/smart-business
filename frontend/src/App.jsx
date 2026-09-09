@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { PreferencesLayout } from "./context/PreferencesContext";
 import MainLayout from "./modules/layout/MainLayout";
 import InicioSegunRol from "./modules/layout/components/InicioSegunRol";
 import ZonasPage from "./modules/geografia/pages/ZonasPage";
@@ -31,33 +32,35 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route element={<RequireAuth />}>
-          <Route element={<RequireRol roles={ROLES_POS} silent />}>
-            <Route path="pos" element={<PosLayout />}>
-              <Route index element={<PosWorkspace />} />
+          <Route element={<PreferencesLayout />}>
+            <Route element={<RequireRol roles={ROLES_POS} silent />}>
+              <Route path="pos" element={<PosLayout />}>
+                <Route index element={<PosWorkspace />} />
+              </Route>
             </Route>
-          </Route>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<InicioSegunRol />} />
-            <Route element={<RequireRol roles={ROLES_ADMIN} />}>
-              <Route path="geografia/zonas" element={<ZonasPage />} />
-              <Route path="geografia/sucursales" element={<SucursalesPage />} />
-              <Route path="usuarios" element={<UsuariosPage />} />
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<InicioSegunRol />} />
+              <Route element={<RequireRol roles={ROLES_ADMIN} />}>
+                <Route path="geografia/zonas" element={<ZonasPage />} />
+                <Route path="geografia/sucursales" element={<SucursalesPage />} />
+                <Route path="usuarios" element={<UsuariosPage />} />
+              </Route>
+              <Route element={<RequireRol roles={ROLES_GERENCIAL} />}>
+                <Route path="gerente" element={<DashboardGerente />} />
+                <Route path="gerente/auditoria" element={<AuditoriaCajas />} />
+                <Route path="gerente/devoluciones" element={<Devoluciones />} />
+              </Route>
+              <Route element={<RequireRol roles={ROLES_INVENTARIO_OPS} />}>
+                <Route path="inventario/catalogo" element={<CatalogoPage />} />
+                <Route path="inventario/categorias" element={<CategoriasPage />} />
+                <Route path="inventario/stock" element={<StockPage />} />
+              </Route>
+              <Route element={<RequireRol roles={ROLES_INVENTARIO_LECTURA} />}>
+                <Route path="inventario/alertas" element={<AlertasPage />} />
+                <Route path="inventario/reportes" element={<ReportesInventario />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
-            <Route element={<RequireRol roles={ROLES_GERENCIAL} />}>
-              <Route path="gerente" element={<DashboardGerente />} />
-              <Route path="gerente/auditoria" element={<AuditoriaCajas />} />
-              <Route path="gerente/devoluciones" element={<Devoluciones />} />
-            </Route>
-            <Route element={<RequireRol roles={ROLES_INVENTARIO_OPS} />}>
-              <Route path="inventario/catalogo" element={<CatalogoPage />} />
-              <Route path="inventario/categorias" element={<CategoriasPage />} />
-              <Route path="inventario/stock" element={<StockPage />} />
-            </Route>
-            <Route element={<RequireRol roles={ROLES_INVENTARIO_LECTURA} />}>
-              <Route path="inventario/alertas" element={<AlertasPage />} />
-              <Route path="inventario/reportes" element={<ReportesInventario />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Route>
       </Routes>

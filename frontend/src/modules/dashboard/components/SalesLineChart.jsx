@@ -9,9 +9,13 @@ import {
   YAxis,
 } from "recharts";
 import { Settings } from "lucide-react";
+import { usePreferences } from "../../../context/PreferencesContext";
 import { SALES_LINES, SALES_SERIES } from "../data/salesSeries";
 
 function SalesLineChart() {
+  const { colorGraficos } = usePreferences();
+  const acento = colorGraficos || "#00AA5D";
+
   return (
     <div className="page-card h-100">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -30,12 +34,12 @@ function SalesLineChart() {
             />
             <Tooltip />
             <Legend />
-            {SALES_LINES.map((line) => (
+            {SALES_LINES.map((line, i) => (
               <Line
                 key={line.key}
                 type="monotone"
                 dataKey={line.key}
-                stroke={line.color}
+                stroke={i === 0 ? acento : line.color}
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4 }}

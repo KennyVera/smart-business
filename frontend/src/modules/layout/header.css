@@ -21,6 +21,14 @@
   background: var(--sb-accent);
 }
 
+.header-logo-img {
+  height: 40px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 .header-title { font-weight: 700; }
 .header-search {
   flex: 1;

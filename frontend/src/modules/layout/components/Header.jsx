@@ -1,12 +1,24 @@
 import { Search } from "lucide-react";
+import { usePreferences } from "../../../context/PreferencesContext";
 import NotificacionesBell from "./NotificacionesBell";
 import UserProfileDropdown from "../../usuarios/components/UserProfileDropdown";
 
 function Header() {
+  const { logoPersonalizado } = usePreferences();
+
   return (
     <header className="admin-header">
       <div className="header-brand">
-        <span className="header-logo" aria-hidden="true" />
+        {logoPersonalizado ? (
+          <img
+            src={logoPersonalizado}
+            alt="Logo"
+            className="header-logo-img"
+            height={40}
+          />
+        ) : (
+          <span className="header-logo" aria-hidden="true" />
+        )}
         <span className="header-title">Smart Business</span>
       </div>
       <label className="header-search">

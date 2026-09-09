@@ -7,8 +7,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { usePreferences } from "../../../../context/PreferencesContext";
 
 function TopProductosChart({ series = [] }) {
+  const { colorGraficos } = usePreferences();
   const datos = series.length
     ? series.map((p) => ({
         nombre: (p.nombre || "").slice(0, 18),
@@ -25,7 +27,12 @@ function TopProductosChart({ series = [] }) {
             <XAxis dataKey="nombre" tick={{ fontSize: 11 }} angle={-20} textAnchor="end" />
             <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
             <Tooltip />
-            <Bar dataKey="unidades" fill="#00AA5D" radius={[6, 6, 0, 0]} name="Unidades" />
+            <Bar
+              dataKey="unidades"
+              fill={colorGraficos || "#00AA5D"}
+              radius={[6, 6, 0, 0]}
+              name="Unidades"
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

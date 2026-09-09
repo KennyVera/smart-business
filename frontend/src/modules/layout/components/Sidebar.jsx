@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { usePreferences } from "../../../context/PreferencesContext";
 import { rolDeSesion } from "../../usuarios/auth/sesion";
 import { SIDEBAR_MODULOS, grupoContieneRuta } from "../sidebarMenu";
 import SidebarGrupo from "./SidebarGrupo";
@@ -20,6 +21,7 @@ function estadoInicial(modulos, pathname) {
 
 function Sidebar() {
   const { pathname } = useLocation();
+  const { colorSidebar } = usePreferences();
   const [abierto, setAbierto] = useState(false);
   const modulos = useMemo(() => {
     const rol = rolDeSesion();
@@ -48,7 +50,10 @@ function Sidebar() {
   }
 
   return (
-    <aside className={`admin-sidebar${abierto ? " is-open" : ""}`}>
+    <aside
+      className={`admin-sidebar${abierto ? " is-open" : ""}`}
+      style={{ backgroundColor: colorSidebar || "#000000" }}
+    >
       <button
         type="button"
         className="sidebar-menu-btn"

@@ -1,8 +1,10 @@
 import { FileBarChart, FileDown, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePreferences } from "../../../context/PreferencesContext";
 import { fetchSucursalesAsignables } from "../../usuarios/api/usuariosApi";
 import { leerSesion } from "../../usuarios/auth/sesion";
 import { fetchReporte } from "../api/inventarioApi";
+import { ACENTO_DEF, varsAcento } from "../coloresReporte";
 import InventarioHeader from "../components/InventarioHeader";
 import ReporteCard from "../components/ReporteCard";
 import ReporteFiltros from "../components/ReporteFiltros";
@@ -32,10 +34,13 @@ import "../inventario.css";
 import "../reportes.css";
 
 const ESPERA_GRAFICO = 450;
+const COLS_LANDSCAPE = 6;
 
 function ReportesInventario() {
   const fija = useMemo(() => sucursalDeSesion(), []);
   const sesion = useMemo(() => leerSesion(), []);
+  const { colorGraficos } = usePreferences();
+  const tema = varsAcento(colorGraficos || ACENTO_DEF);
   const [sucursales, setSucursales] = useState([]);
   const [filtros, setFiltros] = useState(() => ({
     sucursal: fija ? String(fija.id) : "",
@@ -53,6 +58,7 @@ function ReportesInventario() {
 
   const reporte = buscarReporte(activo);
   const columnas = reporte ? columnasVisibles(reporte, !fija) : [];
+  const landscape = columnas.length >= COLS_LANDSCAPE;
   const params = reporte ? parametrosDe(reporte, filtros) : null;
   const consulta = JSON.stringify([activo, params]);
   const nombreSucursal = fija
@@ -122,7 +128,9 @@ function ReportesInventario() {
     let vivo = true;
     (async () => {
       try {
-        await generarPdf(pdfRef.current, nombreArchivo(datos.titulo));
+        await generarPdf(pdfRef.current, nombreArchivo(datos.titulo), {
+          landscape,
+        });
       } catch {
         if (vivo) setError("No se pudo generar el PDF.");
       }
@@ -131,7 +139,7 @@ function ReportesInventario() {
     return () => {
       vivo = false;
     };
-  }, [trabajo]);
+  }, [trabajo, landscape, datos?.titulo]);
 
   function cambiar(cambios) {
     setFiltros((actual) => ({ ...actual, ...cambios }));
@@ -145,7 +153,7 @@ function ReportesInventario() {
   const Icono = reporte?.icono;
 
   return (
-    <div className="page-card">
+    <div className="page-card" style={tema}>
       <InventarioHeader
         icon={FileBarChart}
         titulo="Reportes operativos"
@@ -243,6 +251,7 @@ function ReportesInventario() {
           imagenGrafico={imagen}
           auditoria={trabajo?.auditoria || selloAuditoria(sesion)}
           alcance={alcance}
+          landscape={landscape}
         />
       ) : null}
     </div>

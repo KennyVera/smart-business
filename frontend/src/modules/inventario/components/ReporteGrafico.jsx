@@ -10,8 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { usePreferences } from "../../../context/PreferencesContext";
 import { formatearDinero } from "../margen";
-import { PALETA, VERDE } from "../reportes";
+import { ACENTO_DEF, paletaDesdeAcento } from "../coloresReporte";
 
 const EJE = { fontSize: 11, fill: "#6c757d" };
 const TOOLTIP = {
@@ -25,6 +26,9 @@ function etiquetaPorcentaje({ percent }) {
 }
 
 function ReporteGrafico({ tipo, titulo, datos, innerRef }) {
+  const { colorGraficos } = usePreferences();
+  const acento = colorGraficos || ACENTO_DEF;
+  const paleta = paletaDesdeAcento(acento);
   if (!datos?.length) return null;
 
   return (
@@ -47,7 +51,7 @@ function ReporteGrafico({ tipo, titulo, datos, innerRef }) {
               isAnimationActive={false}
             >
               {datos.map((item, indice) => (
-                <Cell key={item.nombre} fill={PALETA[indice % PALETA.length]} />
+                <Cell key={item.nombre} fill={paleta[indice % paleta.length]} />
               ))}
             </Pie>
             <Tooltip
@@ -74,12 +78,12 @@ function ReporteGrafico({ tipo, titulo, datos, innerRef }) {
             />
             <Tooltip
               contentStyle={TOOLTIP}
-              cursor={{ fill: "rgba(0, 170, 93, 0.06)" }}
+              cursor={{ fill: `${acento}14` }}
               formatter={(valor) => formatearDinero(valor)}
             />
             <Bar
               dataKey="valor"
-              fill={VERDE}
+              fill={acento}
               radius={[6, 6, 0, 0]}
               maxBarSize={56}
               isAnimationActive={false}

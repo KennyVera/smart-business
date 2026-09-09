@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useFilasPorPagina } from "../context/PreferencesContext";
 
 export const POR_PAGINA = 10;
 
 /**
- * Corta una lista en páginas de tamaño fijo. Cuando cambia la cantidad de
- * registros (una búsqueda, un filtro, un alta) vuelve a la primera página.
+ * Corta una lista en páginas. Si no se pasa porPagina, usa la preferencia
+ * del usuario (o 10 por defecto).
  */
-export function usePaginacion(filas, porPagina = POR_PAGINA) {
+export function usePaginacion(filas, porPagina) {
+  const preferido = useFilasPorPagina();
+  const tamano = porPagina ?? preferido ?? POR_PAGINA;
   const lista = filas || [];
   const total = lista.length;
-  const paginas = Math.max(Math.ceil(total / porPagina), 1);
+  const paginas = Math.max(Math.ceil(total / tamano), 1);
   const [pagina, setPagina] = useState(1);
   const totalPrevio = useRef(total);
   const actual = Math.min(pagina, paginas);
@@ -26,17 +29,18 @@ export function usePaginacion(filas, porPagina = POR_PAGINA) {
   }, [pagina, actual]);
 
   const visibles = useMemo(() => {
-    const inicio = (actual - 1) * porPagina;
-    return lista.slice(inicio, inicio + porPagina);
-  }, [filas, actual, porPagina]);
+    const inicio = (actual - 1) * tamano;
+    return lista.slice(inicio, inicio + tamano);
+  }, [lista, actual, tamano]);
 
   return {
     visibles,
     pagina: actual,
     paginas,
     total,
-    desde: total === 0 ? 0 : (actual - 1) * porPagina + 1,
-    hasta: Math.min(actual * porPagina, total),
+    desde: total === 0 ? 0 : (actual - 1) * tamano + 1,
+    hasta: Math.min(actual * tamano, total),
     irA: setPagina,
+    porPagina: tamano,
   };
 }

@@ -1,0 +1,16 @@
+.upd-apariencia .form-control-color {
+  width: 3.5rem;
+  height: 2.5rem;
+  padding: 0.2rem;
+}
+
+.upd-logo-preview {
+  display: block;
+  height: 40px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #f1f5f9;
+  padding: 0.25rem;
+}

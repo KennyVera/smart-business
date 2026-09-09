@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useFilasPorPagina } from "../../../context/PreferencesContext";
 import { usePaginado } from "../../../shared/usePaginado";
 import {
   fetchAlertas,
@@ -17,7 +18,11 @@ const ALERTAS_VACIAS = {
 };
 
 export function useCategorias(pagina = 1) {
-  const cargar = useCallback(() => fetchCategorias({ page: pagina }), [pagina]);
+  const pageSize = useFilasPorPagina();
+  const cargar = useCallback(
+    () => fetchCategorias({ page: pagina, page_size: pageSize }),
+    [pagina, pageSize],
+  );
   return usePaginado(cargar, "No se pudieron cargar las categorías.");
 }
 
@@ -28,6 +33,7 @@ export function useCategoriasTodas() {
 }
 
 export function useProductos({ buscar, categoria, margen, pagina = 1 }) {
+  const pageSize = useFilasPorPagina();
   const cargar = useCallback(
     () =>
       fetchProductos({
@@ -35,13 +41,15 @@ export function useProductos({ buscar, categoria, margen, pagina = 1 }) {
         categoria: categoria || undefined,
         margen: margen || undefined,
         page: pagina,
+        page_size: pageSize,
       }),
-    [buscar, categoria, margen, pagina],
+    [buscar, categoria, margen, pagina, pageSize],
   );
   return usePaginado(cargar, "No se pudieron cargar los productos.");
 }
 
 export function useStock({ sucursal, buscar, soloAlerta, pagina = 1 }) {
+  const pageSize = useFilasPorPagina();
   const cargar = useCallback(
     () =>
       fetchStock({
@@ -49,13 +57,15 @@ export function useStock({ sucursal, buscar, soloAlerta, pagina = 1 }) {
         buscar: buscar || undefined,
         solo_alerta: soloAlerta || undefined,
         page: pagina,
+        page_size: pageSize,
       }),
-    [sucursal, buscar, soloAlerta, pagina],
+    [sucursal, buscar, soloAlerta, pagina, pageSize],
   );
   return usePaginado(cargar, "No se pudo cargar el stock.");
 }
 
 export function useAlertas({ sucursal, dias, paginaCritico = 1, paginaCaducar = 1 }) {
+  const pageSize = useFilasPorPagina();
   const cargar = useCallback(
     () =>
       fetchAlertas({
@@ -63,8 +73,9 @@ export function useAlertas({ sucursal, dias, paginaCritico = 1, paginaCaducar = 
         dias,
         pagina_critico: paginaCritico,
         pagina_caducar: paginaCaducar,
+        page_size: pageSize,
       }),
-    [sucursal, dias, paginaCritico, paginaCaducar],
+    [sucursal, dias, paginaCritico, paginaCaducar, pageSize],
   );
   return useRecurso(cargar, ALERTAS_VACIAS, "No se pudieron cargar las alertas.");
 }

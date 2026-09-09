@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useFilasPorPagina } from "../context/PreferencesContext";
 
 export const POR_PAGINA = 10;
 
@@ -21,6 +22,12 @@ export function datosPaginacion(pagina, total, porPagina = POR_PAGINA) {
     desde: total === 0 ? 0 : (actual - 1) * porPagina + 1,
     hasta: Math.min(actual * porPagina, total),
   };
+}
+
+/** Paginación de UI usando filas_por_pagina del usuario. */
+export function useDatosPaginacion(pagina, total) {
+  const filas = useFilasPorPagina();
+  return datosPaginacion(pagina, total, filas);
 }
 
 /** Vuelve a la página 1 cada vez que cambian los filtros que forman la clave. */

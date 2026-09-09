@@ -7,8 +7,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { usePreferences } from "../../../../context/PreferencesContext";
 
 function VentasPorHoraChart({ series = [] }) {
+  const { colorGraficos } = usePreferences();
   const datos = series.length ? series : [{ hora: "—", total: 0 }];
   return (
     <div className="page-card h-100">
@@ -23,7 +25,7 @@ function VentasPorHoraChart({ series = [] }) {
             <Line
               type="monotone"
               dataKey="total"
-              stroke="#00AA5D"
+              stroke={colorGraficos || "#00AA5D"}
               strokeWidth={2}
               dot={{ r: 3 }}
               name="Total"
