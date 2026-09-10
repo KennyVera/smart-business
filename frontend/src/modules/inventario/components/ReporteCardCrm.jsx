@@ -92,7 +92,7 @@ function ReporteCardCrm({
       <div className="rep-card-acciones">
         <button type="button" className="btn-rep-outline" onClick={onVer} disabled={bloqueado}>
           <Eye size={15} strokeWidth={1.75} />
-          Ver en pantalla
+          {activo ? "Ocultar vista" : "Ver en pantalla"}
         </button>
         <button type="button" className="btn-rep" onClick={onPdf} disabled={bloqueado}>
           {generando ? (

@@ -10,7 +10,7 @@ function urlImagen(valor) {
 }
 
 function ProductoCard({ fila, onAgregar }) {
-  const agotado = fila.cantidad_actual <= 0;
+  const sinStock = fila.cantidad_actual <= 0;
   const url = urlImagen(fila.imagen);
   const [sinFoto, setSinFoto] = useState(!url);
 
@@ -23,9 +23,12 @@ function ProductoCard({ fila, onAgregar }) {
   return (
     <button
       type="button"
-      className={`pos-card${agotado ? " is-agotada" : ""}`}
-      disabled={agotado}
-      title={agotado ? "Sin stock en esta sucursal" : `Agregar ${fila.nombre}`}
+      className={`pos-card${sinStock ? " is-agotada" : ""}`}
+      title={
+        sinStock
+          ? `${fila.nombre} — Stock local: 0 (se cobrará con descuadre)`
+          : `Agregar ${fila.nombre}`
+      }
       onClick={() => onAgregar(fila)}
     >
       <span className="pos-card-imagen">
@@ -52,7 +55,7 @@ function ProductoCard({ fila, onAgregar }) {
         </span>
       </span>
       <span className="pos-card-stock">
-        {agotado ? "Sin stock" : `${fila.cantidad_actual} disp.`}
+        {sinStock ? "Stock local: 0" : `${fila.cantidad_actual} disp.`}
       </span>
     </button>
   );

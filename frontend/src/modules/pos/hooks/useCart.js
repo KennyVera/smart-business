@@ -6,17 +6,21 @@ export const CANTIDAD_MAXIMA = 9999;
 
 function tope(item) {
   const disponible = numero(item.disponible);
-  return Math.min(disponible > 0 ? disponible : CANTIDAD_MAXIMA, CANTIDAD_MAXIMA);
+  // Stock 0 o negativo: se permite vender (descuadre); el tope es operativo, no físico.
+  if (disponible <= 0) return CANTIDAD_MAXIMA;
+  return Math.min(disponible, CANTIDAD_MAXIMA);
 }
 
 function linea(fila, cantidad) {
+  const disponible = numero(fila.cantidad_actual);
   return {
     id_producto: fila.id_producto,
     sku: fila.sku,
     nombre: fila.nombre,
     categoria_nombre: fila.categoria_nombre,
     precio: numero(fila.precio_venta),
-    disponible: numero(fila.cantidad_actual),
+    disponible,
+    stock_alerta: disponible <= 0,
     aplica_iva: fila.aplica_iva !== false,
     cantidad,
   };
@@ -29,6 +33,7 @@ function importe(item) {
 /**
  * Carrito temporal del cajero: vive solo en memoria hasta que se cobra.
  * El total incluye IVA 15% solo sobre las líneas gravadas.
+ * Stock local 0 no bloquea la venta: se marca alerta de descuadre.
  */
 export function useCart() {
   const [items, setItems] = useState([]);
@@ -40,17 +45,17 @@ export function useCart() {
       const previo = actuales.find((item) => item.id_producto === fila.id_producto);
       const nuevo = previo ? { ...previo } : linea(fila, 0);
       nuevo.disponible = numero(fila.cantidad_actual);
+      nuevo.stock_alerta = nuevo.disponible <= 0;
       nuevo.aplica_iva = fila.aplica_iva !== false;
       const pedida = nuevo.cantidad + suma;
       const maximo = tope(nuevo);
-      if (maximo <= 0) {
-        setAviso(`${fila.nombre} no tiene stock disponible.`);
-        return actuales;
-      }
       if (pedida > maximo) {
-        setAviso(`${fila.nombre}: solo quedan ${maximo} unidades.`);
+        setAviso(`${fila.nombre}: máximo ${maximo} unidades por línea.`);
       }
       nuevo.cantidad = Math.min(pedida, maximo);
+      if (nuevo.stock_alerta) {
+        setAviso(`Stock local: 0 — ${fila.nombre} se cobrará con descuadre de inventario.`);
+      }
       if (!previo) return [...actuales, nuevo];
       return actuales.map((item) =>
         item.id_producto === nuevo.id_producto ? nuevo : item,
@@ -66,9 +71,19 @@ export function useCart() {
         const maximo = tope(item);
         const limpia = Math.max(Math.round(numero(cantidad)), 1);
         if (limpia > maximo) {
-          setAviso(`${item.nombre}: solo quedan ${maximo} unidades.`);
+          setAviso(`${item.nombre}: máximo ${maximo} unidades por línea.`);
         }
-        return { ...item, cantidad: Math.min(limpia, maximo) };
+        const actualizado = {
+          ...item,
+          cantidad: Math.min(limpia, maximo),
+          stock_alerta: item.disponible <= 0,
+        };
+        if (actualizado.stock_alerta) {
+          setAviso(
+            `Stock local: 0 — ${item.nombre} se cobrará con descuadre de inventario.`,
+          );
+        }
+        return actualizado;
       }),
     );
   }, []);

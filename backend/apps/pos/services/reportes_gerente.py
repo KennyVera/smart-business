@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.db.models import Count, DecimalField, ExpressionWrapper, F, Sum
-from django.db.models.functions import Coalesce, TruncHour
+from django.db.models.functions import Coalesce, TruncDate, TruncHour, TruncWeek
 from django.utils import timezone
 
 from apps.usuarios.models import SucursalExistente
@@ -14,6 +14,9 @@ TOTAL_LINEA = ExpressionWrapper(
     F("cantidad") * F("precio_unitario_historico"),
     output_field=DINERO,
 )
+
+TOP_VALIDOS = (5, 10, 20)
+GRANULARIDADES = ("hora", "dia", "semana")
 
 
 def _sucursal_id(usuario):
@@ -46,6 +49,25 @@ def rango_dia_local(dia=None):
     dia = dia or timezone.localdate()
     inicio = timezone.make_aware(datetime.combine(dia, datetime.min.time()))
     return inicio, inicio + timedelta(days=1)
+
+
+def top_n(valor, defecto=5):
+    try:
+        n = int(valor)
+    except (TypeError, ValueError):
+        return defecto
+    if n in TOP_VALIDOS:
+        return n
+    if n < 5:
+        return 5
+    if n <= 10:
+        return 10
+    return 20
+
+
+def granularidad_ok(valor, defecto="hora"):
+    clave = str(valor or defecto).strip().lower()
+    return clave if clave in GRANULARIDADES else defecto
 
 
 def turnos_sucursal(usuario):
@@ -89,24 +111,60 @@ def cierre_diario(usuario):
     return totales
 
 
-def dashboard_sucursal(usuario):
-    inicio, fin = rango_dia_local()
+def _ventana(granularidad):
+    """Rango de ventas según agrupación pedida."""
+    hoy = timezone.localdate()
+    _, fin = rango_dia_local(hoy)
     zona = timezone.get_current_timezone()
+    if granularidad == "dia":
+        inicio = timezone.make_aware(
+            datetime.combine(hoy - timedelta(days=13), datetime.min.time())
+        )
+        return inicio, fin, TruncDate("fecha_hora", tzinfo=zona)
+    if granularidad == "semana":
+        inicio = timezone.make_aware(
+            datetime.combine(hoy - timedelta(weeks=11), datetime.min.time())
+        )
+        return inicio, fin, TruncWeek("fecha_hora", tzinfo=zona)
+    inicio, _ = rango_dia_local(hoy)
+    return inicio, fin, TruncHour("fecha_hora", tzinfo=zona)
+
+
+def _etiqueta_periodo(bucket, granularidad):
+    if not bucket:
+        return "—"
+    if hasattr(bucket, "utcoffset"):
+        local = timezone.localtime(bucket) if timezone.is_aware(bucket) else bucket
+    else:
+        # TruncDate devuelve date
+        local = bucket
+    if granularidad == "hora":
+        return local.strftime("%H:00")
+    if granularidad == "dia":
+        return local.strftime("%d/%m")
+    return f"Sem {local.strftime('%d/%m')}"
+
+
+def dashboard_sucursal(usuario, top=5, granularidad="hora"):
+    tope = top_n(top)
+    grano = granularidad_ok(granularidad)
+    inicio, fin, trunc = _ventana(grano)
     ventas = ventas_sucursal(usuario).filter(fecha_hora__gte=inicio, fecha_hora__lt=fin)
-    por_hora = (
-        ventas.annotate(hora=TruncHour("fecha_hora", tzinfo=zona))
-        .values("hora")
+
+    por_tiempo = (
+        ventas.annotate(bucket=trunc)
+        .values("bucket")
         .annotate(total=Coalesce(Sum("total_factura"), Decimal("0")))
-        .order_by("hora")
+        .order_by("bucket")
     )
-    top = (
+    top_qs = (
         VentaDetalle.objects.filter(venta__in=ventas)
         .values(nombre=F("producto__nombre"))
         .annotate(
             unidades=Coalesce(Sum("cantidad"), 0),
             total=Coalesce(Sum(TOTAL_LINEA), Decimal("0")),
         )
-        .order_by("-unidades")[:5]
+        .order_by("-unidades")[:tope]
     )
     por_cajero = (
         ventas.values(
@@ -119,24 +177,34 @@ def dashboard_sucursal(usuario):
         )
         .order_by("-total")
     )
+    serie = [
+        {
+            "etiqueta": _etiqueta_periodo(fila["bucket"], grano),
+            "hora": _etiqueta_periodo(fila["bucket"], grano),
+            "total": max(fila["total"] or Decimal("0"), Decimal("0")),
+        }
+        for fila in por_tiempo
+    ]
     return {
         "sucursal": _sucursal_nombre(usuario),
         "fecha": timezone.localdate().isoformat(),
-        "ventas_por_hora": [
+        "top_n": tope,
+        "granularidad": grano,
+        "ventas_por_hora": serie,
+        "ventas_tiempo": serie,
+        "top_productos": [
             {
-                "hora": timezone.localtime(fila["hora"]).strftime("%H:00")
-                if fila["hora"]
-                else "",
-                "total": fila["total"],
+                "nombre": fila["nombre"],
+                "unidades": max(int(fila["unidades"] or 0), 0),
+                "total": max(fila["total"] or Decimal("0"), Decimal("0")),
             }
-            for fila in por_hora
+            for fila in top_qs
         ],
-        "top_productos": list(top),
         "ventas_por_cajero": [
             {
                 "cajero": f"{f['cajero']} {f['apellido']}".strip(),
-                "tickets": f["tickets"],
-                "total": f["total"],
+                "tickets": max(int(f["tickets"] or 0), 0),
+                "total": max(f["total"] or Decimal("0"), Decimal("0")),
             }
             for f in por_cajero
         ],

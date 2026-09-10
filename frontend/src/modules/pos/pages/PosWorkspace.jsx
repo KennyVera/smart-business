@@ -4,7 +4,7 @@ import Paginacion from "../../../shared/Paginacion";
 import { datosPaginacion, leerPagina, usePagina } from "../../../shared/paginado";
 import { useDebounce } from "../../../shared/useRecurso";
 import { mensajeApi } from "../../usuarios/rol";
-import { fetchCatalogo, procesarVenta } from "../api/posApi";
+import { fetchCatalogoGlobal, procesarVenta } from "../api/posApi";
 import BuscadorProducto from "../components/BuscadorProducto";
 import CategoriaPills from "../components/CategoriaPills";
 import { esEfectivo } from "../components/MetodosPago";
@@ -70,12 +70,15 @@ function PosWorkspace() {
     enfocar();
   }
 
-  /** La pistola termina con Enter: se resuelve el SKU contra la API al vuelo. */
+  /** Pistola / Enter: busca en el catálogo global (cualquier sucursal). */
   async function buscarYAgregar(valor) {
     const consulta = valor.trim();
     if (!consulta) return;
     try {
-      const { data } = await fetchCatalogo({ buscar: consulta, page_size: 2 });
+      const { data } = await fetchCatalogoGlobal({
+        buscar: consulta,
+        page_size: 5,
+      });
       const encontrados = leerPagina(data).items;
       const exacto =
         encontrados.find(
@@ -84,8 +87,8 @@ function PosWorkspace() {
       if (!exacto) {
         carrito.setAviso(
           encontrados.length === 0
-            ? `Sin resultados para "${consulta}".`
-            : "Varios productos coinciden: elige uno del catálogo.",
+            ? `Producto no encontrado: "${consulta}".`
+            : "Varios productos coinciden: elige uno de la grilla o escanea el SKU exacto.",
         );
         return;
       }
@@ -93,7 +96,7 @@ function PosWorkspace() {
       setTexto("");
       enfocar();
     } catch {
-      carrito.setAviso("No se pudo consultar el catálogo.");
+      carrito.setAviso("No se pudo consultar el catálogo global.");
     }
   }
 

@@ -1,0 +1,325 @@
+.reporte-ia-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  min-height: calc(100vh - 8rem);
+}
+
+.reporte-ia-sidebar {
+  position: sticky;
+  top: 1rem;
+}
+
+.reporte-ia-historial {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 8rem);
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.reporte-ia-historial-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #eef0f2;
+}
+
+.reporte-ia-historial-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.reporte-ia-historial-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.reporte-ia-historial-lista li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.15rem;
+  align-items: stretch;
+  margin-bottom: 0.25rem;
+}
+
+.reporte-ia-historial-item {
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  padding: 0.65rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.reporte-ia-historial-item:hover,
+.reporte-ia-historial-item.is-activo {
+  background: #f3faf6;
+}
+
+.reporte-ia-historial-item.is-activo {
+  box-shadow: inset 3px 0 0 #00aa5d;
+}
+
+.reporte-ia-historial-prompt {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1c1f24;
+  line-height: 1.3;
+}
+
+.reporte-ia-historial-fecha {
+  font-size: 0.72rem;
+  color: #6c757d;
+}
+
+.reporte-ia-historial-borrar {
+  border: 0;
+  background: transparent;
+  color: #9aa0a6;
+  border-radius: 8px;
+  width: 34px;
+  display: grid;
+  place-items: center;
+}
+
+.reporte-ia-historial-borrar:hover {
+  color: #c62828;
+  background: #fdecea;
+}
+
+.reporte-ia-trabajo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.reporte-ia-head h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #1c1f24;
+}
+
+.reporte-ia-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #00aa5d;
+}
+
+.reporte-ia-input {
+  border-radius: 12px;
+  font-size: 1rem;
+  padding: 0.85rem 1rem;
+  resize: vertical;
+  min-height: 96px;
+}
+
+.reporte-ia-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.reporte-ia-progreso {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f7fbf9 0%, #f3f7f5 100%);
+  border: 1px solid #e2efe8;
+}
+
+.reporte-ia-progreso-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.82rem;
+  color: #4a5560;
+}
+
+.reporte-ia-progreso-meta strong {
+  font-variant-numeric: tabular-nums;
+  color: #00aa5d;
+  font-size: 0.9rem;
+}
+
+.reporte-ia-progreso-pista {
+  height: 8px;
+  border-radius: 999px;
+  background: #e6eee9;
+  overflow: hidden;
+}
+
+.reporte-ia-progreso-barra {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #009352, #00aa5d 55%, #2fd082);
+  transition: width 0.22s ease-out;
+  box-shadow: 0 0 10px rgba(0, 170, 93, 0.35);
+}
+
+.reporte-ia-sql-toggle {
+  border-top: 1px solid #eef0f2;
+  padding-top: 0.75rem;
+}
+
+.reporte-ia-sql-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  background: transparent;
+  color: #6c757d;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.2rem 0;
+}
+
+.reporte-ia-sql-btn:hover {
+  color: #1c1f24;
+}
+
+.btn-reporte-ia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 10px;
+  background: #00aa5d;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.55rem 1.1rem;
+}
+
+.btn-reporte-ia:hover:not(:disabled) {
+  background: #009352;
+  color: #fff;
+}
+
+.btn-reporte-ia:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.reporte-ia-spin {
+  animation: reporte-ia-spin 0.8s linear infinite;
+}
+
+@keyframes reporte-ia-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reporte-ia-resultado-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.reporte-ia-sql {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0.9rem;
+  background: #f6f7f8;
+  border-radius: 10px;
+  border: 1px solid #e8eaed;
+}
+
+.reporte-ia-sql span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c757d;
+}
+
+.reporte-ia-sql code {
+  font-size: 0.82rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #1c1f24;
+}
+
+.reporte-ia-chart {
+  margin-top: 0.5rem;
+}
+
+.reporte-ia-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+}
+
+.reporte-ia-drawer-fondo {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.35);
+}
+
+.reporte-ia-drawer-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(320px, 88vw);
+  background: #fafafa;
+  padding: 0.75rem;
+  box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12);
+}
+
+.reporte-ia-drawer-panel .reporte-ia-historial {
+  max-height: calc(100vh - 3rem);
+}
+
+.reporte-ia-drawer-cerrar {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 2;
+  border: 0;
+  background: #fff;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 991.98px) {
+  .reporte-ia-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -19,6 +19,8 @@ urlpatterns = [
     path("api/inventario/", include("apps.inventario.urls")),
     path("api/pos/", include("apps.pos.urls")),
     path("api/crm/", include("apps.crm.urls")),
+    path("api/reportes/", include("apps.reportes.urls")),
+    path("api/reportes-ia/", include("apps.reportes.urls")),
     path("api/", include((urlpatterns_notificaciones, "notificaciones"))),
 ]
 

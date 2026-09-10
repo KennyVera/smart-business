@@ -1,6 +1,6 @@
 from decimal import ROUND_HALF_UP, Decimal
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import F
 from rest_framework import serializers
 
@@ -31,18 +31,31 @@ def stock_bloqueado(sucursal_id, producto_id):
     )
 
 
-def descontar_stock(sucursal_id, producto, cantidad, usuario, referencia):
+def asegurar_fila_stock(sucursal_id, producto):
+    """Crea la fila de stock local si el producto se vende aquí por primera vez."""
     fila = stock_bloqueado(sucursal_id, producto.pk)
-    disponible = fila.cantidad_actual if fila else 0
-    if disponible < cantidad:
-        raise serializers.ValidationError(
-            {
-                "items": [
-                    f"{producto.nombre}: solo hay {disponible} "
-                    f"{'unidad' if disponible == 1 else 'unidades'} en stock."
-                ]
-            }
+    if fila is not None:
+        return fila
+    try:
+        InventarioStock.objects.create(
+            sucursal_id=sucursal_id,
+            producto=producto,
+            cantidad_actual=0,
+            stock_minimo=5,
         )
+    except IntegrityError:
+        pass
+    return stock_bloqueado(sucursal_id, producto.pk)
+
+
+def descontar_stock(sucursal_id, producto, cantidad, usuario, referencia):
+    """Descuenta stock local; permite quedar en negativo (descuadre) para no perder la venta.
+
+    Si el producto nunca tuvo InventarioStock en la sucursal, se crea la fila en 0
+    y luego se descuenta (queda negativo hasta el ajuste del gerente).
+    """
+    fila = asegurar_fila_stock(sucursal_id, producto)
+    disponible = fila.cantidad_actual if fila else 0
     InventarioStock.objects.filter(
         sucursal_id=sucursal_id,
         producto_id=producto.pk,

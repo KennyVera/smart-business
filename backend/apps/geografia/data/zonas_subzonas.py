@@ -1,4 +1,4 @@
-# 9 Zonas de Planificación de Ecuador (SENPLADES) y subzonas provinciales.
+# 9 Zonas de Planificación de Ecuador (SENPLADES) y provincias.
 # Tuplas: (id_nombre, codigo, nombre, descripcion)
 ZONAS = [
     ("zona-1", 1, "Zona 1 — Norte", "Esmeraldas, Carchi, Imbabura y Sucumbíos"),
@@ -13,7 +13,8 @@ ZONAS = [
 ]
 
 # Tuplas: (id_nombre, nombre, zona_id)
-SUBZONAS = [
+# Se mantienen ids legacy `subzona-*` para no romper FKs existentes.
+PROVINCIAS = [
     ("subzona-esmeraldas", "Esmeraldas", "zona-1"),
     ("subzona-carchi", "Carchi", "zona-1"),
     ("subzona-imbabura", "Imbabura", "zona-1"),
@@ -41,3 +42,6 @@ SUBZONAS = [
     ("subzona-distrito-guayaquil", "Distrito Guayaquil", "zona-8"),
     ("subzona-dmq", "Distrito Metropolitano de Quito", "zona-9"),
 ]
+
+# Alias histórico.
+SUBZONAS = PROVINCIAS

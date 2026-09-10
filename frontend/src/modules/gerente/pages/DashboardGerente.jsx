@@ -6,7 +6,16 @@ import { useDashboardGerente } from "../hooks/useDashboardGerente";
 import "../gerente.css";
 
 function DashboardGerente() {
-  const { data, cierre, error, cargando } = useDashboardGerente();
+  const {
+    data,
+    cierre,
+    error,
+    cargando,
+    topN,
+    setTopN,
+    granularidad,
+    setGranularidad,
+  } = useDashboardGerente();
   const sucursal = data?.sucursal || cierre?.sucursal || "tu sucursal";
 
   return (
@@ -22,10 +31,18 @@ function DashboardGerente() {
       <KpisCierre cierre={cierre} />
       <div className="row g-3 mb-3">
         <div className="col-12 col-xl-7">
-          <VentasPorHoraChart series={data?.ventas_por_hora} />
+          <VentasPorHoraChart
+            series={data?.ventas_tiempo || data?.ventas_por_hora}
+            granularidad={granularidad}
+            onGranularidad={setGranularidad}
+          />
         </div>
         <div className="col-12 col-xl-5">
-          <TopProductosChart series={data?.top_productos} />
+          <TopProductosChart
+            series={data?.top_productos}
+            topN={topN}
+            onTopN={setTopN}
+          />
         </div>
       </div>
       <TablaCajeros filas={data?.ventas_por_cajero} />

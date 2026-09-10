@@ -13,7 +13,7 @@ CANTIDAD_MAXIMA = 9999
 
 
 class CatalogoPosSerializer(serializers.ModelSerializer):
-    """Producto vendible en la sucursal del turno, con su stock disponible."""
+    """Producto con fila de InventarioStock en la sucursal del cajero (grilla)."""
 
     id_producto = serializers.IntegerField(source="producto_id", read_only=True)
     sku = serializers.CharField(source="producto.sku", read_only=True)
@@ -48,6 +48,32 @@ class CatalogoPosSerializer(serializers.ModelSerializer):
 
     def get_imagen(self, obj):
         foto = obj.producto.imagen
+        return foto.url if foto else None
+
+
+class CatalogoGlobalPosSerializer(serializers.ModelSerializer):
+    """Producto del catálogo empresa + stock local (0 si nunca se registró aquí)."""
+
+    categoria_nombre = serializers.CharField(source="categoria.nombre", read_only=True)
+    imagen = serializers.SerializerMethodField()
+    cantidad_actual = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Producto
+        fields = (
+            "id_producto",
+            "sku",
+            "nombre",
+            "categoria",
+            "categoria_nombre",
+            "precio_venta",
+            "imagen",
+            "aplica_iva",
+            "cantidad_actual",
+        )
+
+    def get_imagen(self, obj):
+        foto = obj.imagen
         return foto.url if foto else None
 
 

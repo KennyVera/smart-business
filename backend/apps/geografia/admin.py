@@ -1,30 +1,27 @@
 from django.contrib import admin
 
-from .models import CantonDistrito, Subzona, Sucursal, ZonaPlanificacion
+from .models import Canton, Provincia, Sucursal, ZonaPlanificacion
 
 
 @admin.register(ZonaPlanificacion)
 class ZonaPlanificacionAdmin(admin.ModelAdmin):
-    list_display = ("codigo", "nombre", "id_nombre")
-    search_fields = ("id_nombre", "nombre")
+    list_display = ("codigo", "nombre", "descripcion", "id_nombre")
+    ordering = ("codigo",)
 
 
-@admin.register(Subzona)
-class SubzonaAdmin(admin.ModelAdmin):
+@admin.register(Provincia)
+class ProvinciaAdmin(admin.ModelAdmin):
     list_display = ("nombre", "zona", "id_nombre")
     list_filter = ("zona",)
-    search_fields = ("id_nombre", "nombre")
 
 
-@admin.register(CantonDistrito)
-class CantonDistritoAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "subzona", "id_nombre")
-    list_filter = ("subzona__zona",)
-    search_fields = ("id_nombre", "nombre")
+@admin.register(Canton)
+class CantonAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "provincia", "id_nombre")
+    list_filter = ("provincia__zona", "provincia")
 
 
 @admin.register(Sucursal)
 class SucursalAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "canton", "telefono", "activa", "fecha_cierre")
-    list_filter = ("activa",)
-    search_fields = ("id_nombre", "nombre", "direccion")
+    list_display = ("nombre", "canton", "activa", "telefono")
+    list_filter = ("activa", "canton__provincia__zona")

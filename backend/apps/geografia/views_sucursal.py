@@ -16,8 +16,8 @@ from .services.detalle_sucursal import terminales_de
 class SucursalViewSet(viewsets.ModelViewSet):
     queryset = Sucursal.objects.select_related(
         "canton",
-        "canton__subzona",
-        "canton__subzona__zona",
+        "canton__provincia",
+        "canton__provincia__zona",
     )
     serializer_class = SucursalSerializer
     http_method_names = ["get", "post", "put", "patch", "head", "options"]

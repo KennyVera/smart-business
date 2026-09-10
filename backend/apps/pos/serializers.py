@@ -8,6 +8,7 @@ from .serializers_caja import (
     TurnoSerializer,
 )
 from .serializers_venta import (
+    CatalogoGlobalPosSerializer,
     CatalogoPosSerializer,
     ProcesarVentaSerializer,
     VentaDetalleSerializer,
@@ -22,6 +23,7 @@ __all__ = [
     "CerrarTurnoSerializer",
     "ClienteSerializer",
     "CatalogoPosSerializer",
+    "CatalogoGlobalPosSerializer",
     "ProcesarVentaSerializer",
     "VentaSerializer",
     "VentaDetalleSerializer",

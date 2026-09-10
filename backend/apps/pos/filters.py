@@ -1,13 +1,13 @@
 import django_filters as filters
 from django.db.models import Q
 
-from apps.inventario.models import InventarioStock
+from apps.inventario.models import InventarioStock, Producto
 
 from .models import Cliente
 
 
 class CatalogoPosFilter(filters.FilterSet):
-    """Búsqueda de mostrador: la pistola manda el SKU, el cajero el nombre."""
+    """Grilla local: filtra solo filas de InventarioStock de la sucursal."""
 
     buscar = filters.CharFilter(method="filtrar_buscar")
     categoria = filters.NumberFilter(field_name="producto__categoria_id")
@@ -29,6 +29,23 @@ class CatalogoPosFilter(filters.FilterSet):
         if not value:
             return queryset
         return queryset.filter(cantidad_actual__gt=0)
+
+
+class CatalogoGlobalPosFilter(filters.FilterSet):
+    """Pistola / buscador: busca en todo el catálogo de productos de la empresa."""
+
+    buscar = filters.CharFilter(method="filtrar_buscar")
+    categoria = filters.NumberFilter(field_name="categoria_id")
+
+    class Meta:
+        model = Producto
+        fields = ("categoria",)
+
+    def filtrar_buscar(self, queryset, _name, value):
+        texto = (value or "").strip()
+        if not texto:
+            return queryset
+        return queryset.filter(Q(sku__icontains=texto) | Q(nombre__icontains=texto))
 
 
 class ClienteFilter(filters.FilterSet):

@@ -20,6 +20,7 @@ import DashboardGerente from "./modules/gerente/pages/DashboardGerente";
 import AuditoriaCajas from "./modules/gerente/pages/AuditoriaCajas";
 import Devoluciones from "./modules/gerente/pages/Devoluciones";
 import ClientesList from "./modules/gerente/pages/ClientesList";
+import ReportesIA from "./modules/reportes/pages/ReportesIA";
 import {
   ROLES_ADMIN,
   ROLES_GERENCIAL,
@@ -52,6 +53,7 @@ function App() {
                 <Route path="gerente/auditoria" element={<AuditoriaCajas />} />
                 <Route path="gerente/devoluciones" element={<Devoluciones />} />
                 <Route path="gerente/clientes" element={<ClientesList />} />
+                <Route path="reportes/ia" element={<ReportesIA />} />
               </Route>
               <Route element={<RequireRol roles={ROLES_INVENTARIO_OPS} />}>
                 <Route path="inventario/catalogo" element={<CatalogoPage />} />

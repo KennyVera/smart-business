@@ -2,8 +2,8 @@ import api from "../../../api/client";
 
 const BASE = "/api/pos/gerente";
 
-export function fetchDashboardGerente() {
-  return api.get(`${BASE}/dashboard/`);
+export function fetchDashboardGerente(params = {}) {
+  return api.get(`${BASE}/dashboard/`, { params });
 }
 
 export function fetchCierreDiario() {

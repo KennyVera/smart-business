@@ -1,33 +1,58 @@
-# Cantones reales de Ecuador. Tuplas: (id_nombre, nombre, subzona_id)
+# Cantones principales de Ecuador. Tuplas: (id_nombre, nombre, provincia_id)
 CANTONES = [
+    # Zona 1
     ("canton-esmeraldas", "Esmeraldas", "subzona-esmeraldas"),
+    ("canton-quininde", "Quinindé", "subzona-esmeraldas"),
     ("canton-tulcan", "Tulcán", "subzona-carchi"),
     ("canton-ibarra", "Ibarra", "subzona-imbabura"),
+    ("canton-otavalo", "Otavalo", "subzona-imbabura"),
     ("canton-lago-agrio", "Lago Agrio", "subzona-sucumbios"),
+    # Zona 2
     ("canton-cayambe", "Cayambe", "subzona-pichincha"),
+    ("canton-ruminahui", "Rumiñahui", "subzona-pichincha"),
+    ("canton-mejia", "Mejía", "subzona-pichincha"),
     ("canton-tena", "Tena", "subzona-napo"),
     ("canton-orellana", "Francisco de Orellana", "subzona-orellana"),
+    # Zona 3
     ("canton-latacunga", "Latacunga", "subzona-cotopaxi"),
     ("canton-ambato", "Ambato", "subzona-tungurahua"),
     ("canton-riobamba", "Riobamba", "subzona-chimborazo"),
     ("canton-pastaza", "Pastaza", "subzona-pastaza"),
+    # Zona 4
     ("canton-portoviejo", "Portoviejo", "subzona-manabi"),
     ("canton-manta", "Manta", "subzona-manabi"),
+    ("canton-chone", "Chone", "subzona-manabi"),
     ("canton-santo-domingo", "Santo Domingo", "subzona-santo-domingo"),
+    # Zona 5
     ("canton-santa-elena", "Santa Elena", "subzona-santa-elena"),
+    ("canton-la-libertad", "La Libertad", "subzona-santa-elena"),
+    ("canton-salinas", "Salinas", "subzona-santa-elena"),
     ("canton-milagro", "Milagro", "subzona-guayas"),
+    ("canton-daule", "Daule", "subzona-guayas"),
+    ("canton-playas", "Playas", "subzona-guayas"),
     ("canton-babahoyo", "Babahoyo", "subzona-los-rios"),
+    ("canton-quevedo", "Quevedo", "subzona-los-rios"),
+    ("canton-buena-fe", "Buena Fe", "subzona-los-rios"),
+    ("canton-ventanas", "Ventanas", "subzona-los-rios"),
     ("canton-guaranda", "Guaranda", "subzona-bolivar"),
     ("canton-san-cristobal", "San Cristóbal", "subzona-galapagos"),
+    ("canton-santa-cruz", "Santa Cruz", "subzona-galapagos"),
+    # Zona 6
     ("canton-cuenca", "Cuenca", "subzona-azuay"),
+    ("canton-gualaceo", "Gualaceo", "subzona-azuay"),
     ("canton-azogues", "Azogues", "subzona-canar"),
     ("canton-morona", "Morona", "subzona-morona"),
+    # Zona 7
     ("canton-machala", "Machala", "subzona-el-oro"),
+    ("canton-pasaje", "Pasaje", "subzona-el-oro"),
     ("canton-loja", "Loja", "subzona-loja"),
+    ("canton-catamayo", "Catamayo", "subzona-loja"),
     ("canton-zamora", "Zamora", "subzona-zamora"),
+    # Zona 8
     ("canton-guayaquil", "Guayaquil", "subzona-distrito-guayaquil"),
     ("canton-samborondon", "Samborondón", "subzona-distrito-guayaquil"),
     ("canton-duran", "Durán", "subzona-distrito-guayaquil"),
+    # Zona 9
     ("canton-quito", "Quito", "subzona-dmq"),
 ]
 

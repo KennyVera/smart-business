@@ -78,6 +78,36 @@ NOMBRES_CLIENTES = [
     ("Michelle", "Ordoñez"),
     ("David", "Campoverde"),
     ("Alejandra", "Tenesaca"),
+    ("Roberto", "Palomeque"),
+    ("Fernanda", "Yépez"),
+    ("Tomás", "Arévalo"),
+    ("Paola", "Sánchez"),
+    ("Julián", "Heredia"),
+    ("Carla", "Montero"),
+    ("Eduardo", "Patiño"),
+    ("Lorena", "Segovia"),
+    ("Martín", "Quichimbo"),
+    ("Silvana", "Ayala"),
+    ("Gabriel", "Pesántez"),
+    ("Beatriz", "Encalada"),
+    ("Rodrigo", "Larriva"),
+    ("Evelyn", "Matute"),
+    ("Francisco", "Cordova"),
+    ("Tatiana", "Bermeo"),
+    ("Álvaro", "Sarmientos"),
+    ("Jessica", "Aucapiña"),
+    ("Leonardo", "Pintado"),
+    ("Monica", "Zhinin"),
+    ("Cristina", "Ambuludi"),
+    ("Pablo", "Sigüenza"),
+    ("Wendy", "Chapa"),
+    ("Hugo", "Toral"),
+    ("Karina", "Ochoa"),
+    ("Emilio", "Vintimilla"),
+    ("Pamela", "Dutan"),
+    ("Jaime", "Farfán"),
+    ("Gloria", "Abad"),
+    ("Ramiro", "Calle"),
 ]
 
 
@@ -114,12 +144,28 @@ def billete_superior(total):
 
 class Command(BaseCommand):
     help = (
-        "Genera 50 clientes y un mes de ventas simuladas en Cuenca Centro "
-        "para alimentar dashboards gerencial y global."
+        "Genera clientes y ventas simuladas full (detalle + pago + kardex) "
+        "en Cuenca Centro. Usa --lote 500 para un bloque de ventas con cliente."
     )
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--lote",
+            type=int,
+            default=0,
+            help="Si > 0, genera exactamente N ventas full con cliente distinto rotativo.",
+        )
+        parser.add_argument(
+            "--dias",
+            type=int,
+            default=45,
+            help="Días hacia atrás para repartir el lote (default 45).",
+        )
 
     def handle(self, *args, **options):
         random.seed()
+        lote = max(int(options.get("lote") or 0), 0)
+        dias = max(int(options.get("dias") or 45), 1)
         with transaction.atomic():
             sucursal = self.obtener_sucursal()
             cajero = self.obtener_cajero(sucursal)
@@ -138,28 +184,48 @@ class Command(BaseCommand):
 
             self.asegurar_stock(sucursal, productos, cajero)
             clientes, cedulas = self.crear_clientes()
-            total_ventas = self.generar_mes(
-                sucursal=sucursal,
-                cajero=cajero,
-                terminal=terminal,
-                metodos=metodos,
-                productos=productos,
-                clientes=clientes,
-            )
+            if lote > 0:
+                total_ventas = self.generar_lote(
+                    sucursal=sucursal,
+                    cajero=cajero,
+                    terminal=terminal,
+                    metodos=metodos,
+                    productos=productos,
+                    clientes=clientes,
+                    objetivo=lote,
+                    dias=dias,
+                )
+                modo = f"lote de {lote} ventas full"
+            else:
+                total_ventas = self.generar_mes(
+                    sucursal=sucursal,
+                    cajero=cajero,
+                    terminal=terminal,
+                    metodos=metodos,
+                    productos=productos,
+                    clientes=clientes,
+                )
+                modo = "mes simulado"
 
         self.stdout.write("")
         self.stdout.write(
             self.style.SUCCESS(
-                f"¡Éxito! {len(clientes)} clientes creados y "
-                f"{total_ventas} ventas registradas en el último mes."
+                f"¡Éxito! {len(clientes)} clientes disponibles y "
+                f"{total_ventas} ventas registradas ({modo})."
             )
         )
-        self.stdout.write("")
-        self.stdout.write(self.style.WARNING("Cédulas ficticias de los 50 clientes:"))
-        for i, (cliente, cedula) in enumerate(zip(clientes, cedulas), start=1):
+        if lote > 0:
             self.stdout.write(
-                f"  {i:02d}. {cedula} — {cliente.nombres} {cliente.apellidos}"
+                self.style.WARNING(
+                    f"Clientes distintos usados en el lote: hasta {min(len(clientes), lote)}."
+                )
             )
+        else:
+            self.stdout.write(self.style.WARNING("Cédulas ficticias de clientes seed:"))
+            for i, (cliente, cedula) in enumerate(zip(clientes, cedulas), start=1):
+                self.stdout.write(
+                    f"  {i:02d}. {cedula} — {cliente.nombres} {cliente.apellidos}"
+                )
 
     def obtener_sucursal(self):
         sucursal = SucursalExistente.objects.filter(
@@ -327,13 +393,115 @@ class Command(BaseCommand):
 
         return total_ventas
 
-    def crear_venta(self, *, turno, sucursal, cajero, productos, clientes, metodos, dia):
+    def generar_lote(
+        self,
+        *,
+        sucursal,
+        cajero,
+        terminal,
+        metodos,
+        productos,
+        clientes,
+        objetivo,
+        dias,
+    ):
+        """Genera N ventas full (siempre con cliente), repartidas en los últimos días."""
+        if not clientes:
+            raise CommandError("No hay clientes para asignar a las ventas.")
+        ahora = timezone.localtime()
+        pool = list(clientes)
+        random.shuffle(pool)
+        # Reserva ventas para el día de hoy (último del rango) para que el dashboard no quede vacío.
+        reserva_hoy = max(min(objetivo // 10, 40), 15)
+        resto = max(objetivo - reserva_hoy, 0)
+        total = 0
+        indice_cliente = 0
+        dias_previos = max(dias - 1, 1)
+        por_dia = max(resto // dias_previos, 1) if resto else 0
+
+        for dias_atras in range(dias - 1, -1, -1):
+            if dias_atras == 0:
+                hoy_quota = objetivo - total
+            else:
+                if resto <= 0:
+                    continue
+                hoy_quota = min(resto, por_dia + random.randint(0, 2))
+                resto -= hoy_quota
+            if hoy_quota <= 0:
+                continue
+
+            dia = (ahora - timedelta(days=dias_atras)).date()
+            # Evita reabrir turnos del día si ya hay uno cerrado reciente: crea uno dedicado al lote.
+            apertura = timezone.make_aware(datetime.combine(dia, time(9, 0)))
+            cierre = timezone.make_aware(datetime.combine(dia, time(21, 0)))
+            turno = TurnoCaja.objects.create(
+                terminal=terminal,
+                usuario=cajero,
+                monto_apertura=Decimal("50.00"),
+                monto_esperado=Decimal("50.00"),
+                estado=TurnoCaja.ABIERTO,
+            )
+            TurnoCaja.objects.filter(pk=turno.pk).update(
+                fecha_apertura=apertura,
+                fecha_cierre=None,
+            )
+
+            efectivo = Decimal("0.00")
+            for _ in range(hoy_quota):
+                cliente = pool[indice_cliente % len(pool)]
+                indice_cliente += 1
+                venta, metodo = self.crear_venta(
+                    turno=turno,
+                    sucursal=sucursal,
+                    cajero=cajero,
+                    productos=productos,
+                    clientes=clientes,
+                    metodos=metodos,
+                    dia=dia,
+                    cliente_fijo=cliente,
+                )
+                total += 1
+                if metodo.nombre.lower() == "efectivo":
+                    efectivo += venta.total_factura
+
+            esperado = plata(Decimal("50.00") + efectivo)
+            TurnoCaja.objects.filter(pk=turno.pk).update(
+                fecha_apertura=apertura,
+                fecha_cierre=cierre,
+                estado=TurnoCaja.CERRADO,
+                monto_esperado=esperado,
+                monto_cierre_real=esperado,
+                monto_cierre_declarado=esperado,
+                descuadre=Decimal("0.00"),
+            )
+            self.stdout.write(
+                f"Lote {dia.isoformat()}: +{hoy_quota} ventas full "
+                f"(acum {total}/{objetivo})..."
+            )
+
+        return total
+
+    def crear_venta(
+        self,
+        *,
+        turno,
+        sucursal,
+        cajero,
+        productos,
+        clientes,
+        metodos,
+        dia,
+        cliente_fijo=None,
+    ):
         minutos = random.randint(0, 11 * 60 + 59)
         fecha_emision = timezone.make_aware(
             datetime.combine(dia, time(8, 0)) + timedelta(minutes=minutos)
         )
 
-        cliente = random.choice(clientes) if random.random() < 0.70 else None
+        if cliente_fijo is not None:
+            cliente = cliente_fijo
+        else:
+            cliente = random.choice(clientes) if random.random() < 0.70 else None
         metodo = self.elegir_metodo(metodos)
 
         lineas = self.elegir_lineas(productos)

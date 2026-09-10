@@ -5,10 +5,18 @@ export function fetchZonas(params) {
   return api.get("/api/geografia/zonas/", { params });
 }
 
-/** Los formularios necesitan todos los cantones para su <select>. */
-export async function fetchCantones() {
+/** Provincias (o distritos especiales) de la división política. */
+export async function fetchProvincias(params = {}) {
+  const { data } = await api.get("/api/geografia/provincias/", {
+    params: { page_size: TODOS, ...params },
+  });
+  return { data: leerPagina(data).items };
+}
+
+/** Cantones; filtrar con `{ provincia }` para la cascada del formulario. */
+export async function fetchCantones(params = {}) {
   const { data } = await api.get("/api/geografia/cantones/", {
-    params: { page_size: TODOS },
+    params: { page_size: TODOS, ...params },
   });
   return { data: leerPagina(data).items };
 }

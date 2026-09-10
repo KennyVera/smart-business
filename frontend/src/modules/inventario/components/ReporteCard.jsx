@@ -51,7 +51,7 @@ function ReporteCard({
       <div className="rep-card-acciones">
         <button type="button" className="btn-rep-outline" onClick={onVer}>
           <Eye size={15} strokeWidth={1.75} />
-          Ver en pantalla
+          {activo ? "Ocultar vista" : "Ver en pantalla"}
         </button>
         <button
           type="button"

@@ -16,12 +16,12 @@ function BuscadorProducto({ valor, inputRef, onValor, onBuscar }) {
         ref={inputRef}
         type="text"
         className="pos-buscador-input"
-        placeholder="Escanea el código de barras o busca el producto..."
+        placeholder="Escanea (catálogo global) o filtra la grilla local..."
         value={valor}
         autoFocus
         autoComplete="off"
         spellCheck="false"
-        aria-label="Buscar producto por código de barras o nombre"
+        aria-label="Escanear código de barras (global) o filtrar grilla local"
         onChange={(evento) => onValor(evento.target.value)}
         onKeyDown={alTeclear}
       />

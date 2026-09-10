@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePaginado } from "../../../shared/usePaginado";
 import { useRecurso } from "../../../shared/useRecurso";
 import {
-  fetchCatalogo,
+  fetchCatalogoLocal,
   fetchCategoriasPos,
   fetchMetodosPago,
   fetchTurnoActual,
@@ -43,7 +43,7 @@ export function useTurno() {
 export function useCatalogoPos({ buscar, categoria, pagina = 1, turnoId }) {
   const cargar = useCallback(
     () =>
-      fetchCatalogo({
+      fetchCatalogoLocal({
         buscar: buscar || undefined,
         categoria: categoria || undefined,
         page: pagina,
@@ -51,7 +51,7 @@ export function useCatalogoPos({ buscar, categoria, pagina = 1, turnoId }) {
       }),
     [buscar, categoria, pagina, turnoId],
   );
-  return usePaginado(cargar, "No se pudo cargar el catálogo.");
+  return usePaginado(cargar, "No se pudo cargar el catálogo local.");
 }
 
 export function useCategoriasPos(turnoId) {

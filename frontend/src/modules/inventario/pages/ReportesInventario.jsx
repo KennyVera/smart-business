@@ -183,6 +183,21 @@ function ReportesInventario() {
     setFiltros((actual) => ({ ...actual, ...cambios }));
   }
 
+  function cerrarVista() {
+    setActivo(null);
+    setDatos(null);
+    setError("");
+    setImagen("");
+  }
+
+  function verEnPantalla(clave) {
+    if (activo === clave) {
+      cerrarVista();
+      return;
+    }
+    setActivo(clave);
+  }
+
   function descargar(clave) {
     setActivo(clave);
     setTrabajo({ clave, fase: "datos", auditoria: selloAuditoria(sesion) });
@@ -215,7 +230,7 @@ function ReportesInventario() {
             bloqueado={Boolean(trabajo)}
             filtros={item.filtros === "fechas" ? filtros : undefined}
             onFiltros={item.filtros === "fechas" ? cambiar : undefined}
-            onVer={() => setActivo(item.clave)}
+            onVer={() => verEnPantalla(item.clave)}
             onPdf={() => descargar(item.clave)}
           />
         ))}
@@ -232,7 +247,7 @@ function ReportesInventario() {
             onLimite={setCrmLimite}
             onDesde={(valor) => setCrmFechas((a) => ({ ...a, desde: valor }))}
             onHasta={(valor) => setCrmFechas((a) => ({ ...a, hasta: valor }))}
-            onVer={() => setActivo(CLAVE_CRM)}
+            onVer={() => verEnPantalla(CLAVE_CRM)}
             onPdf={() => descargar(CLAVE_CRM)}
           />
         ) : null}
@@ -292,7 +307,7 @@ function ReportesInventario() {
                 type="button"
                 className="rep-cerrar"
                 title="Cerrar reporte"
-                onClick={() => setActivo(null)}
+                onClick={cerrarVista}
               >
                 <X size={16} strokeWidth={1.75} />
               </button>

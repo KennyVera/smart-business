@@ -29,12 +29,18 @@ function StockAjusteModal({ show, fila, onClose, onSaved }) {
       setError("Completa las dos cantidades.");
       return;
     }
+    const cantidad = Number(form.cantidad_actual);
+    const minimo = Number(form.stock_minimo);
+    if (!Number.isFinite(cantidad) || cantidad < 0 || !Number.isFinite(minimo) || minimo < 0) {
+      setError("Las cantidades no pueden ser negativas.");
+      return;
+    }
     try {
       await ajustarStock({
         sucursal: fila.id_sucursal,
         producto: fila.id_producto,
-        cantidad_actual: Number(form.cantidad_actual),
-        stock_minimo: Number(form.stock_minimo),
+        cantidad_actual: cantidad,
+        stock_minimo: minimo,
       });
       onSaved();
     } catch (err) {
@@ -72,6 +78,7 @@ function StockAjusteModal({ show, fila, onClose, onSaved }) {
                   className="form-control"
                   value={form.cantidad_actual}
                   inputMode="numeric"
+                  min="0"
                   onChange={(event) => onCampo("cantidad_actual", event.target.value)}
                 />
               </InventarioCampo>
@@ -82,6 +89,7 @@ function StockAjusteModal({ show, fila, onClose, onSaved }) {
                   className="form-control"
                   value={form.stock_minimo}
                   inputMode="numeric"
+                  min="0"
                   onChange={(event) => onCampo("stock_minimo", event.target.value)}
                 />
               </InventarioCampo>

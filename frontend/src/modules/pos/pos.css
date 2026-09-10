@@ -467,6 +467,40 @@
   font-size: 0.7rem;
 }
 
+.pos-ticket-producto strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+}
+
+.pos-stock-alerta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c45c00;
+  background: #fff4e5;
+  border: 1px solid #ffd8a8;
+  border-radius: 6px;
+  padding: 0.1rem 0.4rem;
+  letter-spacing: 0.01em;
+}
+
+.pos-ticket-alerta td {
+  background: #fffaf3;
+}
+
+.pos-card.is-agotada {
+  border-color: #ffd8a8;
+}
+
+.pos-card.is-agotada .pos-card-stock {
+  color: #c45c00;
+  font-weight: 700;
+}
+
 .pos-cant,
 .pos-cant-input {
   min-width: 36px;

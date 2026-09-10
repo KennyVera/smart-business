@@ -174,8 +174,8 @@ def dashboard_global():
 def sucursales_recientes(limite=10):
     filas = Sucursal.objects.select_related(
         "canton",
-        "canton__subzona",
-        "canton__subzona__zona",
+        "canton__provincia",
+        "canton__provincia__zona",
     ).order_by("-fecha_apertura", "nombre")[:limite]
     return [
         {

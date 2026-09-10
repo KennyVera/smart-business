@@ -16,36 +16,38 @@ class ZonaPlanificacion(models.Model):
         return self.nombre
 
 
-class Subzona(models.Model):
+class Provincia(models.Model):
+    """Provincia (o distrito especial) vinculada a una zona SENPLADES."""
+
     id_nombre = models.CharField(max_length=64, primary_key=True)
     nombre = models.CharField(max_length=120)
     zona = models.ForeignKey(
         ZonaPlanificacion,
         on_delete=models.PROTECT,
-        related_name="subzonas",
+        related_name="provincias",
     )
 
     class Meta:
-        verbose_name = "Subzona"
-        verbose_name_plural = "Subzonas"
+        verbose_name = "Provincia"
+        verbose_name_plural = "Provincias"
         ordering = ["nombre"]
 
     def __str__(self):
         return self.nombre
 
 
-class CantonDistrito(models.Model):
+class Canton(models.Model):
     id_nombre = models.CharField(max_length=64, primary_key=True)
     nombre = models.CharField(max_length=120)
-    subzona = models.ForeignKey(
-        Subzona,
+    provincia = models.ForeignKey(
+        Provincia,
         on_delete=models.PROTECT,
         related_name="cantones",
     )
 
     class Meta:
-        verbose_name = "Cantón / Distrito"
-        verbose_name_plural = "Cantones / Distritos"
+        verbose_name = "Cantón"
+        verbose_name_plural = "Cantones"
         ordering = ["nombre"]
 
     def __str__(self):
@@ -56,7 +58,7 @@ class Sucursal(models.Model):
     id_nombre = models.CharField(max_length=64, primary_key=True)
     nombre = models.CharField(max_length=120)
     canton = models.ForeignKey(
-        CantonDistrito,
+        Canton,
         on_delete=models.PROTECT,
         related_name="sucursales",
     )

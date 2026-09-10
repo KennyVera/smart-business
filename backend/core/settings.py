@@ -1,7 +1,16 @@
-import os
 from pathlib import Path
+import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+try:
+    from dotenv import load_dotenv
+
+    _BASE = Path(__file__).resolve().parent.parent
+    load_dotenv(_BASE / ".env")
+    load_dotenv(_BASE.parent / ".env")
+except ImportError:
+    _BASE = Path(__file__).resolve().parent.parent
+
+BASE_DIR = _BASE
 
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
@@ -27,6 +36,7 @@ INSTALLED_APPS = [
     "apps.inventario.apps.InventarioConfig",
     "apps.pos.apps.PosConfig",
     "apps.crm.apps.CrmConfig",
+    "apps.reportes.apps.ReportesConfig",
 ]
 
 MIDDLEWARE = [
@@ -112,3 +122,7 @@ JWT_EXPIRACION_HORAS = 12
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# Google Gemini (Text-to-SQL / reportes inteligentes).
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash").strip()

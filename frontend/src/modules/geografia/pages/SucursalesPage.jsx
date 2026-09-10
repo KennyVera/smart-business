@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Paginacion from "../../../shared/Paginacion";
 import { confirmar } from "../../../shared/confirm";
 import { useDatosPaginacion, usePagina } from "../../../shared/paginado";
-import { desactivarSucursal, fetchCantones, fetchSucursalDetalle } from "../api/geografiaApi";
+import { desactivarSucursal, fetchProvincias, fetchSucursalDetalle } from "../api/geografiaApi";
 import { useSucursales } from "../hooks/useSucursales";
 import SucursalDetalleOffcanvas from "../components/SucursalDetalleOffcanvas";
 import SucursalFormModal from "../components/SucursalFormModal";
@@ -15,14 +15,14 @@ function SucursalesPage() {
   const [pagina, setPagina] = usePagina();
   const { items, total, error, cargando, recargar } = useSucursales(pagina);
   const paginacionUi = useDatosPaginacion(pagina, total);
-  const [cantones, setCantones] = useState([]);
+  const [provincias, setProvincias] = useState([]);
   const [form, setForm] = useState({ open: false, sucursal: null });
   const [detalle, setDetalle] = useState({ open: false, data: null });
 
   useEffect(() => {
-    fetchCantones()
-      .then((response) => setCantones(response.data))
-      .catch(() => setCantones([]));
+    fetchProvincias()
+      .then((response) => setProvincias(response.data))
+      .catch(() => setProvincias([]));
   }, []);
 
   async function onDesactivar(sucursal) {
@@ -68,7 +68,7 @@ function SucursalesPage() {
       <SucursalFormModal
         show={form.open}
         sucursal={form.sucursal}
-        cantones={cantones}
+        provincias={provincias}
         onClose={() => setForm({ open: false, sucursal: null })}
         onSaved={() => {
           setForm({ open: false, sucursal: null });

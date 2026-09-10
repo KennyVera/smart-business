@@ -15,8 +15,19 @@ export function cerrarTurno(idTurno, payload) {
   return api.post(`${BASE}/turnos/${idTurno}/cerrar/`, payload);
 }
 
+/** Grilla visual: solo productos con InventarioStock en la sucursal del cajero. */
+export function fetchCatalogoLocal(params) {
+  return api.get(`${BASE}/catalogo-local/`, { params });
+}
+
+/** Compat: mismo criterio que catalogo-local. */
 export function fetchCatalogo(params) {
-  return api.get(`${BASE}/catalogo/`, { params });
+  return fetchCatalogoLocal(params);
+}
+
+/** Pistola / buscador de texto: catálogo global de la empresa + stock local. */
+export function fetchCatalogoGlobal(params) {
+  return api.get(`${BASE}/catalogo-global/`, { params });
 }
 
 /** Las pills de categoría necesitan la lista completa, no una página. */

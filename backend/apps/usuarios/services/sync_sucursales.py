@@ -10,26 +10,27 @@ def _zona(geo_zona):
     return zona
 
 
-def _subzona(geo_subzona):
-    zona = _zona(geo_subzona.zona)
+def _provincia(geo_provincia):
+    """Sincroniza provincia geo → tabla legacy `subzona`."""
+    zona = _zona(geo_provincia.zona)
     hallada = SubzonaExistente.objects.filter(
-        nombre=geo_subzona.nombre,
+        nombre=geo_provincia.nombre,
         zona=zona,
     ).first()
     if hallada:
         return hallada
-    return SubzonaExistente.objects.create(nombre=geo_subzona.nombre, zona=zona)
+    return SubzonaExistente.objects.create(nombre=geo_provincia.nombre, zona=zona)
 
 
 def _canton(geo_canton):
-    subzona = _subzona(geo_canton.subzona)
+    provincia = _provincia(geo_canton.provincia)
     hallado = CantonExistente.objects.filter(
         nombre=geo_canton.nombre,
-        subzona=subzona,
+        subzona=provincia,
     ).first()
     if hallado:
         return hallado
-    return CantonExistente.objects.create(nombre=geo_canton.nombre, subzona=subzona)
+    return CantonExistente.objects.create(nombre=geo_canton.nombre, subzona=provincia)
 
 
 def sincronizar_sucursal(geo):
@@ -53,7 +54,7 @@ def sincronizar_sucursal(geo):
 def sincronizar_todas():
     consulta = GeoSucursal.objects.select_related(
         "canton",
-        "canton__subzona",
-        "canton__subzona__zona",
+        "canton__provincia",
+        "canton__provincia__zona",
     )
     return [sincronizar_sucursal(item) for item in consulta]

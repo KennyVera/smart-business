@@ -88,11 +88,8 @@ export function validarProducto(form) {
   const costo = Number(form.costo_actual);
   const precio = Number(form.precio_venta);
   if (!Number.isFinite(costo) || costo < 0) return "Registra un costo válido (≥ 0).";
-  if (!Number.isFinite(precio) || precio < 0) {
-    return "El precio de venta no puede ser negativo.";
-  }
-  if (precio <= 0) {
-    return "El precio de venta debe ser mayor a 0.";
+  if (!Number.isFinite(precio) || precio <= 0) {
+    return "El precio de venta debe ser mayor a 0 (no se admiten negativos ni cero).";
   }
   return "";
 }

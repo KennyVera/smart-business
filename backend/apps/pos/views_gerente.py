@@ -61,4 +61,10 @@ class GerenteReportesViewSet(ViewSet):
 
     @action(detail=False, methods=["get"], url_path="dashboard")
     def dashboard(self, request):
-        return Response(dashboard_sucursal(request.user))
+        return Response(
+            dashboard_sucursal(
+                request.user,
+                top=request.query_params.get("top"),
+                granularidad=request.query_params.get("granularidad"),
+            )
+        )

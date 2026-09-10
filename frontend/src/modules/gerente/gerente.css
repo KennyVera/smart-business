@@ -18,6 +18,26 @@
   color: #00aa5d;
 }
 
+.gerente-chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.gerente-chart-head h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.gerente-chart-select {
+  width: auto;
+  min-width: 8.5rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
 .gerente-kpi {
   background: #fff;
   border-radius: 14px;

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import CantonDistrito, Subzona, Sucursal, ZonaPlanificacion
+from .models import Canton, Provincia, Sucursal, ZonaPlanificacion
 
 
 class ZonaPlanificacionSerializer(serializers.ModelSerializer):
@@ -9,33 +9,53 @@ class ZonaPlanificacionSerializer(serializers.ModelSerializer):
         fields = ("id_nombre", "nombre", "codigo", "descripcion")
 
 
-class SubzonaSerializer(serializers.ModelSerializer):
+class ProvinciaSerializer(serializers.ModelSerializer):
     zona_nombre = serializers.CharField(source="zona.nombre", read_only=True)
+    zona_codigo = serializers.IntegerField(source="zona.codigo", read_only=True)
 
     class Meta:
-        model = Subzona
-        fields = ("id_nombre", "nombre", "zona", "zona_nombre")
-
-
-class CantonDistritoSerializer(serializers.ModelSerializer):
-    subzona_nombre = serializers.CharField(source="subzona.nombre", read_only=True)
-    zona_nombre = serializers.CharField(source="subzona.zona.nombre", read_only=True)
-
-    class Meta:
-        model = CantonDistrito
+        model = Provincia
         fields = (
             "id_nombre",
             "nombre",
-            "subzona",
-            "subzona_nombre",
+            "zona",
             "zona_nombre",
+            "zona_codigo",
+        )
+
+
+class CantonSerializer(serializers.ModelSerializer):
+    provincia_nombre = serializers.CharField(source="provincia.nombre", read_only=True)
+    zona = serializers.CharField(source="provincia.zona_id", read_only=True)
+    zona_nombre = serializers.CharField(source="provincia.zona.nombre", read_only=True)
+    zona_codigo = serializers.IntegerField(source="provincia.zona.codigo", read_only=True)
+
+    class Meta:
+        model = Canton
+        fields = (
+            "id_nombre",
+            "nombre",
+            "provincia",
+            "provincia_nombre",
+            "zona",
+            "zona_nombre",
+            "zona_codigo",
         )
 
 
 class SucursalSerializer(serializers.ModelSerializer):
     canton_nombre = serializers.CharField(source="canton.nombre", read_only=True)
+    provincia = serializers.CharField(source="canton.provincia_id", read_only=True)
+    provincia_nombre = serializers.CharField(
+        source="canton.provincia.nombre",
+        read_only=True,
+    )
     zona_nombre = serializers.CharField(
-        source="canton.subzona.zona.nombre",
+        source="canton.provincia.zona.nombre",
+        read_only=True,
+    )
+    zona_codigo = serializers.IntegerField(
+        source="canton.provincia.zona.codigo",
         read_only=True,
     )
 
@@ -46,7 +66,10 @@ class SucursalSerializer(serializers.ModelSerializer):
             "nombre",
             "canton",
             "canton_nombre",
+            "provincia",
+            "provincia_nombre",
             "zona_nombre",
+            "zona_codigo",
             "direccion",
             "telefono",
             "activa",
@@ -54,3 +77,8 @@ class SucursalSerializer(serializers.ModelSerializer):
             "fecha_cierre",
         )
         read_only_fields = ("id_nombre", "fecha_cierre")
+
+
+# Compatibilidad con imports antiguos.
+SubzonaSerializer = ProvinciaSerializer
+CantonDistritoSerializer = CantonSerializer
